@@ -51,6 +51,6 @@ pipeline {
     }
   }
   environment {
-    INNO_AZURE_CREDENTIALS = credentials('INNO_AZURE_CREDENTIALS')
+    INNO_AZURE_CREDENTIALS = 'INNO_AZURE_CREDENTIALS'
   }
 }
