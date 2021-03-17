@@ -82,9 +82,10 @@ pipeline {
         // kubeconfig = sh(script: "mktemp", returnStdout: true)
         sh """
           companion_rg="MC_${RESOURCE_GROUP}_${AKS_NAME}_${LOCATIONS}"
-          DATA=\$(printf "%-50s \"${RESOURCE_GROUP}\" \"${AKS_NAME}\"")
+          kubeconfig="\$(mktemp)"
           
-          echo "Fetch AKS credentials to \$DATA"
+          echo "Fetch AKS credentials to \$kubeconfig"
+          az aks get-credentials -g "${RESOURCE_GROUP}" -n "${AKS_NAME}" --admin --file "\$kubeconfig"
         """
         /*
         sh  """
