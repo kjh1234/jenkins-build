@@ -73,8 +73,9 @@ pipeline {
         sh """
         #!/bin/bash
         
+        resource_group="aks-bg-test"
         companion_rg="MC_${RESOURCE_GROUP}_${AKS_NAME}_${LOCATIONS}"
-        echo "companion resource group '$companion_rg'" 
+        echo "Fetch AKS credentials to $resource_group"
         """
         /*
         sh  """
