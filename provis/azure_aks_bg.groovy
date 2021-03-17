@@ -82,7 +82,7 @@ pipeline {
         // kubeconfig = sh(script: "mktemp", returnStdout: true)
         sh """
           companion_rg="MC_${RESOURCE_GROUP}_${AKS_NAME}_${LOCATIONS}"
-          kubeconfig=\$(mktemp)
+          kubeconfig=\\$(mktemp)
           
           echo "Fetch AKS credentials to $kubeconfig"
         """
