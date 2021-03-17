@@ -79,6 +79,10 @@ pipeline {
         // Apply the plan
         sh """
           companion_rg="MC_${RESOURCE_GROUP}_${AKS_NAME}_${LOCATIONS}"
+          kubeconfig="$\(mktemp\)"
+          
+          echo "Fetch AKS credentials to $kubeconfig"
+          az aks get-credentials -g "${RESOURCE_GROUP}" -n "${AKS_NAME}" --admin --file "$kubeconfig"
           
         """
         /*
