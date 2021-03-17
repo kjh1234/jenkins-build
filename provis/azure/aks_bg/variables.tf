@@ -35,7 +35,8 @@ variable "public_key" {
 }
 
 variable "node_count" {
-    default = "2"
+    type        = number
+    default = 2
 }
 
 
