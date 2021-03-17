@@ -77,10 +77,18 @@ pipeline {
           """
         }
         // Apply the plan
+        
+        kubeconfig = sh(script: "mktemp", returnStdout: true)
         sh """
           companion_rg="MC_${RESOURCE_GROUP}_${AKS_NAME}_${LOCATIONS}"
           
-          kubeconfig=$\\(mktemp\\)
+          echo "Fetch AKS credentials to $kubeconfig"
+          az aks get-credentials -g "${RESOURCE_GROUP}" -n "${AKS_NAME}" --admin --file "$kubeconfig"          
+          
+          echo "Apply Service"
+          kubectl apply -f "${workspace}/provis/azure/aks_bg/service-green.yml" --kubeconfig "$kubeconfig"
+          kubectl apply -f "${workspace}/provis/azure/aks_bg/test-endpoint-blue.yml" --kubeconfig "$kubeconfig"
+          kubectl apply -f "${workspace}/provis/azure/aks_bg/test-endpoint-green.yml" --kubeconfig "$kubeconfig"
           
         """
         /*
