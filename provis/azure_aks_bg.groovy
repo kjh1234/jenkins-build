@@ -31,7 +31,9 @@ pipeline {
             
             cd ${workspace}/provis/azure/aks_bg
             terraform plan -out=tfplan -input=false \
-              -var 'app_resource_group_name=aks-bg-jenkins' \
+              -var 'app_resource_group_name=${RESOURCE_GROUP}' \
+              -var 'location=${LOCATIONS}' \
+              -var 'cluster_name=${AKS_NAME}' \
               -var 'public_key=${PUBLIC_KEY}' \
               -var 'client_id=${AZURE_CLIENT_ID}' \
               -var 'client_secret=${AZURE_CLIENT_SECRET}' \
@@ -69,20 +71,19 @@ pipeline {
     stage('K8s Create Service'){
       steps {
         // Apply the plan
-        /*
         sh  """
+          companion_rg="MC_${RESOURCE_GROUP}_${AKS_NAME}_${LOCATIONS}"
           kubeconfig="$(mktemp)"
           
           echo "Fetch AKS credentials to $kubeconfig"
-          az aks get-credentials -g "$resource_group" -n "$aks_name" --admin --file "$kubeconfig"
+          az aks get-credentials -g "${RESOURCE_GROUP}" -n "${AKS_NAME}" --admin --file "$kubeconfig"
           
           echo "Apply Service"
           kubectl apply -f "${workspace}/provis/azure/aks_bg/service-green.yml" --kubeconfig "$kubeconfig"
           kubectl apply -f "${workspace}/provis/azure/aks_bg/test-endpoint-blue.yml" --kubeconfig "$kubeconfig"
           kubectl apply -f "${workspace}/provis/azure/aks_bg/test-endpoint-green.yml" --kubeconfig "$kubeconfig"
-        """
-        */
-        sh  """  
+          
+          
           function assign_dns {
             service="$1"
             dns_name="$2"
@@ -128,5 +129,9 @@ pipeline {
     INNO_AZURE_CREDENTIALS = 'INNO_AZURE_CREDENTIALS'
     AZURE_SUBSCRIPTION_ID = credentials('AZURE_SUBSCRIPTION_ID')
     PUBLIC_KEY="~/.ssh/inno_id_rsa.pub"
+    RESOURCE_GROUP="aks-bg-test"
+    AKS_NAME="aks-bg-cluster"
+    LOCATIONS="koreacentral"
+    
   }
 }
