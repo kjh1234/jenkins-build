@@ -11,8 +11,6 @@ resource "azurerm_resource_group" "main" {
   location = "${var.location}"
 }
 
-az aks create -g "$resource_group" -n "$aks_name" --ssh-key-value "$public_key" --node-count 2 --kubernetes-version 1.18.14
-
 resource "azurerm_kubernetes_cluster" "k8s" {
     name                = "${var.cluster_name}"
     location            = "${azurerm_resource_group.main.location}"
