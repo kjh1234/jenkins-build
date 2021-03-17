@@ -30,6 +30,12 @@ pipeline {
             export ARM_CLIENT_SECRET="${AZURE_CLIENT_SECRET}"
             export ARM_SUBSCRIPTION_ID="${AZURE_SUBSCRIPTION_ID}"
             export ARM_TENANT_ID="${AZURE_TENANT_ID}"
+            
+            cd ${workspace}/provis/azure/vmss_bg
+            terraform plan -out=tfplan -input=false -var 'app_resource_group_name=vmss-tf-jenkins \
+              client_id=${AZURE_CLIENT_ID} client_secret=${AZURE_CLIENT_SECRET} tenant_id=${AZURE_TENANT_ID} subscription_id=${AZURE_SUBSCRIPTION_ID}'
+            
+            # sh (script:"cd ${workspace}/provis/azure/vmss_bg && terraform plan -out=tfplan -input=false -var 'app_resource_group_name=vmss-tf-jenkins'")
           """
         }
 
@@ -41,7 +47,6 @@ pipeline {
 
         // sh (script:"cd ${workspace}/provis/azure/vmss_bg && terraform plan -out=tfplan -input=false -var 'terraform_resource_group='$vmss_rg -var 'terraform_vmss_name='$vmss_name -var 'terraform_azure_region='$location -var 'terraform_image_id='$image_id")
           
-        sh (script:"cd ${workspace}/provis/azure/vmss_bg && terraform plan -out=tfplan -input=false -var 'app_resource_group_name=vmss-tf-jenkins'")
         
       }
     }
