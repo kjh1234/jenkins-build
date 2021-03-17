@@ -73,7 +73,7 @@ pipeline {
         // Apply the plan
         sh """
         companion_rg="MC_${RESOURCE_GROUP}_${AKS_NAME}_${LOCATIONS}"
-        echo "companion_rg : $companion_rg"
+        echo $companion_rg
         """
         /*
         sh  """
