@@ -69,12 +69,21 @@ pipeline {
 
     stage('K8s Create Service'){
       steps {
+        // Get the VM image ID for the VMSS
+        withCredentials([azureServicePrincipal(INNO_AZURE_CREDENTIALS)]) {
+          sh """
+            az login --service-principal -u $AZURE_CLIENT_ID -p $AZURE_CLIENT_SECRET -t $AZURE_TENANT_ID
+            az account set --subscription $AZURE_SUBSCRIPTION_ID
+          """
+        }
         // Apply the plan
         sh """
-        
-        resource_group="aks-bg-test"
-        companion_rg="MC_${RESOURCE_GROUP}_${AKS_NAME}_${LOCATIONS}"
-        echo "Fetch AKS credentials to $resource_group"
+          companion_rg="MC_${RESOURCE_GROUP}_${AKS_NAME}_${LOCATIONS}"
+          kubeconfig="$(mktemp)"
+          
+          echo "Fetch AKS credentials to $kubeconfig"
+          az aks get-credentials -g "${RESOURCE_GROUP}" -n "${AKS_NAME}" --admin --file "$kubeconfig"
+          
         """
         /*
         sh  """
