@@ -79,7 +79,8 @@ pipeline {
         // Apply the plan
         sh """
           companion_rg="MC_${RESOURCE_GROUP}_${AKS_NAME}_${LOCATIONS}"
-          kubeconfig="$\(mktemp\)"
+          
+          kubeconfig="mktemp"
           
         """
         /*
