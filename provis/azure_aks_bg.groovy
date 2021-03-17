@@ -71,6 +71,8 @@ pipeline {
       steps {
         // Apply the plan
         sh """
+        #!/bin/bash
+        
         companion_rg="MC_${RESOURCE_GROUP}_${AKS_NAME}_${LOCATIONS}"
         echo "companion resource group '$companion_rg'" 
         """
