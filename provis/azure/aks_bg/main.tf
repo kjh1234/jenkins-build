@@ -28,13 +28,13 @@ resource "azurerm_kubernetes_cluster" "k8s" {
 
     default_node_pool {
         name            = "agentpool"
-        node_count      = "2"
+        node_count      = ${node_count}
         vm_size         = "Standard_D2_v2"
     }
 
     service_principal {
-        client_id     = ${var.client_id}
-        client_secret = ${var.client_secret}
+        client_id     = "${var.client_id}"
+        client_secret = "${var.client_secret}"
     }
 
     network_profile {
