@@ -25,6 +25,8 @@ pipeline {
           sh """
             az login --service-principal -u $AZURE_CLIENT_ID -p $AZURE_CLIENT_SECRET -t $AZURE_TENANT_ID
           """
+          
+          sh (script:"cd ${workspace}/provis/azure/vmss_bg && terraform plan -out=tfplan -input=false -var 'app_resource_group_name=vmss-tf-jenkins'")
         }
 
         /*
@@ -34,19 +36,19 @@ pipeline {
         */
 
         // sh (script:"cd ${workspace}/provis/azure/vmss_bg && terraform plan -out=tfplan -input=false -var 'terraform_resource_group='$vmss_rg -var 'terraform_vmss_name='$vmss_name -var 'terraform_azure_region='$location -var 'terraform_image_id='$image_id")
-
-        sh (script:"cd ${workspace}/provis/azure/vmss_bg && terraform plan -out=tfplan -input=false -var 'app_resource_group_name=vmss-tf-jenkins'")
-
+        
       }
     }
 
     stage('Terraform apply'){
       steps {
         // Apply the plan
-        sh  """
-         cd ${workspace}/provis/azure/vmss_bg
-         terraform apply -input=false -auto-approve "tfplan"
-        """
+        withCredentials([azureServicePrincipal(INNO_AZURE_CREDENTIALS)]) {
+          sh  """
+           cd ${workspace}/provis/azure/vmss_bg
+           terraform apply -input=false -auto-approve "tfplan"
+          """
+        }
       }
     }
   }
