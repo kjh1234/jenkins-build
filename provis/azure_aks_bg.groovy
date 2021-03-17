@@ -106,7 +106,7 @@ pipeline {
                 sleep 10
             done
 
-            public_ip="\$(az network public-ip list -g "\$companion_rg" --query "[?ipAddress==\`\$IP\`] | [0].id" -o tsv)"
+            public_ip="\$(az network public-ip list -g "\$companion_rg" --query "[?ipAddress==\\`\$IP\\`] | [0].id" -o tsv)"
             if [[ -z "\$public_ip" ]]; then
                 echo "Cannot find public IP resource ID for '\$service' in companion resource group '\$companion_rg'" >&2
                 exit 1
