@@ -74,6 +74,7 @@ pipeline {
           sh """
             az login --service-principal -u $AZURE_CLIENT_ID -p $AZURE_CLIENT_SECRET -t $AZURE_TENANT_ID
             az account set --subscription $AZURE_SUBSCRIPTION_ID
+            pwd
           """
         }
         // Apply the plan
@@ -81,7 +82,7 @@ pipeline {
         // kubeconfig = sh(script: "mktemp", returnStdout: true)
         sh """
           companion_rg="MC_${RESOURCE_GROUP}_${AKS_NAME}_${LOCATIONS}"
-          kubeconfig=\$\(mktemp\)
+          kubeconfig=\$(mktemp)
           
           echo "Fetch AKS credentials to $kubeconfig"
         """
