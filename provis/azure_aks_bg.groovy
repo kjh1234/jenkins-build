@@ -69,6 +69,7 @@ pipeline {
     stage('K8s Create Service'){
       steps {
         // Apply the plan
+        /*
         sh  """
           kubeconfig="$(mktemp)"
           
@@ -80,7 +81,7 @@ pipeline {
           kubectl apply -f "${workspace}/provis/azure/aks_bg/test-endpoint-blue.yml" --kubeconfig "$kubeconfig"
           kubectl apply -f "${workspace}/provis/azure/aks_bg/test-endpoint-green.yml" --kubeconfig "$kubeconfig"
         """
-        
+        */
         sh  """  
           function assign_dns {
             service="$1"
