@@ -7,6 +7,7 @@ pipeline {
         checkout scm
       }
     }
+    /*
     stage('Terraform init'){
       steps {
         // Initialize the plan
@@ -44,14 +45,11 @@ pipeline {
           """
         }
 
-        /*
-        image_id = sh (
-            script: "az image show -g $vm_images_rg -n $image_name --query '{VMName:id}' --out tsv",
-            returnStdout: true).trim()
-        */
+        // image_id = sh (
+        //     script: "az image show -g $vm_images_rg -n $image_name --query '{VMName:id}' --out tsv",
+        //    returnStdout: true).trim()
 
         // sh (script:"cd ${workspace}/provis/azure/vmss_bg && terraform plan -out=tfplan -input=false -var 'terraform_resource_group='$vmss_rg -var 'terraform_vmss_name='$vmss_name -var 'terraform_azure_region='$location -var 'terraform_image_id='$image_id")
-          
         
       }
     }
@@ -67,6 +65,7 @@ pipeline {
         }
       }
     }
+    */
 
     stage('K8s Create Service'){
       steps {
