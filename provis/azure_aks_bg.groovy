@@ -71,7 +71,6 @@ pipeline {
       steps {
         // Apply the plan
         sh """
-        #!/bin/bash
         
         resource_group="aks-bg-test"
         companion_rg="MC_${RESOURCE_GROUP}_${AKS_NAME}_${LOCATIONS}"
