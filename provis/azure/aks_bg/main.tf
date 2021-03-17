@@ -20,7 +20,7 @@ resource "azurerm_kubernetes_cluster" "k8s" {
         admin_username = "ubuntu"
 
         ssh_key {
-            key_data = file(${var.public_key})
+            key_data = "${file(var.public_key)}"
         }
     }
 
