@@ -98,7 +98,7 @@ pipeline {
             IP=
             while true; do
                 echo "Waiting external IP for $service..."
-                IP="\$(kubectl get service "\$service" --kubeconfig "\$kubeconfig" | tail -n +2 | awk '{print $4}' | grep -v '<')"
+                IP="\$(kubectl get service "\$service" --kubeconfig "\$kubeconfig" | tail -n +2 | awk '{print \$4}' | grep -v '<')"
                 if [[ "$?" == 0 && -n "\$IP" ]]; then
                     echo "Service \$service public IP: \$IP"
                     break
