@@ -71,6 +71,11 @@ pipeline {
     stage('K8s Create Service'){
       steps {
         // Apply the plan
+        sh """
+        companion_rg="MC_${RESOURCE_GROUP}_${AKS_NAME}_${LOCATIONS}"
+        echo "companion_rg : $companion_rg"
+        """
+        /*
         sh  """
           companion_rg="MC_${RESOURCE_GROUP}_${AKS_NAME}_${LOCATIONS}"
           kubeconfig="$(mktemp)"
@@ -113,6 +118,7 @@ pipeline {
         assign_dns todoapp-test-blue "aks-todoapp-blue-dns"
         assign_dns todoapp-test-green "aks-todoapp-green-dns"
         """
+        */
       }
     }
 
