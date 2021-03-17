@@ -33,7 +33,7 @@ pipeline {
             
             cd ${workspace}/provis/azure/vmss_bg
             terraform plan -out=tfplan -input=false \
-              -var 'app_resource_group_name=vmss-tf-jenkins' \
+              -var 'app_resource_group_name=vmss-bg-test' \
               -var 'client_id=${AZURE_CLIENT_ID}' \
               -var 'client_secret=${AZURE_CLIENT_SECRET}' \
               -var 'tenant_id=${AZURE_TENANT_ID}' \
