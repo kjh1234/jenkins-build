@@ -160,6 +160,7 @@ pipeline {
               az aks get-credentials --resource-group "${resourceGroup}" --name "${aks}" --admin --file kubeconfig
               az logout
               current_role="\$(kubectl --kubeconfig kubeconfig get services todoapp-service --output jsonpath='{.spec.selector.role}')"
+              
               if [ "\$current_role" = null ]; then
                   current_role = "blue"
                   #echo "Unable to determine current environment"
@@ -198,7 +199,17 @@ pipeline {
       }
       steps {
         script {
-          env.IMAGE_TAG = "http://${dockerRegistry}/${imageName}:${tagVersion}"
+          // env.IMAGE_TAG = "http://${dockerRegistry}/${imageName}:${tagVersion}"
+          withCredentials([usernamePassword(credentialsId: DOCKER_CREDENTIALS_ID, usernameVariable: 'DOCKER_USER', passwordVariable: 'DOCKER_PASS')]){
+            sh """
+              kubectl --kubeconfig=kubeconfig create secret docker-registry docker-registry-login \
+                --docker-server=${dockerRegistry} \
+                --docker-username=${DOCKER_USER} \
+                --docker-password=${DOCKER_PASS} \
+                --namespace=default 
+            """
+          }
+            
         // Apply the deployments to AKS.
         // With enableConfigSubstitution set to true, the variables ${TARGET_ROLE}, ${IMAGE_TAG}, ${KUBERNETES_SECRET_NAME}
         // will be replaced with environment variable values
