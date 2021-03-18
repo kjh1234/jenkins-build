@@ -7,6 +7,7 @@ pipeline {
         checkout scm
       }
     }
+    /*
     stage('Terraform init'){
       steps {
         // Initialize the plan
@@ -64,7 +65,32 @@ pipeline {
         }
       }
     }
-
+    */
+    
+    stage('Cluster Create'){
+      steps {
+        sh """
+          echo "Check Azure CLI login..."
+          if ! az group list >/dev/null 2>&1; then
+              echo "Login Azure CLI required" >&2
+              exit 1
+          fi
+          
+          echo "Checking resource group ${RESOURCE_GROUP}..."
+          if [[ "\$(az group exists --name "${RESOURCE_GROUP}")" == "false" ]]; then
+              echo "Create resource group ${RESOURCE_GROUP}"
+              az group create -n "${RESOURCE_GROUP}" -l "${LOCATIONS}"
+          fi
+          
+          echo "Checking AKS ${AKS_NAME}..."
+          if ! az aks show -g "${RESOURCE_GROUP}" -n "${AKS_NAME}" >/dev/null 2>&1; then
+              echo "Create AKS ${AKS_NAME}"
+              az aks create -g "${RESOURCE_GROUP}" -n "${AKS_NAME}" --node-count 2
+          fi
+        """
+      }
+    }
+    
     stage('K8s Create Service'){
       steps {
         // Get the VM image ID for the VMSS
