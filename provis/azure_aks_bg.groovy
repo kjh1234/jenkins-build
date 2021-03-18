@@ -69,6 +69,15 @@ pipeline {
     
     stage('Cluster Create'){
       steps {
+        // Get the VM image ID for the VMSS
+        withCredentials([azureServicePrincipal(INNO_AZURE_CREDENTIALS)]) {
+          sh """
+            az login --service-principal -u $AZURE_CLIENT_ID -p $AZURE_CLIENT_SECRET -t $AZURE_TENANT_ID
+            az account set --subscription $AZURE_SUBSCRIPTION_ID
+            pwd
+          """
+        }
+        
         sh """
           echo "Check Azure CLI login..."
           if ! az group list >/dev/null 2>&1; then
@@ -93,14 +102,6 @@ pipeline {
     
     stage('K8s Create Service'){
       steps {
-        // Get the VM image ID for the VMSS
-        withCredentials([azureServicePrincipal(INNO_AZURE_CREDENTIALS)]) {
-          sh """
-            az login --service-principal -u $AZURE_CLIENT_ID -p $AZURE_CLIENT_SECRET -t $AZURE_TENANT_ID
-            az account set --subscription $AZURE_SUBSCRIPTION_ID
-            pwd
-          """
-        }
         // Apply the plan
         
         // kubeconfig = sh(script: "mktemp", returnStdout: true)
