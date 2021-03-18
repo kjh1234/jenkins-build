@@ -66,7 +66,7 @@ pipeline {
       }
     }
     */
-    /*
+    
     stage('Cluster Create'){
       steps {
         // Get the VM image ID for the VMSS
@@ -98,7 +98,7 @@ pipeline {
           fi
         """
       }
-    }*/
+    }
     
     stage('K8s Create Service'){
       steps {
@@ -120,10 +120,10 @@ pipeline {
           echo "Fetch AKS credentials to \$kubeconfig"
           az aks get-credentials -g "${RESOURCE_GROUP}" -n "${AKS_NAME}" --admin --file "\$kubeconfig"
           
-          # echo "Apply Service"
-          # kubectl apply -f "${workspace}/provis/azure/aks_bg/service-green.yml" --kubeconfig "\$kubeconfig"
-          # kubectl apply -f "${workspace}/provis/azure/aks_bg/test-endpoint-blue.yml" --kubeconfig "\$kubeconfig"
-          # kubectl apply -f "${workspace}/provis/azure/aks_bg/test-endpoint-green.yml" --kubeconfig "\$kubeconfig"
+          echo "Apply Service"
+          kubectl apply -f "${workspace}/provis/azure/aks_bg/service-green.yml" --kubeconfig "\$kubeconfig"
+          kubectl apply -f "${workspace}/provis/azure/aks_bg/test-endpoint-blue.yml" --kubeconfig "\$kubeconfig"
+          kubectl apply -f "${workspace}/provis/azure/aks_bg/test-endpoint-green.yml" --kubeconfig "\$kubeconfig"
           
           function assign_dns {
             service="\$1"
@@ -179,7 +179,7 @@ pipeline {
     INNO_AZURE_CREDENTIALS = 'INNO_AZURE_CREDENTIALS'
     AZURE_SUBSCRIPTION_ID = credentials('AZURE_SUBSCRIPTION_ID')
     PUBLIC_KEY="~/.ssh/inno_id_rsa.pub"
-    RESOURCE_GROUP="aks-bg-tf-jenkins-1"
+    RESOURCE_GROUP="aks-bg-tf-jenkins-2"
     AKS_NAME="aks-bg-cluster"
     LOCATIONS="koreacentral"
     
