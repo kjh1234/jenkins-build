@@ -131,7 +131,7 @@ pipeline {
             while true; do
                 echo "Waiting external IP for \$service..."
                 IP="\$(kubectl get service "\$service" --kubeconfig "\$kubeconfig" | tail -n +2 | awk '{print \$4}' | grep -v '<')"
-                echo "? value before: $?"
+                echo "? value before: \$?"
                 if [[ "\$?" == 0 && -n "\$IP" ]]; then
                     echo "Service \$service public IP: \$IP"
                     break
@@ -149,7 +149,7 @@ pipeline {
 
             echo "Assign DNS name '\$dns_name' for '\$service'"
             az network public-ip update --dns-name "\$dns_name" --ids "\$public_ip"
-            echo "? value after: $?"
+            echo "? value after: \$?"
             [[ \$? != 0 ]] && exit 1
         }
 
