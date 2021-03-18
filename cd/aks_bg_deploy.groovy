@@ -44,7 +44,7 @@ pipeline {
             isHook = true
           }
           echo "isHook : " + isHook
-          env.IMAGE_TAG = "http://${dockerRegistry}/${imageName}:${params.TAG_VERSION}"
+          env.IMAGE_TAG = "${dockerRegistry}/${imageName}:${params.TAG_VERSION}"
         }
 
       }
@@ -105,7 +105,7 @@ pipeline {
               submoduleCfg: [], 
               userRemoteConfigs: [[credentialsId: GIT_CREDENTIALS_ID, url: "https://github.com/kjh1234/todo-app-java-on-azure.git"]]
           ])
-          env.IMAGE_TAG = "http://${dockerRegistry}/${imageName}:${tagVersion}"
+          env.IMAGE_TAG = "${dockerRegistry}/${imageName}:${tagVersion}"
         }
 
       }
@@ -198,6 +198,7 @@ pipeline {
       }
       steps {
         script {
+          env.IMAGE_TAG = "http://${dockerRegistry}/${imageName}:${tagVersion}"
         // Apply the deployments to AKS.
         // With enableConfigSubstitution set to true, the variables ${TARGET_ROLE}, ${IMAGE_TAG}, ${KUBERNETES_SECRET_NAME}
         // will be replaced with environment variable values
