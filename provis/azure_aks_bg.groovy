@@ -7,7 +7,7 @@ pipeline {
         checkout scm
       }
     }
-    /*
+    
     stage('Terraform init'){
       steps {
         // Initialize the plan
@@ -65,8 +65,8 @@ pipeline {
         }
       }
     }
-    */
     
+    /*
     stage('Cluster Create'){
       steps {
         // Get the VM image ID for the VMSS
@@ -98,7 +98,7 @@ pipeline {
           fi
         """
       }
-    }
+    }*/
     
     stage('K8s Create Service'){
       steps {
@@ -179,7 +179,7 @@ pipeline {
     INNO_AZURE_CREDENTIALS = 'INNO_AZURE_CREDENTIALS'
     AZURE_SUBSCRIPTION_ID = credentials('AZURE_SUBSCRIPTION_ID')
     PUBLIC_KEY="~/.ssh/inno_id_rsa.pub"
-    RESOURCE_GROUP="aks-bg-tf-jenkins-2"
+    RESOURCE_GROUP="aks-bg-tf-jenkins"
     AKS_NAME="aks-bg-cluster"
     LOCATIONS="koreacentral"
     
