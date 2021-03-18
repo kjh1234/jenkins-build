@@ -94,7 +94,7 @@ pipeline {
           echo "Checking AKS ${AKS_NAME}..."
           if ! az aks show -g "${RESOURCE_GROUP}" -n "${AKS_NAME}" >/dev/null 2>&1; then
               echo "Create AKS ${AKS_NAME}"
-              az aks create -g "${RESOURCE_GROUP}" -n "${AKS_NAME}" --node-count 2
+              az aks create -g "${RESOURCE_GROUP}" -n "${AKS_NAME}" --ssh-key-value "${PUBLIC_KEY}" --node-count 2
           fi
         """
       }
