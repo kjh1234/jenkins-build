@@ -66,7 +66,7 @@ pipeline {
       }
     }
     */
-    
+    /*
     stage('Cluster Create'){
       steps {
         // Get the VM image ID for the VMSS
@@ -99,10 +99,17 @@ pipeline {
         """
       }
     }
-    
+    */
     stage('K8s Create Service'){
       steps {
-        // Apply the plan
+        // Get the VM image ID for the VMSS
+        withCredentials([azureServicePrincipal(INNO_AZURE_CREDENTIALS)]) {
+          sh """
+            az login --service-principal -u $AZURE_CLIENT_ID -p $AZURE_CLIENT_SECRET -t $AZURE_TENANT_ID
+            az account set --subscription $AZURE_SUBSCRIPTION_ID
+            pwd
+          """
+        }
         
         // kubeconfig = sh(script: "mktemp", returnStdout: true)
         sh """
@@ -128,7 +135,9 @@ pipeline {
                     echo "Service \$service public IP: \$IP"
                     break
                 fi
+                echo "Get IP sleep before"
                 sleep 10
+                echo "Get IP sleep after"
             done
 
             public_ip="\$(az network public-ip list -g "\$companion_rg" --query "[?ipAddress==\\`\$IP\\`] | [0].id" -o tsv)"
