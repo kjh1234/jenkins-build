@@ -290,7 +290,7 @@ pipeline {
     GIT_CREDENTIALS_ID = credentials('GIT_CREDENTIALS_ID')
     DOCKER_CREDENTIALS_ID = 'TEST_DOCKER_CREDENTIALS_ID'
     
-    KUBERNETES_SECRET_NAME = 'todoapp' 
+    KUBERNETES_SECRET_NAME = 'docker-registry-login' 
   }
   parameters {
     booleanParam(name: 'ALL_STEPS', defaultValue: false, description: '')
