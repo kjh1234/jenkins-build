@@ -6,8 +6,8 @@ def servicePrincipalId = 'INNO_AZURE_CREDENTIALS'
 def resourceGroup = 'aks-bg-tf-jenkins-1'
 def aks = 'aks-bg-cluster'
 
-def dockerRegistry = 'doss.sktelecom.com'
-def dockerRegistryUrl = 'https://doss.sktelecom.com'
+def dockerRegistry = 'doss.sktelecom.com/nexus'
+def dockerRegistryUrl = 'https://doss.sktelecom.com/nexus'
 def imageName = "todo-app"
 
 def currentEnvironment = 'blue'
