@@ -66,7 +66,7 @@ pipeline {
       }
     }
     */
-    /*
+    
     stage('Cluster Create'){
       steps {
         // Get the VM image ID for the VMSS
@@ -99,7 +99,7 @@ pipeline {
         """
       }
     }
-    */
+    
     stage('K8s Create Service'){
       steps {
         // Get the VM image ID for the VMSS
@@ -131,6 +131,7 @@ pipeline {
             while true; do
                 echo "Waiting external IP for \$service..."
                 IP="\$(kubectl get service "\$service" --kubeconfig "\$kubeconfig" | tail -n +2 | awk '{print \$4}' | grep -v '<')"
+                echo "? value before: $?"
                 if [[ "\$?" == 0 && -n "\$IP" ]]; then
                     echo "Service \$service public IP: \$IP"
                     break
@@ -148,6 +149,7 @@ pipeline {
 
             echo "Assign DNS name '\$dns_name' for '\$service'"
             az network public-ip update --dns-name "\$dns_name" --ids "\$public_ip"
+            echo "? value after: $?"
             [[ \$? != 0 ]] && exit 1
         }
 
@@ -171,7 +173,7 @@ pipeline {
     INNO_AZURE_CREDENTIALS = 'INNO_AZURE_CREDENTIALS'
     AZURE_SUBSCRIPTION_ID = credentials('AZURE_SUBSCRIPTION_ID')
     PUBLIC_KEY="~/.ssh/inno_id_rsa.pub"
-    RESOURCE_GROUP="aks-bg-tf-jenkins-1"
+    RESOURCE_GROUP="aks-bg-tf-jenkins-2"
     AKS_NAME="aks-bg-cluster"
     LOCATIONS="koreacentral"
     
