@@ -64,7 +64,7 @@ pipeline {
         }
       }
     }
-/*
+
     stage('K8s Create Service'){
       steps {
         // Get the VM image ID for the VMSS
@@ -121,7 +121,7 @@ pipeline {
         """
       }
     }
-*/
+
     stage('Post-clean') {
       steps {
         sh '''
