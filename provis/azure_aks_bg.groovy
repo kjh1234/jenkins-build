@@ -119,10 +119,10 @@ pipeline {
           echo "Fetch AKS credentials to \$kubeconfig"
           az aks get-credentials -g "${RESOURCE_GROUP}" -n "${AKS_NAME}" --admin --file "\$kubeconfig"
           
-          echo "Apply Service"
-          kubectl apply -f "${workspace}/provis/azure/aks_bg/service-green.yml" --kubeconfig "\$kubeconfig"
-          kubectl apply -f "${workspace}/provis/azure/aks_bg/test-endpoint-blue.yml" --kubeconfig "\$kubeconfig"
-          kubectl apply -f "${workspace}/provis/azure/aks_bg/test-endpoint-green.yml" --kubeconfig "\$kubeconfig"
+          # echo "Apply Service"
+          # kubectl apply -f "${workspace}/provis/azure/aks_bg/service-green.yml" --kubeconfig "\$kubeconfig"
+          # kubectl apply -f "${workspace}/provis/azure/aks_bg/test-endpoint-blue.yml" --kubeconfig "\$kubeconfig"
+          # kubectl apply -f "${workspace}/provis/azure/aks_bg/test-endpoint-green.yml" --kubeconfig "\$kubeconfig"
           
           function assign_dns {
             service="\$1"
