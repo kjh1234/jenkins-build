@@ -18,7 +18,7 @@ variable "tenant_id" {
 #     resource variables     #
 variable "app_resource_group_name" {
   description = "Resource Group name, must be lowercase alphanumeric with hyphens as its used as domain_name_label as well"
-  default     = "vmss-tf-test"
+  default     = "vm-tf-jenkins"
 }
 
 variable "location" {
@@ -44,14 +44,4 @@ variable "frontend_port" {
 variable "application_port" {
     description = "The backend port where the application can be accessed"
     default     = 8080
-}
-
-variable "image_resource_group_name" {
-  description = "Resource Group name for packer images"
-  default     = "vmss-bg-image-gr"
-}
-
-variable "image_name" {
-  description = "The name of OS image to use"
-  default     = "tomcat-7"
 }
