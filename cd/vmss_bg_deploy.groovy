@@ -17,7 +17,7 @@ pipeline {
 	    }
 	    script {
 	      currentBackend = sh (
-		      script: 'az network lb rule show -g ${envRESOURCE_GROUP} --lb-name ${env.LB_NAME} -n ${env.PROD_VMSS_NAME} --query "backendAddressPool.id"',
+		      script: 'az network lb rule show -g ${env.RESOURCE_GROUP} --lb-name ${env.LB_NAME} -n ${env.PROD_VMSS_NAME} --query "backendAddressPool.id"',
             returnStdout: true
           ).trim()
           currentBackend = sh(returnStdout: true, script: "expr ${currentBackend} : '.*/backendAddressPools/\\(.*\\)-'").trim()
