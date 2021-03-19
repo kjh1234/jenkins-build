@@ -6,36 +6,27 @@ provider "azurerm" {
   tenant_id = "${var.tenant_id}"
 }
 
-data "azurerm_resource_group" "image" {
-  name = "${var.image_resource_group_name}"
-}
-
-data "azurerm_image" "image" {
-  name                = "${var.image_name}"
-  resource_group_name = "${data.azurerm_resource_group.image.name}"
-}
-
 resource "azurerm_resource_group" "main" {
   name     = "${var.app_resource_group_name}"
   location = "${var.location}"
 }
 
 resource "azurerm_virtual_network" "main" {
-  name                = "vmssbg-vnet"
+  name                = "vm-vnet"
   resource_group_name = "${azurerm_resource_group.main.name}"
   location            = "${azurerm_resource_group.main.location}"
   address_space       = ["10.0.0.0/16"]
 }
 
 resource "azurerm_subnet" "main" {
-  name                 = "vmssbg-subnet"
+  name                 = "vm-subnet"
   virtual_network_name = "${azurerm_virtual_network.main.name}"
   resource_group_name  = "${azurerm_resource_group.main.name}"
   address_prefixes     = ["10.0.1.0/24"]
 }
 
 resource "azurerm_public_ip" "main" {
-  name                         = "vmssbg-ip"
+  name                         = "vm-ip"
   location                     = "${var.location}"
   resource_group_name          = "${azurerm_resource_group.main.name}"
   allocation_method            = "Static"
@@ -43,7 +34,7 @@ resource "azurerm_public_ip" "main" {
 }
 
 resource "azurerm_lb" "main" {
-  name                = "vmssbg-lb"
+  name                = "vm-lb"
   location            = "${var.location}"
   resource_group_name = "${azurerm_resource_group.main.name}"
   sku                          = "standard"
@@ -96,7 +87,7 @@ resource "azurerm_lb_probe" "main" {
 }
 
 resource "azurerm_network_security_group" "main" {
-  name                = "vmssbg-nsg"
+  name                = "vm-nsg"
   location            = "${azurerm_resource_group.main.location}"
   resource_group_name = "${azurerm_resource_group.main.name}"
 
@@ -117,8 +108,8 @@ resource "azurerm_network_security_group" "main" {
   }
 }
 
-resource "azurerm_virtual_machine_scale_set" "main" {
-  name                = "vmssbg-blue"
+resource "azurerm_virtual_machine" "main" {
+  name                = "vm-blue"
   location            = "${azurerm_resource_group.main.location}"
   resource_group_name = "${azurerm_resource_group.main.name}"
   upgrade_policy_mode = "Manual"
@@ -130,7 +121,7 @@ resource "azurerm_virtual_machine_scale_set" "main" {
   }
 
   os_profile {
-    computer_name_prefix = "vmss"
+    computer_name_prefix = "vm"
     admin_username       = "${var.admin_id}"
     admin_password       = "${var.admin_password}"
   }
@@ -145,7 +136,7 @@ resource "azurerm_virtual_machine_scale_set" "main" {
 
     network_security_group_id = "${azurerm_network_security_group.main.id}"
     ip_configuration {
-      name      = "vmssbg-subnet"
+      name      = "vm-subnet"
       subnet_id = "${azurerm_subnet.main.id}"
       primary   = true
       load_balancer_backend_address_pool_ids = ["${azurerm_lb_backend_address_pool.main.id}"]
@@ -158,10 +149,6 @@ resource "azurerm_virtual_machine_scale_set" "main" {
     caching           = "ReadWrite"
     create_option     = "FromImage"
     managed_disk_type = "Standard_LRS"
-  }
-
-  storage_profile_image_reference {
-    id="${data.azurerm_image.image.id}"
   }
 }
 
