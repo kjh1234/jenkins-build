@@ -3,11 +3,11 @@ def tagVersion = ''
 
 def servicePrincipalId = 'INNO_AZURE_CREDENTIALS'
 
-def resourceGroup = 'aks-bg-tf-jenkins-1'
+def resourceGroup = 'aks-bg-tf-jenkins'
 def aks = 'aks-bg-cluster'
 
-def dockerRegistry = '52.141.3.188:5000'
-def dockerRegistryUrl = 'http://52.141.3.188:5000'
+def dockerRegistry = 'innoregi.azurecr.io'
+def dockerRegistryUrl = 'http://innoregi.azurecr.io'
 def imageName = "todo-app"
 
 def currentEnvironment = 'blue'
@@ -288,7 +288,7 @@ pipeline {
   environment {
     AZURE_SUBSCRIPTION_ID = credentials('AZURE_SUBSCRIPTION_ID')
     GIT_CREDENTIALS_ID = credentials('GIT_CREDENTIALS_ID')
-    DOCKER_CREDENTIALS_ID = 'TEST_DOCKER_CREDENTIALS_ID'
+    DOCKER_CREDENTIALS_ID = 'DOCKER_CREDENTIALS_ID'
     
     KUBERNETES_SECRET_NAME = 'docker-registry-login' 
   }
