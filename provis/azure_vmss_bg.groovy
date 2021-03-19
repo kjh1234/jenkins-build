@@ -33,7 +33,7 @@ pipeline {
             
             cd ${workspace}/provis/azure/vmss_bg
             terraform plan -out=tfplan -input=false \
-              -var 'app_resource_group_name=vmss-bg-test' \
+              -var 'app_resource_group_name=${RESOURCE_GROUP}' \
               -var 'client_id=${AZURE_CLIENT_ID}' \
               -var 'client_secret=${AZURE_CLIENT_SECRET}' \
               -var 'tenant_id=${AZURE_TENANT_ID}' \
@@ -70,5 +70,6 @@ pipeline {
   environment {
     INNO_AZURE_CREDENTIALS = 'INNO_AZURE_CREDENTIALS'
     AZURE_SUBSCRIPTION_ID = credentials('AZURE_SUBSCRIPTION_ID')
+    RESOURCE_GROUP="vmss-bg-tf-jenkins"
   }
 }
