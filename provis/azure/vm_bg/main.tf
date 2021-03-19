@@ -25,86 +25,15 @@ resource "azurerm_subnet" "main" {
   address_prefixes     = ["10.0.1.0/24"]
 }
 
-resource "azurerm_public_ip" "main" {
-  name                         = "vm-ip"
-  location                     = "${var.location}"
-  resource_group_name          = "${azurerm_resource_group.main.name}"
-  allocation_method            = "Static"
-  sku                          = "standard"
-}
-
-resource "azurerm_lb" "main" {
-  name                = "vm-lb"
-  location            = "${var.location}"
-  resource_group_name = "${azurerm_resource_group.main.name}"
-  sku                          = "standard"
-
-  frontend_ip_configuration {
-    name                 = "PublicIPAddress"
-    public_ip_address_id = "${azurerm_public_ip.main.id}"
-  }
-}
-
-resource "azurerm_lb_backend_address_pool" "main" {
-  resource_group_name = "${azurerm_resource_group.main.name}"
-  loadbalancer_id     = "${azurerm_lb.main.id}"
-  name                = "blue-bepool"
-}
-
-resource "azurerm_lb_nat_pool" "main" {
-  resource_group_name            = "${azurerm_resource_group.main.name}"
-  name                           = "blue-natpool"
-  loadbalancer_id                = "${azurerm_lb.main.id}"
-  protocol                       = "Tcp"
-  frontend_port_start            = 50000
-  frontend_port_end              = 50119
-  backend_port                   = 22
-  frontend_ip_configuration_name = "PublicIPAddress"
-}
-
-resource "azurerm_lb_backend_address_pool" "green" {
-  resource_group_name = "${azurerm_resource_group.main.name}"
-  loadbalancer_id     = "${azurerm_lb.main.id}"
-  name                = "green-bepool"
-}
-
-resource "azurerm_lb_nat_pool" "green" {
-  resource_group_name            = "${azurerm_resource_group.main.name}"
-  name                           = "green-natpool"
-  loadbalancer_id                = "${azurerm_lb.main.id}"
-  protocol                       = "Tcp"
-  frontend_port_start            = 50120
-  frontend_port_end              = 50239
-  backend_port                   = 22
-  frontend_ip_configuration_name = "PublicIPAddress"
-}
-
-resource "azurerm_lb_probe" "main" {
-  resource_group_name = "${azurerm_resource_group.main.name}"
-  loadbalancer_id     = "${azurerm_lb.main.id}"
-  name                = "tomcat"
-  port                = "${var.application_port}"
-}
-
-resource "azurerm_network_security_group" "main" {
-  name                = "vm-nsg"
+resource "azurerm_network_interface" "main" {
+  name                = "vm-nic"
   location            = "${azurerm_resource_group.main.location}"
   resource_group_name = "${azurerm_resource_group.main.name}"
 
-  security_rule {
-    name                       = "allow-public-access"
-    priority                   = 100
-    direction                  = "Inbound"
-    access                     = "Allow"
-    protocol                   = "*"
-    source_port_range          = "*"
-    destination_port_range     = "22-55000"
-    source_address_prefix      = "*"
-    destination_address_prefix = "*"
-  }
-
-  tags = {
-    environment = "Production"
+  ip_configuration {
+    name                          = "testconfiguration1"
+    subnet_id                     = azurerm_subnet.main.id
+    private_ip_address_allocation = "Dynamic"
   }
 }
 
@@ -112,16 +41,11 @@ resource "azurerm_virtual_machine" "main" {
   name                = "vm-blue"
   location            = "${azurerm_resource_group.main.location}"
   resource_group_name = "${azurerm_resource_group.main.name}"
-  upgrade_policy_mode = "Manual"
-
-  sku {
-    name     = "Standard_D1_v2"
-    tier     = "Standard"
-    capacity = 2
-  }
+  network_interface_ids = [azurerm_network_interface.main.id]
+  vm_size             = "Standard_DS1_v2"
 
   os_profile {
-    computer_name_prefix = "vm"
+    computer_name 		 = "todo-vm"
     admin_username       = "${var.admin_id}"
     admin_password       = "${var.admin_password}"
   }
@@ -129,37 +53,4 @@ resource "azurerm_virtual_machine" "main" {
   os_profile_linux_config {
     disable_password_authentication = false
   }
-
-  network_profile {
-    name    = "web_ss_net_profile"
-    primary = true
-
-    network_security_group_id = "${azurerm_network_security_group.main.id}"
-    ip_configuration {
-      name      = "vm-subnet"
-      subnet_id = "${azurerm_subnet.main.id}"
-      primary   = true
-      load_balancer_backend_address_pool_ids = ["${azurerm_lb_backend_address_pool.main.id}"]
-      load_balancer_inbound_nat_rules_ids    =  ["${azurerm_lb_nat_pool.main.id}"]
-    }
-  }
-
-  storage_profile_os_disk {
-    name              = ""
-    caching           = "ReadWrite"
-    create_option     = "FromImage"
-    managed_disk_type = "Standard_LRS"
-  }
-}
-
-resource "azurerm_lb_rule" "lbnatrule" {
-  resource_group_name            = "${var.app_resource_group_name}"
-  loadbalancer_id                = "${azurerm_lb.main.id}"
-  name                           = "tomcat"
-  protocol                       = "Tcp"
-  frontend_port                  = "${var.frontend_port}"
-  backend_port                   = "${var.application_port}"
-  backend_address_pool_id        = "${azurerm_lb_backend_address_pool.main.id}"
-  frontend_ip_configuration_name = "PublicIPAddress"
-  probe_id                       = "${azurerm_lb_probe.main.id}"
 }
