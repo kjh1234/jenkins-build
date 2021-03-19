@@ -35,7 +35,7 @@ pipeline {
 	    script {
 	      deployImage = "${IMAGE_RESOURCE_GROUP}tomcat-${TAG_VERSION}"
           sh """
-          az vmss create --resource-group "$RESOURCE_GROUP" --name "vmss-${newBackend()}" \
+          az vmss create --resource-group "$RESOURCE_GROUP" --name "vmssbg-${newBackend()}" \
               --image $deployImage \
               --admin-username $ADMIN_USERNAME \
 	            --ssh-key-value "${publicKey}" \
@@ -76,10 +76,10 @@ pipeline {
         input("Switch Prod Proceed or Abort?")
 				  
         sh """
-		az vmss scale --resource-group $RESOURCE_GROUP --name "vmss-${newBackend()}" --new-capacity 3
+		az vmss scale --resource-group $RESOURCE_GROUP --name "vmssbg-${newBackend()}" --new-capacity 3
 	    az network lb rule delete --resource-group $RESOURCE_GROUP --lb-name $LB_NAME --name $TEST_VMSS_NAME
         az network lb rule update --resource-group $RESOURCE_GROUP --lb-name $LB_NAME --name $PROD_VMSS_NAME --backend-pool-name ${newBackend()}-bepool
-		az vmss scale --resource-group $RESOURCE_GROUP --name "vmss-${currentBackend}" --new-capacity 1
+		az vmss scale --resource-group $RESOURCE_GROUP --name "vmssbg-${currentBackend}" --new-capacity 1
         """
       }
     }
