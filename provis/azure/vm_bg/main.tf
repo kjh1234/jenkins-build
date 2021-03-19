@@ -27,15 +27,15 @@ resource "azurerm_subnet" "main" {
 
 # Create public IPs
 resource "azurerm_public_ip" "main" {
-    name                         = "vm-pip"
-    location                     = "${azurerm_resource_group.main.location}"
-    resource_group_name          = "${azurerm_virtual_network.main.name}"
-    allocation_method            = "Dynamic"
+  name                 = "vm-pip"
+  location             = "${azurerm_resource_group.main.location}"
+  resource_group_name  = "${azurerm_virtual_network.main.name}"
+  allocation_method    = "Dynamic"
 }
 
 # Create Network Security Group and rule
 resource "azurerm_network_security_group" "main" {
-  name                = "vmssbg-nsg"
+  name                = "vm-nsg"
   location            = "${azurerm_resource_group.main.location}"
   resource_group_name = "${azurerm_resource_group.main.name}"
 
