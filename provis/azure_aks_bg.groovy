@@ -179,7 +179,7 @@ pipeline {
     INNO_AZURE_CREDENTIALS = 'INNO_AZURE_CREDENTIALS'
     AZURE_SUBSCRIPTION_ID = credentials('AZURE_SUBSCRIPTION_ID')
     PUBLIC_KEY="~/.ssh/inno_id_rsa.pub"
-    RESOURCE_GROUP="aks-bg-tf-jenkins-1"
+    RESOURCE_GROUP="aks-bg-tf-jenkins"
     AKS_NAME="aks-bg-cluster"
     LOCATIONS="koreacentral"
     
