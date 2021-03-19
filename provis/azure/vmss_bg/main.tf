@@ -93,18 +93,6 @@ resource "azurerm_lb_probe" "main" {
   port                = "${var.application_port}"
 }
 
-resource "azurerm_lb_rule" "lbnatrule" {
-  resource_group_name            = "${var.app_resource_group_name}"
-  loadbalancer_id                = "${azurerm_lb.main.id}"
-  name                           = "tomcat"
-  protocol                       = "Tcp"
-  frontend_port                  = "${var.frontend_port}"
-  backend_port                   = "${var.application_port}"
-  backend_address_pool_id        = "${azurerm_lb_backend_address_pool.main.id}"
-  frontend_ip_configuration_name = "PublicIPAddress"
-  probe_id                       = "${azurerm_lb_probe.main.id}"
-}
-
 resource "azurerm_network_security_group" "main" {
   name                = "vmssbg-nsg"
   location            = "${azurerm_resource_group.main.location}"
@@ -173,4 +161,16 @@ resource "azurerm_virtual_machine_scale_set" "main" {
   storage_profile_image_reference {
     id="${data.azurerm_image.image.id}"
   }
+}
+
+resource "azurerm_lb_rule" "lbnatrule" {
+  resource_group_name            = "${var.app_resource_group_name}"
+  loadbalancer_id                = "${azurerm_lb.main.id}"
+  name                           = "tomcat"
+  protocol                       = "Tcp"
+  frontend_port                  = "${var.frontend_port}"
+  backend_port                   = "${var.application_port}"
+  backend_address_pool_id        = "${azurerm_lb_backend_address_pool.main.id}"
+  frontend_ip_configuration_name = "PublicIPAddress"
+  probe_id                       = "${azurerm_lb_probe.main.id}"
 }
