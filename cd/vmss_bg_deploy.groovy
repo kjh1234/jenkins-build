@@ -17,7 +17,7 @@ pipeline {
 	    }
 	    script {
 	      currentBackend = sh (
-            script: 'az network lb rule show -g vmss-bg-test --lb-name vmssbg-lb -n tomcat --query "backendAddressPool.id"',
+		      script: 'az network lb rule show -g ${envRESOURCE_GROUP} --lb-name ${env.LB_NAME} -n ${env.PROD_VMSS_NAME} --query "backendAddressPool.id"',
             returnStdout: true
           ).trim()
           currentBackend = sh(returnStdout: true, script: "expr ${currentBackend} : '.*/backendAddressPools/\\(.*\\)-'").trim()
@@ -95,7 +95,7 @@ pipeline {
     }
   }
   environment {
-    RESOURCE_GROUP="vmss-bg-test"
+    RESOURCE_GROUP="vmss-bg-tf-jenkins"
     LOCATION="koreacentral"
     LB_NAME="vmssbg-lb"
     IP_NAME="vmssbg-ip"
