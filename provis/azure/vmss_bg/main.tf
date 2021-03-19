@@ -39,12 +39,14 @@ resource "azurerm_public_ip" "main" {
   location                     = "${var.location}"
   resource_group_name          = "${azurerm_resource_group.main.name}"
   allocation_method            = "Static"
+  sku                          = "standard"
 }
 
 resource "azurerm_lb" "main" {
   name                = "vmssbg-lb"
   location            = "${var.location}"
   resource_group_name = "${azurerm_resource_group.main.name}"
+  sku                          = "standard"
 
   frontend_ip_configuration {
     name                 = "PublicIPAddress"
