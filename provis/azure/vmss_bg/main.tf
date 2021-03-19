@@ -96,7 +96,7 @@ resource "azurerm_lb_probe" "main" {
 resource "azurerm_lb_rule" "lbnatrule" {
   resource_group_name            = "${var.app_resource_group_name}"
   loadbalancer_id                = "${azurerm_lb.main.id}"
-  name                           = "http"
+  name                           = "tomcat"
   protocol                       = "Tcp"
   frontend_port                  = "${var.frontend_port}"
   backend_port                   = "${var.application_port}"
