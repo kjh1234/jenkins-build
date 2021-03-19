@@ -42,7 +42,7 @@ resource "azurerm_public_ip" "main" {
 }
 
 resource "azurerm_lb" "main" {
-  name                = "vmss-lb"
+  name                = "vmssbg-lb"
   location            = "${var.location}"
   resource_group_name = "${azurerm_resource_group.main.name}"
 
@@ -106,7 +106,7 @@ resource "azurerm_lb_rule" "lbnatrule" {
 }
 
 resource "azurerm_network_security_group" "main" {
-  name                = "vmss-nsg"
+  name                = "vmssbg-nsg"
   location            = "${azurerm_resource_group.main.location}"
   resource_group_name = "${azurerm_resource_group.main.name}"
 
@@ -128,7 +128,7 @@ resource "azurerm_network_security_group" "main" {
 }
 
 resource "azurerm_virtual_machine_scale_set" "main" {
-  name                = "vmss-blue"
+  name                = "vmssbg-blue"
   location            = "${azurerm_resource_group.main.location}"
   resource_group_name = "${azurerm_resource_group.main.name}"
   upgrade_policy_mode = "Manual"
