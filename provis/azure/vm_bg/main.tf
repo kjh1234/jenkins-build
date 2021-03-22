@@ -72,7 +72,7 @@ resource "tls_private_key" "main" {
   rsa_bits = 4096
 }
 output "tls_private_key" { 
-  value = "${tls_private_key.main.private_key_pem}"
+  value = ${tls_private_key.main.private_key_pem}
  }
 
 resource "azurerm_linux_virtual_machine" "main" {
@@ -90,7 +90,7 @@ resource "azurerm_linux_virtual_machine" "main" {
   admin_ssh_key {
     username   = "${var.admin_id}"
     # public_key = file("${var.public_key}")
-    public_key     = "${tls_private_key.main.private_key_pem}"
+    public_key     = ${tls_private_key.main.private_key_pem}
 
   }
 
