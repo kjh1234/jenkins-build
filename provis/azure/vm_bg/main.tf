@@ -99,6 +99,7 @@ resource "azurerm_virtual_machine" "vm" {
   os_profile {
     computer_name  = "todo-vm"
     admin_username = "${var.admin_id}"
+    admin_password = "${var.admin_password}"
     custom_data    = base64encode(file("cloud-init.yml"))
   }
 
