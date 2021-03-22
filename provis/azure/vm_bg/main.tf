@@ -89,8 +89,8 @@ resource "azurerm_linux_virtual_machine" "main" {
 
   admin_ssh_key {
     username   = "${var.admin_id}"
-    # public_key = file("${var.public_key}")
-    public_key     = tls_private_key.main.private_key_pem
+    public_key = file("${var.public_key}")
+    # public_key     = tls_private_key.main.private_key_pem
 
   }
 
