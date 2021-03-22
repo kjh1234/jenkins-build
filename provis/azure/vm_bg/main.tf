@@ -78,11 +78,19 @@ resource "azurerm_virtual_machine" "main" {
     computer_name 		 = "todo-vm"
     admin_username       = "${var.admin_id}"
     custom_data          = file("cloud-init.yml")
-
-    ssh_key {
-        key_data = "${file(var.public_key)}"
-    }
   }
+  os_profile {
+      admin_username = "azureuser"
+  }
+
+  os_profile_linux_config {
+      disable_password_authentication = true
+
+      ssh_keys = [{
+          key_data = "${file(var.public_key)}"
+      }]
+  }
+
   storage_image_reference {
     publisher = "Canonical"
     offer     = "UbuntuServer"
