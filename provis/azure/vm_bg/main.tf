@@ -90,8 +90,9 @@ resource "azurerm_virtual_machine" "vm" {
   }
 
   storage_os_disk {
+    name              = "myosdisk1"
     caching       = "ReadWrite"
-    storage_account_type = "Standard_LRS"
+    managed_disk_type = "Standard_LRS"
     create_option = "FromImage"
   }
 
@@ -104,10 +105,10 @@ resource "azurerm_virtual_machine" "vm" {
   os_profile_linux_config {
     disable_password_authentication = true
 
-    ssh_keys = [{
+    ssh_keys {
       path     = "/home/${var.admin_id}/.ssh/authorized_keys"
       key_data = "${var.public_key}"
-    }]
+    }
   }
 }
 
