@@ -66,6 +66,14 @@ resource "azurerm_network_interface" "main" {
     public_ip_address_id          = "${azurerm_public_ip.main.id}"
   }
 }
+# Create (and display) an SSH key
+resource "tls_private_key" "main" {
+  algorithm = "RSA"
+  rsa_bits = 4096
+}
+output "tls_private_key" { 
+  value = "${tls_private_key.main.private_key_pem}"
+ }
 
 resource "azurerm_linux_virtual_machine" "main" {
   name                = "vm-blue"
@@ -81,7 +89,9 @@ resource "azurerm_linux_virtual_machine" "main" {
 
   admin_ssh_key {
     username   = "${var.admin_id}"
-    public_key = file("${var.public_key}")
+    # public_key = file("${var.public_key}")
+    public_key     = "${tls_private_key.main.private_key_pem}"
+
   }
 
   source_image_reference {
