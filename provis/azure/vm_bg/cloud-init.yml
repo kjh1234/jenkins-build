@@ -1,5 +1,5 @@
 #cloud-config
-package_upgrade: true
-packages:
-  - java
-  - mvn
+runcmd:
+  - [ 'sh', '-c', 'sudo apt-get update']
+  - [ 'sh', '-c', 'sudo apt-get install openjdk-8-jdk']
+  - [ 'sh', '-c', 'sudo apt install maven']
