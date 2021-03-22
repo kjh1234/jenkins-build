@@ -70,7 +70,7 @@ pipeline {
   environment {
     INNO_AZURE_CREDENTIALS = 'INNO_AZURE_CREDENTIALS'
     AZURE_SUBSCRIPTION_ID = credentials('AZURE_SUBSCRIPTION_ID')
-    PUBLIC_KEY="~/.ssh/vm-halyard-ubuntu-key.pem"
+    PUBLIC_KEY="~/.ssh/inno_id_rsa2.pub"
     RESOURCE_GROUP="vm-bg-tf-jenkins"
   }
 }
