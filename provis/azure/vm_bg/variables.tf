@@ -36,6 +36,10 @@ variable "admin_password" {
     default = "dlatl!1234"
 }
 
+variable "public_key" {
+    default = "~/.ssh/id_rsa.pub"
+}
+
 variable "frontend_port" {
     description = "The frontend port of the external Load Balancer"
     default     = 80
