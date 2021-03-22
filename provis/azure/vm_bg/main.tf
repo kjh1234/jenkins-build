@@ -67,26 +67,21 @@ resource "azurerm_network_interface" "main" {
   }
 }
 
-resource "azurerm_virtual_machine" "main" {
+resource "azurerm_linux_virtual_machine" "main" {
   name                = "vm-blue"
   location            = "${azurerm_resource_group.main.location}"
   resource_group_name = "${azurerm_resource_group.main.name}"
   network_interface_ids = [azurerm_network_interface.main.id]
   vm_size             = "Standard_DS1_v2"
 
-  os_profile {
-    computer_name 		 = "todo-vm"
-    admin_username       = "${var.admin_id}"
-    custom_data          = file("cloud-init.yml")
-  }
+  computer_name  = "todo-vm"
+  admin_username       = "${var.admin_id}"
+  disable_password_authentication = true
+  custom_data          = file("cloud-init.yml")
 
-  os_profile_linux_config {
-      disable_password_authentication = true
-
-      ssh_keys {
-        path = "/home/${var.admin_id}/.ssh/authorized_keys"
-        key_data = "${file(var.public_key)}"
-      }
+  admin_ssh_key {
+      username       = "azureuser"
+      public_key     = ${file(var.public_key)}
   }
 
   storage_image_reference {
