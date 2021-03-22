@@ -33,6 +33,7 @@ pipeline {
             cd ${workspace}/provis/azure/vm_bg
             terraform plan -out=tfplan -input=false \
               -var 'app_resource_group_name=${RESOURCE_GROUP}' \
+              -var 'public_key=${PUBLIC_KEY}' \
               -var 'client_id=${AZURE_CLIENT_ID}' \
               -var 'client_secret=${AZURE_CLIENT_SECRET}' \
               -var 'tenant_id=${AZURE_TENANT_ID}' \
@@ -69,6 +70,7 @@ pipeline {
   environment {
     INNO_AZURE_CREDENTIALS = 'INNO_AZURE_CREDENTIALS'
     AZURE_SUBSCRIPTION_ID = credentials('AZURE_SUBSCRIPTION_ID')
+    PUBLIC_KEY="~/.ssh/inno_id_rsa.pub"
     RESOURCE_GROUP="vm-bg-tf-jenkins"
   }
 }
