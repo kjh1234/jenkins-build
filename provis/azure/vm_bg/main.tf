@@ -75,35 +75,39 @@ output "tls_private_key" {
   value = tls_private_key.main.private_key_pem
  }
 
-resource "azurerm_linux_virtual_machine" "main" {
-  name                = "vm-blue"
-  location            = "${azurerm_resource_group.main.location}"
-  resource_group_name = "${azurerm_resource_group.main.name}"
+resource "azurerm_virtual_machine" "vm" {
+  name                  = "vm-blue"
+  location              = "${azurerm_resource_group.main.location}"
+  resource_group_name   = "${azurerm_resource_group.main.name}"
+  vm_size               = "Standard_DS1_v2"
   network_interface_ids = [azurerm_network_interface.main.id]
-  size             = "Standard_DS1_v2"
 
-  computer_name  = "todo-vm"
-  admin_username       = "${var.admin_id}"
-  disable_password_authentication = true
-  custom_data          = base64encode(file("cloud-init.yml"))
-
-  admin_ssh_key {
-    username   = "${var.admin_id}"
-    public_key = "${var.public_key}"
-    # public_key     = tls_private_key.main.private_key_pem
-
-  }
-
-  source_image_reference {
+  storage_image_reference {
     publisher = "Canonical"
     offer     = "UbuntuServer"
     sku       = "16.04-LTS"
     version   = "latest"
   }
 
-  os_disk {
-    caching              = "ReadWrite"
+  storage_os_disk {
+    caching       = "ReadWrite"
     storage_account_type = "Standard_LRS"
+    create_option = "FromImage"
+  }
+
+  os_profile {
+    computer_name  = "todo-vm"
+    admin_username = "${var.admin_id}"
+    custom_data    = base64encode(file("cloud-init.yml"))
+  }
+
+  os_profile_linux_config {
+    disable_password_authentication = true
+
+    ssh_keys = [{
+      path     = "/home/${var.admin_id}/.ssh/authorized_keys"
+      key_data = "${var.public_key}"
+    }]
   }
 }
 
