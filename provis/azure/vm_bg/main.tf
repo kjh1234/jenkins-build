@@ -80,8 +80,8 @@ resource "azurerm_linux_virtual_machine" "main" {
   custom_data          = file("cloud-init.yml")
 
   admin_ssh_key {
-      username       = "azureuser"
-      public_key     = ${file(var.public_key)}
+    username   = "${var.admin_id}"
+    public_key = file("${var.public_key}")
   }
 
   storage_image_reference {
