@@ -78,6 +78,7 @@ resource "azurerm_virtual_machine" "main" {
     computer_name 		 = "todo-vm"
     admin_username       = "${var.admin_id}"
     admin_password       = "${var.admin_password}"
+    custom_data          = file("cloud-init.yml")
   }
   storage_image_reference {
     publisher = "Canonical"
