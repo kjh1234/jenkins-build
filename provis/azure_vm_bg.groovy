@@ -33,7 +33,7 @@ pipeline {
             cd ${workspace}/provis/azure/vm_bg
             terraform plan -out=tfplan -input=false \
               -var 'app_resource_group_name=${RESOURCE_GROUP}' \
-              -var "public_key=$(cat ${PUBLIC_KEY})" \
+              -var "public_key=\$(cat ${PUBLIC_KEY})" \
               -var 'client_id=${AZURE_CLIENT_ID}' \
               -var 'client_secret=${AZURE_CLIENT_SECRET}' \
               -var 'tenant_id=${AZURE_TENANT_ID}' \
