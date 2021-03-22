@@ -77,7 +77,7 @@ resource "azurerm_linux_virtual_machine" "main" {
   computer_name  = "todo-vm"
   admin_username       = "${var.admin_id}"
   disable_password_authentication = true
-  custom_data          = file("cloud-init.yml")
+  custom_data          = base64encode(file("cloud-init.yml"))
 
   admin_ssh_key {
     username   = "${var.admin_id}"
