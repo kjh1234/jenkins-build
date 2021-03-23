@@ -10,7 +10,7 @@ pipeline {
             error "TAG_VERSION is required"
           }
           
-          echo tagVersion
+          echo params.TAG_VERSION
           
           checkout([
               $class: 'GitSCM', 
