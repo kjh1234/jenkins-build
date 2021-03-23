@@ -19,7 +19,7 @@ variable "tenant_id" {
 #     resource variables     #
 variable "app_resource_group_name" {
   description = "Resource Group name, must be lowercase alphanumeric with hyphens as its used as domain_name_label as well"
-  default     = "aks-tf-jenkins"
+  default     = "function-tf-jenkins"
 }
 
 variable "location" {
