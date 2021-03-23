@@ -62,7 +62,8 @@ pipeline {
   
   environment {
     AZURE_SUBSCRIPTION_ID = credentials('AZURE_SUBSCRIPTION_ID')
-    INNO_AZURE_CREDENTIALS="INNO_AZURE_CREDENTIALS"
+    INNO_AZURE_CREDENTIALS = "INNO_AZURE_CREDENTIALS"
+    GIT_CREDENTIALS_ID = credentials('GIT_CREDENTIALS_ID')
   }
   parameters {
     string(name: 'TAG_VERSION', defaultValue: '', description: '')
