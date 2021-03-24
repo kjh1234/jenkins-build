@@ -36,15 +36,15 @@ pipeline {
       steps {
         withCredentials(bindings: [azureServicePrincipal(INNO_AZURE_CREDENTIALS)]) {
           sh """
-                                            az login --service-principal -u "\$AZURE_CLIENT_ID" -p "\$AZURE_CLIENT_SECRET" -t "\$AZURE_TENANT_ID"
-                                            az account set --subscription "\$AZURE_SUBSCRIPTION_ID"
-                                            
-                              	            chmod 764 ./mvnw
-                                            ./mvnw clean package
-                              	      
-                                            cd ${workspace}/target/azure-functions/inno-func-app && zip -r ../../../archive.zip ./* && cd -
-                                            az functionapp deployment source config-zip -g ${RESOURCE_GROUP} -n ${FUNC_NAME} --src ./archive.zip
-                                          """
+                                                      az login --service-principal -u "\$AZURE_CLIENT_ID" -p "\$AZURE_CLIENT_SECRET" -t "\$AZURE_TENANT_ID"
+                                                      az account set --subscription "\$AZURE_SUBSCRIPTION_ID"
+                                                      
+                                        	            chmod 764 ./mvnw
+                                                      ./mvnw clean package
+                                        	      
+                                                      cd ${workspace}/target/azure-functions/inno-func-app && zip -r ../../../archive.zip ./* && cd -
+                                                      az functionapp deployment source config-zip -g ${RESOURCE_GROUP} -n ${FUNC_NAME} --src ./archive.zip
+                                                    """
         }
 
       }
