@@ -11,7 +11,7 @@ pipeline {
       steps {
         // Initialize the plan
         sh  """
-         cd ${workspace}/provis/azure/vm_bg
+         cd ${workspace}/provis/azure/vm_image_bg
          terraform init -input=false
         """
       }
@@ -30,7 +30,7 @@ pipeline {
             export ARM_SUBSCRIPTION_ID="${AZURE_SUBSCRIPTION_ID}"
             export ARM_TENANT_ID="${AZURE_TENANT_ID}"
             
-            cd ${workspace}/provis/azure/vm_bg
+            cd ${workspace}/provis/azure/vm_image_bg
             terraform plan -out=tfplan -input=false \
               -var 'app_resource_group_name=${RESOURCE_GROUP}' \
               -var "public_key=\$(cat ${PUBLIC_KEY})" \
@@ -39,18 +39,9 @@ pipeline {
               -var 'tenant_id=${AZURE_TENANT_ID}' \
               -var 'subscription_id=${AZURE_SUBSCRIPTION_ID}'
             
-            # sh (script:"cd ${workspace}/provis/azure/vm_bg && terraform plan -out=tfplan -input=false -var 'app_resource_group_name=vmss-tf-jenkins'")
+            # sh (script:"cd ${workspace}/provis/azure/vm_image_bg && terraform plan -out=tfplan -input=false -var 'app_resource_group_name=vmss-tf-jenkins'")
           """
         }
-
-        /*
-        image_id = sh (
-            script: "az image show -g $vm_images_rg -n $image_name --query '{VMName:id}' --out tsv",
-            returnStdout: true).trim()
-        */
-
-        // sh (script:"cd ${workspace}/provis/azure/vm_bg && terraform plan -out=tfplan -input=false -var 'terraform_resource_group='$vmss_rg -var 'terraform_vmss_name='$vmss_name -var 'terraform_azure_region='$location -var 'terraform_image_id='$image_id")
-          
         
       }
     }
@@ -60,7 +51,7 @@ pipeline {
         // Apply the plan
         withCredentials([azureServicePrincipal(INNO_AZURE_CREDENTIALS)]) {
           sh  """
-           cd ${workspace}/provis/azure/vm_bg
+           cd ${workspace}/provis/azure/vm_image_bg
            terraform apply -input=false -auto-approve "tfplan"
           """
         }
