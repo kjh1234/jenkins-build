@@ -39,6 +39,59 @@ resource "azurerm_public_ip" "main" {
   allocation_method    = "Dynamic"
 }
 
+resource "azurerm_lb" "main" {
+  name                = "vm-lb"
+  location            = "${var.location}"
+  resource_group_name = "${azurerm_resource_group.main.name}"
+  sku                 = "standard"
+
+  frontend_ip_configuration {
+    name                 = "PublicIPAddress"
+    public_ip_address_id = "${azurerm_public_ip.main.id}"
+  }
+}
+
+resource "azurerm_lb_backend_address_pool" "main" {
+  resource_group_name = "${azurerm_resource_group.main.name}"
+  loadbalancer_id     = "${azurerm_lb.main.id}"
+  name                = "blue-bepool"
+}
+
+resource "azurerm_lb_nat_pool" "main" {
+  resource_group_name            = "${azurerm_resource_group.main.name}"
+  name                           = "blue-natpool"
+  loadbalancer_id                = "${azurerm_lb.main.id}"
+  protocol                       = "Tcp"
+  frontend_port_start            = 50000
+  frontend_port_end              = 50119
+  backend_port                   = 22
+  frontend_ip_configuration_name = "PublicIPAddress"
+}
+
+resource "azurerm_lb_backend_address_pool" "green" {
+  resource_group_name = "${azurerm_resource_group.main.name}"
+  loadbalancer_id     = "${azurerm_lb.main.id}"
+  name                = "green-bepool"
+}
+
+resource "azurerm_lb_nat_pool" "green" {
+  resource_group_name            = "${azurerm_resource_group.main.name}"
+  name                           = "green-natpool"
+  loadbalancer_id                = "${azurerm_lb.main.id}"
+  protocol                       = "Tcp"
+  frontend_port_start            = 50120
+  frontend_port_end              = 50239
+  backend_port                   = 22
+  frontend_ip_configuration_name = "PublicIPAddress"
+}
+
+resource "azurerm_lb_probe" "main" {
+  resource_group_name = "${azurerm_resource_group.main.name}"
+  loadbalancer_id     = "${azurerm_lb.main.id}"
+  name                = "tomcat"
+  port                = "${var.application_port}"
+}
+
 # Create Network Security Group and rule
 resource "azurerm_network_security_group" "main" {
   name                = "vm-nsg"
@@ -72,14 +125,6 @@ resource "azurerm_network_interface" "main" {
     public_ip_address_id          = "${azurerm_public_ip.main.id}"
   }
 }
-# Create (and display) an SSH key
-resource "tls_private_key" "main" {
-  algorithm = "RSA"
-  rsa_bits = 4096
-}
-output "tls_private_key" { 
-  value = tls_private_key.main.private_key_pem
- }
 
 resource "azurerm_virtual_machine" "vm" {
   name                  = "vm-blue"
@@ -119,6 +164,18 @@ resource "azurerm_virtual_machine" "vm" {
       key_data = "${var.public_key}"
     }
   }
+}
+
+resource "azurerm_lb_rule" "lbnatrule" {
+  resource_group_name            = "${var.app_resource_group_name}"
+  loadbalancer_id                = "${azurerm_lb.main.id}"
+  name                           = "tomcat"
+  protocol                       = "Tcp"
+  frontend_port                  = "${var.frontend_port}"
+  backend_port                   = "${var.application_port}"
+  backend_address_pool_id        = "${azurerm_lb_backend_address_pool.main.id}"
+  frontend_ip_configuration_name = "PublicIPAddress"
+  probe_id                       = "${azurerm_lb_probe.main.id}"
 }
 
 output "public_ip_address" {
