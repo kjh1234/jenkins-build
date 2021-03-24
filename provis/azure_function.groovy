@@ -68,7 +68,7 @@ pipeline {
   environment {
     INNO_AZURE_CREDENTIALS = 'INNO_AZURE_CREDENTIALS'
     AZURE_SUBSCRIPTION_ID = credentials('AZURE_SUBSCRIPTION_ID')
-    RESOURCE_GROUP="func-tf-jenkins-2"
+    RESOURCE_GROUP="func-tf-jenkins"
     LOCATIONS="koreacentral"
     
   }
