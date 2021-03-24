@@ -25,7 +25,8 @@ pipeline {
                   trackingSubmodules: false
               ]], 
               submoduleCfg: [], 
-              userRemoteConfigs: [[credentialsId: GIT_CREDENTIALS_ID, url: "https://github.com/kjh1234/azure-functions-samples-java.git"]]
+              // userRemoteConfigs: [[credentialsId: GIT_CREDENTIALS_ID, url: "https://github.com/kjh1234/azure-functions-samples-java.git"]]
+              userRemoteConfigs: [[credentialsId: GIT_CREDENTIALS_ID, url: "https://github.com/kjh1234/hello-spring-function-azure.git"]]
           ])
         }
 
