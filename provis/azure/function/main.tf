@@ -40,3 +40,13 @@ resource "azurerm_function_app" "main" {
   storage_account_name       = "${azurerm_storage_account.main.name}"
   storage_account_access_key = "${azurerm_storage_account.main.primary_access_key}"
 }
+
+resource "azurerm_function_app_slot" "main" {
+  name                       = "inno-func-app-test"
+  location                   = "${azurerm_resource_group.main.location}"
+  resource_group_name        = "${azurerm_resource_group.main.name}"
+  app_service_plan_id        = "${azurerm_app_service_plan.main.id}"
+  function_app_name          = "${azurerm_function_app.main.name}"
+  storage_account_name       = "${azurerm_storage_account.main.name}"
+  storage_account_access_key = "${azurerm_storage_account.main.primary_access_key}"
+}
