@@ -62,6 +62,6 @@ pipeline {
     INNO_AZURE_CREDENTIALS = 'INNO_AZURE_CREDENTIALS'
     AZURE_SUBSCRIPTION_ID = credentials('AZURE_SUBSCRIPTION_ID')
     PUBLIC_KEY="~/.ssh/inno_id_rsa2.pub"
-    RESOURCE_GROUP="vm-image-bg-tf-jenkins"
+    RESOURCE_GROUP="vm-image-bg-tf-jenkins-2"
   }
 }
