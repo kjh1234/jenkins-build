@@ -33,7 +33,7 @@ resource "azurerm_app_service_plan" "main" {
 }
 
 resource "azurerm_function_app" "main" {
-  name                       = "inno-func-app"
+  name                       = "inno-tf-func-app"
   location                   = "${azurerm_resource_group.main.location}"
   resource_group_name        = "${azurerm_resource_group.main.name}"
   app_service_plan_id        = "${azurerm_app_service_plan.main.id}"
@@ -42,7 +42,7 @@ resource "azurerm_function_app" "main" {
 }
 
 resource "azurerm_function_app_slot" "main" {
-  name                       = "inno-func-app-test"
+  name                       = "inno-tf-func-app-test"
   location                   = "${azurerm_resource_group.main.location}"
   resource_group_name        = "${azurerm_resource_group.main.name}"
   app_service_plan_id        = "${azurerm_app_service_plan.main.id}"
