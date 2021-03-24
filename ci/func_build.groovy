@@ -32,7 +32,7 @@ pipeline {
       }
     }
 
-    stage('Function Build/Deploy') {
+    stage('Function Build') {
       steps {
         withCredentials(bindings: [azureServicePrincipal(INNO_AZURE_CREDENTIALS)]) {
           sh """
@@ -50,11 +50,22 @@ pipeline {
       }
     }
 
-    stage('push Image') {
+    stage('function stage Deploy') {
       steps {
         sh '''
-        
+          az functionapp deployment slot create -g ${RESOURCE_GROUP} -n ${FUNC_NAME} --slot stage
+          az functionapp deployment source config-zip -g ${RESOURCE_GROUP} -n ${FUNC_NAME} --slot stage --src ./archive.zip
         '''
+      }
+    }
+
+    stage('Switch') {
+      steps {
+        input("Switch Prod Proceed or Abort?")
+				  
+        sh """
+          az functionapp deployment slot swap -g func-tf-jenkins -n inno-tf-func-app --slot stage --target-slot production
+        """
       }
     }
 
