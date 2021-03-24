@@ -58,14 +58,24 @@ resource "azurerm_lb_backend_address_pool" "main" {
   name                = "blue-bepool"
 }
 
-resource "azurerm_lb_nat_pool" "main" {
+# resource "azurerm_lb_nat_pool" "main" {
+#   resource_group_name            = "${azurerm_resource_group.main.name}"
+#   name                           = "blue-natpool"
+#   loadbalancer_id                = "${azurerm_lb.main.id}"
+#   protocol                       = "Tcp"
+#   frontend_port_start            = 50000
+#   frontend_port_end              = 50119
+#   backend_port                   = 22
+#   frontend_ip_configuration_name = "PublicIPAddress"
+# }
+
+resource "azurerm_lb_nat_rule" "main" {
   resource_group_name            = "${azurerm_resource_group.main.name}"
-  name                           = "blue-natpool"
   loadbalancer_id                = "${azurerm_lb.main.id}"
+  name                           = "blue-natpool"
   protocol                       = "Tcp"
-  frontend_port_start            = 50000
-  frontend_port_end              = 50119
-  backend_port                   = 22
+  frontend_port                  = 3389
+  backend_port                   = 3389
   frontend_ip_configuration_name = "PublicIPAddress"
 }
 
@@ -75,14 +85,23 @@ resource "azurerm_lb_backend_address_pool" "green" {
   name                = "green-bepool"
 }
 
-resource "azurerm_lb_nat_pool" "green" {
+# resource "azurerm_lb_nat_pool" "green" {
+#   resource_group_name            = "${azurerm_resource_group.main.name}"
+#   name                           = "green-natpool"
+#   loadbalancer_id                = "${azurerm_lb.main.id}"
+#   protocol                       = "Tcp"
+#   frontend_port_start            = 50120
+#   frontend_port_end              = 50239
+#   backend_port                   = 22
+#   frontend_ip_configuration_name = "PublicIPAddress"
+# }
+resource "azurerm_lb_nat_rule" "green" {
   resource_group_name            = "${azurerm_resource_group.main.name}"
-  name                           = "green-natpool"
   loadbalancer_id                = "${azurerm_lb.main.id}"
+  name                           = "green-natpool"
   protocol                       = "Tcp"
-  frontend_port_start            = 50120
-  frontend_port_end              = 50239
-  backend_port                   = 22
+  frontend_port                  = 4389
+  backend_port                   = 4389
   frontend_ip_configuration_name = "PublicIPAddress"
 }
 
