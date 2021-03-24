@@ -135,7 +135,7 @@ resource "azurerm_network_interface_backend_address_pool_association" "main" {
 resource "azurerm_network_interface_nat_rule_association" "main" {
   network_interface_id  = "${azurerm_network_interface.main.id}"
   ip_configuration_name = "testconfiguration1"
-  nat_rule_id           = "${azurerm_lb_nat_rule.example.id}"
+  nat_rule_id           = "${azurerm_lb_nat_rule.main.id}"
 }
 
 resource "azurerm_virtual_machine" "vm" {
