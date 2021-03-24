@@ -43,7 +43,6 @@ pipeline {
             ./mvnw clean package
 
             cd ${workspace}/target/azure-functions/inno-func-app && zip -r ../../../archive.zip ./* && cd -
-            az functionapp deployment source config-zip -g ${RESOURCE_GROUP} -n ${FUNC_NAME} --slot stage --src ./archive.zip
           """
         }
 
@@ -52,10 +51,10 @@ pipeline {
 
     stage('function stage Deploy') {
       steps {
-        sh '''
+        sh """
           az functionapp deployment slot create -g ${RESOURCE_GROUP} -n ${FUNC_NAME} --slot stage
           az functionapp deployment source config-zip -g ${RESOURCE_GROUP} -n ${FUNC_NAME} --slot stage --src ./archive.zip
-        '''
+        """
       }
     }
 
@@ -63,9 +62,7 @@ pipeline {
       steps {
         input("Switch Prod Proceed or Abort?")
 				  
-        sh """
-          az functionapp deployment slot swap -g func-tf-jenkins -n inno-tf-func-app --slot stage --target-slot production
-        """
+        sh "az functionapp deployment slot swap -g func-tf-jenkins -n inno-tf-func-app --slot stage --target-slot production"
       }
     }
 
