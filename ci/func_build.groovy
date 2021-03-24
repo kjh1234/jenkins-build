@@ -46,7 +46,7 @@ pipeline {
               ./mvnw clean package
 	      
               cd ${workspace}/target/azure-functions/inno-func-app && zip -r ../../../archive.zip ./* && cd -
-              az functionapp deployment source config-zip -g ${RESOURCE_GROUP} -n ${FUNC_NAME} --src archive.zip
+              az functionapp deployment source config-zip -g ${RESOURCE_GROUP} -n ${FUNC_NAME} --src ./archive.zip
             """
         }
       }
