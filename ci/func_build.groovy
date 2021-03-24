@@ -69,7 +69,7 @@ pipeline {
     stage('Delete Stage') {
       steps {
 	script {
-	  result = input(message: 'Delete Stage-Slot?', ok: 'Yes', parameters: [booleanParam(defaultValue: true)])
+	  result = input(message: 'Delete Stage-Slot?', ok: 'Proceed', parameters: [booleanParam(defaultValue: true, name: 'Yes?')])
           if (result == true) {
 	    sh "az functionapp deployment slot delete -g ${RESOURCE_GROUP} -n ${FUNC_NAME} --slot stage"
           }
