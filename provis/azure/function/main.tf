@@ -23,6 +23,7 @@ resource "azurerm_app_service_plan" "main" {
   name                = "func-service-plan"
   location            = "${azurerm_resource_group.main.location}"
   resource_group_name = "${azurerm_resource_group.main.name}"
+  kind                = "FunctionApp"
 
   sku {
     tier = "Standard"
