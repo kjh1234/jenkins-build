@@ -127,7 +127,7 @@ resource "azurerm_network_interface_security_group_association" "main" {
   network_security_group_id     = "${azurerm_network_security_group.main.id}"
 }
 
-resource "azurerm_virtual_machine" "vm" {
+resource "azurerm_virtual_machine" "main" {
   name                  = "vm-blue"
   location              = "${azurerm_resource_group.main.location}"
   resource_group_name   = "${azurerm_resource_group.main.name}"
@@ -207,7 +207,7 @@ resource "azurerm_network_interface_security_group_association" "green" {
   network_security_group_id     = "${azurerm_network_security_group.green.id}"
 }
 
-resource "azurerm_virtual_machine" "vm" {
+resource "azurerm_virtual_machine" "green" {
   name                  = "vm-green"
   location              = "${azurerm_resource_group.main.location}"
   resource_group_name   = "${azurerm_resource_group.main.name}"
@@ -247,7 +247,7 @@ resource "azurerm_virtual_machine" "vm" {
   }
 }
 
-resource "azurerm_lb_rule" "lbnatrule" {
+resource "azurerm_lb_rule" "lbnatrulegreen" {
   resource_group_name            = "${var.app_resource_group_name}"
   loadbalancer_id                = "${azurerm_lb.main.id}"
   name                           = "tomcat-test"
