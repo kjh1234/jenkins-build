@@ -225,7 +225,7 @@ resource "azurerm_virtual_machine" "green" {
   }
 
   storage_os_disk {
-    name              = "myosdisk1"
+    name              = "myosdisk-green"
     caching       = "ReadWrite"
     managed_disk_type = "Standard_LRS"
     create_option = "FromImage"
