@@ -198,7 +198,7 @@ resource "azurerm_network_interface" "green" {
 
 resource "azurerm_network_interface_backend_address_pool_association" "green" {
   network_interface_id    = "${azurerm_network_interface.green.id}"
-  ip_configuration_name   = "testconfiguration1"
+  ip_configuration_name   = "testconfiguration2"
   backend_address_pool_id = "${azurerm_lb_backend_address_pool.green.id}"
 }
 
@@ -208,7 +208,7 @@ resource "azurerm_network_interface_security_group_association" "green" {
 }
 
 resource "azurerm_virtual_machine" "vm" {
-  name                  = "vm-blue"
+  name                  = "vm-green"
   location              = "${azurerm_resource_group.main.location}"
   resource_group_name   = "${azurerm_resource_group.main.name}"
   vm_size               = "Standard_DS1_v2"
