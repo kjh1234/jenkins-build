@@ -204,7 +204,7 @@ resource "azurerm_network_interface_backend_address_pool_association" "green" {
 
 resource "azurerm_network_interface_security_group_association" "green" {
   network_interface_id          = "${azurerm_network_interface.green.id}"
-  network_security_group_id     = "${azurerm_network_security_group.green.id}"
+  network_security_group_id     = "${azurerm_network_security_group.main.id}"
 }
 
 resource "azurerm_virtual_machine" "green" {
