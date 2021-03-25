@@ -158,9 +158,9 @@ resource "azurerm_network_interface_backend_address_pool_association" "main" {
 #   nat_rule_id           = "${azurerm_lb_nat_rule.main.id}"
 # }
 
-resource "azurerm_network_interface_application_security_group_association" "example" {
+resource "azurerm_network_interface_security_group_association" "main" {
   network_interface_id          = "${azurerm_network_interface.main.id}"
-  application_security_group_id = "${azurerm_application_security_group.main.id}"
+  network_security_group_id     = "${azurerm_application_security_group.main.id}"
 }
 
 resource "azurerm_virtual_machine" "vm" {
