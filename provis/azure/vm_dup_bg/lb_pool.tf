@@ -19,7 +19,6 @@ resource "azurerm_lb_probe" "main" {
   port                = "${var.application_port}"
 }
 
-
 # Create network interface
 resource "azurerm_network_interface" "main" {
   name                = "vm-nic-${pool_name}"
@@ -43,3 +42,4 @@ resource "azurerm_network_interface_security_group_association" "main" {
   network_interface_id          = "${azurerm_network_interface.main.id}"
   network_security_group_id     = "${azurerm_network_security_group.main.id}"
 }
+
