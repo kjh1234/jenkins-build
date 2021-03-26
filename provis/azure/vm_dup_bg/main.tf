@@ -47,7 +47,6 @@ module "blue_vm" {
   nsg_id                   = "${module.lb_network.nsg_id}"
   subnet_id                = "${module.lb_network.subnet_id}"
   lb_backend_address_pool_id = "${module.lb_pool_nic.lb_backend_address_pool_ids[0]}"
-  lb_probe_id              = "${module.lb_pool_nic.lb_probe_ids[0]}"
 }
 
 module "green_vm" {
@@ -66,7 +65,6 @@ module "green_vm" {
   nsg_id                   = "${module.lb_network.nsg_id}"
   subnet_id                = "${module.lb_network.subnet_id}"
   lb_backend_address_pool_id = "${module.lb_pool_nic.lb_backend_address_pool_ids[1]}"
-  lb_probe_id              = "${module.lb_pool_nic.lb_probe_ids[1]}"
 }
 
 module "lb_rule_prod" {
