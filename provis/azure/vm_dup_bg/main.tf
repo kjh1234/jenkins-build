@@ -88,7 +88,7 @@ module "lb_rule_stage" {
   
   app_resource_group_name  = "${azurerm_resource_group.main.name}"
 
-  system_type              = "stage
+  system_type              = "stage"
   application_port         = "8080"
   frontend_port            = "8080"
   
