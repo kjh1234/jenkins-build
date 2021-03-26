@@ -9,6 +9,18 @@ variable "location" {
   default     = "koreacentral"
 }
 
+variable "lb_id" {
+  default     = ""
+}
+
+variable "lb_backend_address_pool_id" {
+  default     = ""
+}
+
+variable "lb_probe_id" {
+  default     = ""
+}
+
 variable "nic_id" {
   default     = ""
 }
@@ -41,4 +53,12 @@ variable "public_key" {
 
 variable "image_version" {
   default     = "7"
+}
+
+variable "application_port" {
+  default     = "8080"
+}
+
+variable "frontend_port" {
+  default     = "8080"
 }
