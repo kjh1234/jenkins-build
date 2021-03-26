@@ -27,4 +27,5 @@ module "lb_pool_nic" {
   prefix                   = "vm"
   pool_name                = "blue"
   nsg_id                   = "${lb_network.nsg_id}"
+  subnet_id                   = "${lb_network.subnet_id}"
 }
