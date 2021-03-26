@@ -12,6 +12,14 @@ resource "azurerm_lb_backend_address_pool" "main" {
   name                = "${pool_name}-bepool"
 }
 
+resource "azurerm_lb_probe" "main" {
+  resource_group_name = "${azurerm_resource_group.main.name}"
+  loadbalancer_id     = "${azurerm_lb.main.id}"
+  name                = "${pool_name}-tomcat"
+  port                = "${var.application_port}"
+}
+
+
 # Create network interface
 resource "azurerm_network_interface" "main" {
   name                = "vm-nic-${pool_name}"
