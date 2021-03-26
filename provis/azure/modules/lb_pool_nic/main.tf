@@ -13,7 +13,7 @@ resource "azurerm_lb_probe" "main" {
 
 # Create network interface
 resource "azurerm_network_interface" "main" {
-  name                = "${prefix}-nic-${var.pool_name}"
+  name                = "${var.prefix}-nic-${var.pool_name}"
   location            = "${var.location}"
   resource_group_name = "${var.app_resource_group_name}"
 
