@@ -11,6 +11,10 @@ resource "azurerm_resource_group" "main" {
   location = "${var.location}"
 }
 
+module "network" {
+  source = "./network"
+}
+
 output "public_ip_address" {
   value = azurerm_public_ip.main.*.ip_address
 }
