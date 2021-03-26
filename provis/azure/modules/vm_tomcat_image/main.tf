@@ -1,6 +1,6 @@
 # Locate the existing custom/golden image
 data "azurerm_image" "main" {
-  name                = "tomcat-${image_version}"
+  name                = "tomcat-${var.image_version}"
   resource_group_name = "vmss-bg-image-gr"
 }
 
