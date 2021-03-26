@@ -26,6 +26,10 @@ variable "location" {
   default     = "koreacentral"
 }
 
+variable "nic_id" {
+  default     = ""
+}
+
 variable "prefix" {
   default     = "default"
 }
