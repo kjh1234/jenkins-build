@@ -61,7 +61,7 @@ pipeline {
     INNO_AZURE_CREDENTIALS = 'INNO_AZURE_CREDENTIALS'
     AZURE_SUBSCRIPTION_ID = credentials('AZURE_SUBSCRIPTION_ID')
     PUBLIC_KEY="~/.ssh/inno_id_rsa2.pub"
-    RESOURCE_GROUP="vm-dup-bg-tf-jenkins-1"
+    RESOURCE_GROUP="vm-dup-bg-tf-jenkins"
     TERRAFORM_PATH="provis/azure/vm_dup_bg"
   }
 }
