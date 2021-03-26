@@ -28,3 +28,34 @@ resource "azurerm_public_ip" "main" {
   allocation_method            = "Static"
   sku                          = "standard"
 }
+
+resource "azurerm_lb" "main" {
+  name                = "vm-lb"
+  location            = "${var.location}"
+  resource_group_name = "${azurerm_resource_group.main.name}"
+  sku                 = "standard"
+
+  frontend_ip_configuration {
+    name                 = "PublicIPAddress"
+    public_ip_address_id = "${azurerm_public_ip.main.id}"
+  }
+}
+
+# Create Network Security Group and rule
+resource "azurerm_network_security_group" "main" {
+  name                = "vm-nsg"
+  location            = "${azurerm_resource_group.main.location}"
+  resource_group_name = "${azurerm_resource_group.main.name}"
+
+  security_rule {
+    name                       = "allow-public-access"
+    priority                   = 100
+    direction                  = "Inbound"
+    access                     = "Allow"
+    protocol                   = "*"
+    source_port_range          = "*"
+    destination_port_range     = "22-55000"
+    source_address_prefix      = "*"
+    destination_address_prefix = "*"
+  }
+}
