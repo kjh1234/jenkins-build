@@ -17,6 +17,10 @@ variable "nsg_id" {
   default     = ""
 }
 
+variable "lb_id" {
+  default     = ""
+}
+
 variable "prefix" {
   default     = "default"
 }
