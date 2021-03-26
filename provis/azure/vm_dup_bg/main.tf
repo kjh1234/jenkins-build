@@ -11,10 +11,19 @@ resource "azurerm_resource_group" "main" {
   location = "${var.location}"
 }
 
-module "network" {
+module "lb_network" {
   source = "../modules/lb_network"
   
   app_resource_group_name  = "${azurerm_resource_group.main.name}"
   location                 = "${azurerm_resource_group.main.location}"
   prefix                   = "vm"
+}
+
+module "lb_pool_nic" {
+  source = "../modules/lb_pool_nic"
+  
+  app_resource_group_name  = "${azurerm_resource_group.main.name}"
+  location                 = "${azurerm_resource_group.main.location}"
+  prefix                   = "vm"
+  pool_name                = "blue"
 }
