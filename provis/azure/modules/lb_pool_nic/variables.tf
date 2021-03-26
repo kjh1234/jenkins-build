@@ -25,8 +25,8 @@ variable "prefix" {
   default     = "default"
 }
 
-variable "pool_name" {
-  default     = "default"
+variable "pool_names" {
+  default     = ["default"]
 }
 
 variable "application_port" {
