@@ -11,9 +11,14 @@ resource "azurerm_resource_group" "main" {
   location = "${var.location}"
 }
 
-
 module "network" {
   source = "./network"
+}
+
+module "lb_backend_address_pool" {
+  source = "./lb_pool"
+  
+  pool_name = "blue"
 }
 
 output "public_ip_address" {
