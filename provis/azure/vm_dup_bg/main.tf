@@ -12,7 +12,7 @@ resource "azurerm_resource_group" "main" {
 }
 
 module "network" {
-  source = "./network"
+  source = "./modules/network"
 }
 
 output "public_ip_address" {
