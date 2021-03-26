@@ -22,7 +22,7 @@ variable "pool_name" {
 }
 
 variable "vm_instances" {
-  type        = number
+  type        = "number"
   default     = 2
 }
 
