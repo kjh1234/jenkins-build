@@ -32,3 +32,29 @@ module "lb_pool_nic" {
   subnet_id                = "${module.lb_network.subnet_id}"
   lb_id                    = "${module.lb_network.lb_id}"
 }
+
+module "blue_vm" {
+  source = "../modules/vm_tomcat_image"
+  
+  app_resource_group_name  = "${azurerm_resource_group.main.name}"
+  location                 = "${azurerm_resource_group.main.location}"
+  
+  prefix                   = "vm"
+  pool_name                = "blue"
+  vm_instances             = 2
+  
+  nic_id                   = "${module.lb_pool_nic.nic_ids[0]}"
+}
+
+module "green_vm" {
+  source = "../modules/vm_tomcat_image"
+  
+  app_resource_group_name  = "${azurerm_resource_group.main.name}"
+  location                 = "${azurerm_resource_group.main.location}"
+  
+  prefix                   = "vm"
+  pool_name                = "green"
+  vm_instances             = 2
+  
+  nic_id                   = "${module.lb_pool_nic.nic_ids[0]}"
+}
