@@ -14,7 +14,7 @@ resource "azurerm_resource_group" "main" {
 module "network" {
   source = "../modules/lb_network"
   
-  app_resource_group_name  = "${var.app_resource_group_name}"
-  location                 = "${var.location}"
+  app_resource_group_name  = "${azurerm_resource_group.main.name}"
+  location                 = "${azurerm_resource_group.main.location}"
   prefix                   = "vm"
 }
