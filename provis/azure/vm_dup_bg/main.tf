@@ -41,7 +41,7 @@ module "blue_vm" {
   
   prefix                   = "vm"
   pool_name                = "blue"
-  vm_instances             = "2"
+  vm_instances             = "1"
   image_version            = "7"
   admin_id                 = "${var.admin_id}"
   public_key               = "${var.public_key}"
@@ -62,7 +62,7 @@ module "green_vm" {
   
   prefix                   = "vm"
   pool_name                = "green"
-  vm_instances             = "2"
+  vm_instances             = "1"
   image_version            = "8"
   admin_id                 = "${var.admin_id}"
   public_key               = "${var.public_key}"
