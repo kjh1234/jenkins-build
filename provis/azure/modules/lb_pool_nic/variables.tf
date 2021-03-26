@@ -9,11 +9,11 @@ variable "location" {
   default     = "koreacentral"
 }
 
-variable "nsg_id" {
+variable "subnet_id" {
   default     = ""
 }
 
-variable "nic_id" {
+variable "nsg_id" {
   default     = ""
 }
 
