@@ -7,7 +7,7 @@ data "azurerm_image" "main" {
 # Create network interface
 resource "azurerm_network_interface" "main" {
   count               = "${var.vm_instances}"
-  
+
   name                = "${var.prefix}-${var.pool_name}-nic-${count.index}"
   location            = "${var.location}"
   resource_group_name = "${var.app_resource_group_name}"
@@ -21,7 +21,7 @@ resource "azurerm_network_interface" "main" {
 
 resource "azurerm_network_interface_backend_address_pool_association" "main" {
   count                   = "${var.vm_instances}"
-  
+
   network_interface_id    = "${azurerm_network_interface.main[count.index].id}"
   ip_configuration_name   = "${var.pool_name}-configuration-${count.index}"
   backend_address_pool_id = "${var.lb_backend_address_pool_id}"
@@ -29,7 +29,7 @@ resource "azurerm_network_interface_backend_address_pool_association" "main" {
 
 resource "azurerm_network_interface_security_group_association" "main" {
   count                   = "${var.vm_instances}"
-  
+
   network_interface_id          = "${azurerm_network_interface.main[count.index].id}"
   network_security_group_id     = "${var.nsg_id}"
 }
@@ -46,7 +46,7 @@ resource "azurerm_virtual_machine" "main" {
 #   network_interface_ids = [azurerm_network_interface.main.id]
 
   storage_image_reference {
-    id = "${data.azurerm_image.main.id}"  
+    id = "${data.azurerm_image.main.id}"
   }
 
   storage_os_disk {
@@ -69,16 +69,4 @@ resource "azurerm_virtual_machine" "main" {
       key_data = "${var.public_key}"
     }
   }
-}
-
-resource "azurerm_lb_rule" "lbnatrule" {
-  resource_group_name            = "${var.app_resource_group_name}"
-  loadbalancer_id                = "${var.lb_id}"
-  name                           = "${var.pool_name}-rule"
-  protocol                       = "Tcp"
-  frontend_port                  = "${var.frontend_port}"
-  backend_port                   = "${var.application_port}"
-  backend_address_pool_id        = "${var.lb_backend_address_pool_id}"
-  frontend_ip_configuration_name = "PublicIPAddress"
-  probe_id                       = "${var.lb_probe_id}"
 }
