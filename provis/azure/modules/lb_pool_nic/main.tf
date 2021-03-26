@@ -33,9 +33,9 @@ resource "azurerm_network_interface" "main" {
 resource "azurerm_network_interface_backend_address_pool_association" "main" {
   count = length(var.pool_names)
   
-  network_interface_id    = "${azurerm_network_interface.main.id}"
+  network_interface_id    = "${azurerm_network_interface.main[count.index].id}"
   ip_configuration_name   = "${element(var.pool_names, count.index)}-configuration"
-  backend_address_pool_id = "${azurerm_lb_backend_address_pool.main.id}"
+  backend_address_pool_id = "${azurerm_lb_backend_address_pool.main[count.index].id}"
 }
 
 resource "azurerm_network_interface_security_group_association" "main" {
