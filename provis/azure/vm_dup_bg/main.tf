@@ -28,8 +28,6 @@ module "lb_pool_nic" {
   prefix                   = "vm"
   pool_names               = ["blue", "green"]
   
-  nsg_id                   = "${module.lb_network.nsg_id}"
-  subnet_id                = "${module.lb_network.subnet_id}"
   lb_id                    = "${module.lb_network.lb_id}"
 }
 
@@ -41,13 +39,15 @@ module "blue_vm" {
   
   prefix                   = "vm"
   pool_name                = "blue"
-  vm_instances             = "1"
+  vm_instances             = "2"
   image_version            = "7"
   admin_id                 = "${var.admin_id}"
   public_key               = "${var.public_key}"
   application_port         = "8080"
   frontend_port            = "80"
   
+  nsg_id                   = "${module.lb_network.nsg_id}"
+  subnet_id                = "${module.lb_network.subnet_id}"
   lb_id                    = "${module.lb_network.lb_id}"
   lb_backend_address_pool_id = "${module.lb_pool_nic.lb_backend_address_pool_ids[0]}"
   lb_probe_id              = "${module.lb_pool_nic.lb_probe_ids[0]}"
@@ -62,13 +62,15 @@ module "green_vm" {
   
   prefix                   = "vm"
   pool_name                = "green"
-  vm_instances             = "1"
+  vm_instances             = "2"
   image_version            = "8"
   admin_id                 = "${var.admin_id}"
   public_key               = "${var.public_key}"
   application_port         = "8080"
   frontend_port            = "8080"
   
+  nsg_id                   = "${module.lb_network.nsg_id}"
+  subnet_id                = "${module.lb_network.subnet_id}"
   lb_id                    = "${module.lb_network.lb_id}"
   lb_backend_address_pool_id = "${module.lb_pool_nic.lb_backend_address_pool_ids[1]}"
   lb_probe_id              = "${module.lb_pool_nic.lb_probe_ids[1]}"
