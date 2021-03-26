@@ -5,7 +5,7 @@ data "azurerm_image" "main" {
 }
 
 resource "azurerm_virtual_machine" "main" {
-  count                 = ${vm_instances}
+  count                 = ${var.vm_instances}
 
   name                  = "${var.prefix}-${var.pool_name}-${var.count.index}"
   location              = "${var.location}"
