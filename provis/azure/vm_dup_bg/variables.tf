@@ -26,7 +26,7 @@ variable "location" {
   default     = "koreacentral"
 }
 
-variable "prefix"
+variable "prefix" {
   default     = "vm"
 }
 
