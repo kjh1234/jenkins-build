@@ -4,6 +4,37 @@ data "azurerm_image" "main" {
   resource_group_name = "vmss-bg-image-gr"
 }
 
+# Create network interface
+resource "azurerm_network_interface" "main" {
+  count               = "${var.vm_instances}"
+  
+  name                = "${var.prefix}-${var.pool_name}-nic-${count.index}"
+  location            = "${var.location}"
+  resource_group_name = "${var.app_resource_group_name}"
+
+  ip_configuration {
+    name                          = "${var.pool_name}-configuration-${count.index}"
+    subnet_id                     = "${var.subnet_id}"
+    private_ip_address_allocation = "Dynamic"
+  }
+}
+
+resource "azurerm_network_interface_backend_address_pool_association" "main" {
+  count                   = "${var.vm_instances}"
+  
+  network_interface_id    = "${azurerm_network_interface.main[count.index].id}"
+  ip_configuration_name   = "${var.pool_name}-configuration-${count.index}"
+  backend_address_pool_id = "${var.lb_backend_address_pool_id}"
+}
+
+resource "azurerm_network_interface_security_group_association" "main" {
+  count                   = "${var.vm_instances}"
+  
+  network_interface_id          = "${azurerm_network_interface.main[count.index].id}"
+  network_security_group_id     = "${var.nsg_id}"
+}
+
+# VM Create
 resource "azurerm_virtual_machine" "main" {
   count                 = "${var.vm_instances}"
 
@@ -11,7 +42,7 @@ resource "azurerm_virtual_machine" "main" {
   location              = "${var.location}"
   resource_group_name   = "${var.app_resource_group_name}"
   vm_size               = "Standard_DS1_v2"
-  network_interface_ids = ["${var.nic_id}"]
+  network_interface_ids = ["${azurerm_network_interface.main[count.index].id}"]
 #   network_interface_ids = [azurerm_network_interface.main.id]
 
   storage_image_reference {
