@@ -5,13 +5,13 @@ data "azurerm_image" "main" {
 }
 
 resource "azurerm_virtual_machine" "main" {
-  count                 = ${var.vm_instances}
+  count                 = "${var.vm_instances}"
 
   name                  = "${var.prefix}-${var.pool_name}-${var.count.index}"
   location              = "${var.location}"
   resource_group_name   = "${var.app_resource_group_name}"
   vm_size               = "Standard_DS1_v2"
-  network_interface_ids = [${var.nic_id}]
+  network_interface_ids = ["${var.nic_id}"]
 #   network_interface_ids = [azurerm_network_interface.main.id]
 
   storage_image_reference {
