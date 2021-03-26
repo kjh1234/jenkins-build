@@ -9,6 +9,14 @@ variable "location" {
   default     = "koreacentral"
 }
 
+variable "nsg_id" {
+  default     = ""
+}
+
+variable "subnet_id" {
+  default     = ""
+}
+
 variable "lb_id" {
   default     = ""
 }
