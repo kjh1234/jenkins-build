@@ -12,7 +12,7 @@ resource "azurerm_resource_group" "main" {
 }
 
 module "network" {
-  source = "./azure/modules/network.tf"
+  source = "../modules/lb_network"
 }
 
 output "public_ip_address" {

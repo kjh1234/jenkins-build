@@ -14,10 +14,10 @@ data "azurerm_image" "main" {
 
 resource "azurerm_virtual_machine" "main" {
   count                 = ${vm_instances}
-  
-  name                  = "vm-${pool_name}-${count.index}"
-  location              = "${azurerm_resource_group.main.location}"
-  resource_group_name   = "${azurerm_resource_group.main.name}"
+
+  name                  = "${prefix}-${pool_name}-${count.index}"
+  location              = "${var.location}"
+  resource_group_name   = "${var.app_resource_group_name}"
   vm_size               = "Standard_DS1_v2"
   network_interface_ids = [azurerm_network_interface.main.id]
 
@@ -26,16 +26,15 @@ resource "azurerm_virtual_machine" "main" {
   }
 
   storage_os_disk {
-    name              = "myosdisk-${pool_name}-${count.index}"
+    name              = "osdisk-${pool_name}-${count.index}"
     caching       = "ReadWrite"
     managed_disk_type = "Standard_LRS"
     create_option = "FromImage"
   }
 
   os_profile {
-    computer_name  = "todo-vm-${pool_name}-${count.index}"
+    computer_name  = "tomcat-${prefix}-${pool_name}-${count.index}"
     admin_username = "${var.admin_id}"
-    admin_password = "${var.admin_password}"
   }
 
   os_profile_linux_config {

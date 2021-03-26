@@ -26,30 +26,6 @@ variable "location" {
   default     = "koreacentral"
 }
 
-variable "prefix"
-  default     = "vm"
-}
-
-variable "admin_id" {
-    description = "Default password for azureuser"
-    default = "azureuser"
-}
-
-variable "admin_password" {
-    description = "Default password for azureuser"
-    default = "dlatl!1234"
-}
-
-variable "public_key" {
-    default = "~/.ssh/id_rsa.pub"
-}
-
-variable "frontend_port" {
-    description = "The frontend port of the external Load Balancer"
-    default     = 80
-}
-
-variable "application_port" {
-    description = "The backend port where the application can be accessed"
-    default     = 8080
+variable "prefix" {
+  default     = "default"
 }

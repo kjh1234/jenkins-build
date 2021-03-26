@@ -26,8 +26,16 @@ variable "location" {
   default     = "koreacentral"
 }
 
-variable "prefix"
-  default     = "vm"
+variable "prefix" {
+  default     = "default"
+}
+
+variable "pool_name" {
+  default     = "default"
+}
+
+variable "vm_instances" {
+  default     = 2
 }
 
 variable "admin_id" {
@@ -44,12 +52,6 @@ variable "public_key" {
     default = "~/.ssh/id_rsa.pub"
 }
 
-variable "frontend_port" {
-    description = "The frontend port of the external Load Balancer"
-    default     = 80
-}
-
-variable "application_port" {
-    description = "The backend port where the application can be accessed"
-    default     = 8080
+variable "image_version" {
+  default     = "7"
 }

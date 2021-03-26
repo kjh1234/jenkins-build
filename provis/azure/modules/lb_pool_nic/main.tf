@@ -7,13 +7,13 @@ provider "azurerm" {
 }
 
 resource "azurerm_lb_backend_address_pool" "main" {
-  resource_group_name = "${azurerm_resource_group.main.name}"
+  resource_group_name = "${var.app_resource_group_name}"
   loadbalancer_id     = "${azurerm_lb.main.id}"
   name                = "${pool_name}-bepool"
 }
 
 resource "azurerm_lb_probe" "main" {
-  resource_group_name = "${azurerm_resource_group.main.name}"
+  resource_group_name = "${var.app_resource_group_name}"
   loadbalancer_id     = "${azurerm_lb.main.id}"
   name                = "${pool_name}-tomcat"
   port                = "${var.application_port}"
@@ -21,12 +21,12 @@ resource "azurerm_lb_probe" "main" {
 
 # Create network interface
 resource "azurerm_network_interface" "main" {
-  name                = "vm-nic-${pool_name}"
-  location            = "${azurerm_resource_group.main.location}"
-  resource_group_name = "${azurerm_resource_group.main.name}"
+  name                = "${prefix}-nic-${pool_name}"
+  location            = "${var.location}"
+  resource_group_name = "${var.app_resource_group_name}"
 
   ip_configuration {
-    name                          = "${pool_name}configuration"
+    name                          = "${pool_name}-configuration"
     subnet_id                     = "${azurerm_subnet.main.id}"
     private_ip_address_allocation = "Dynamic"
   }
@@ -42,4 +42,3 @@ resource "azurerm_network_interface_security_group_association" "main" {
   network_interface_id          = "${azurerm_network_interface.main.id}"
   network_security_group_id     = "${azurerm_network_security_group.main.id}"
 }
-
