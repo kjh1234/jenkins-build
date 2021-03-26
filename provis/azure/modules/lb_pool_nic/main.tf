@@ -39,6 +39,8 @@ resource "azurerm_network_interface_backend_address_pool_association" "main" {
 }
 
 resource "azurerm_network_interface_security_group_association" "main" {
-  network_interface_id          = "${azurerm_network_interface.main.*.id}"
+  count = length(var.pool_names)
+  
+  network_interface_id          = "${azurerm_network_interface.main[count.index].id}"
   network_security_group_id     = "${var.nsg_id}"
 }
