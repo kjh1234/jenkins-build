@@ -1,8 +1,18 @@
-# Locate the existing custom/golden image
+variable "image_versions" {
+  default = ["7", "8"]
+}
 data "azurerm_image" "main" {
-  name                = "tomcat-${var.image_version}"
+  count               = length(var.image_versions)
+  
+  name                = "tomcat-${element(var.image_versions, count.index)}"
   resource_group_name = "vmss-bg-image-gr"
 }
+
+# Locate the existing custom/golden image
+# data "azurerm_image" "main" {
+#   name                = "tomcat-${var.image_version}"
+#   resource_group_name = "vmss-bg-image-gr"
+# }
 
 # Create network interface
 resource "azurerm_network_interface" "main" {
@@ -46,7 +56,8 @@ resource "azurerm_virtual_machine" "main" {
 #   network_interface_ids = [azurerm_network_interface.main.id]
 
   storage_image_reference {
-    id = "${data.azurerm_image.main.id}"
+#     id = "${data.azurerm_image.main.id}"
+    id = "${data.azurerm_image.main[count.index].id}"
   }
 
   storage_os_disk {
