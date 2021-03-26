@@ -59,10 +59,3 @@ resource "azurerm_lb" "main" {
     public_ip_address_id = "${azurerm_public_ip.main.id}"
   }
 }
-
-resource "azurerm_lb_probe" "main" {
-  resource_group_name = "${azurerm_resource_group.main.name}"
-  loadbalancer_id     = "${azurerm_lb.main.id}"
-  name                = "tomcat"
-  port                = "${var.application_port}"
-}
