@@ -43,7 +43,14 @@ module "blue_vm" {
   pool_name                = "blue"
   vm_instances             = "2"
   image_version            = "7"
+  admin_id                 = "${var.admin_id}"
+  public_key               = "${var.public_key}"
+  application_port         = "8080"
+  frontend_port            = "80"
   
+  lb_id                    = "${module.lb_network.lb_id}"
+  lb_backend_address_pool_id = "${module.lb_pool_nic.lb_backend_address_pool_ids[0]}"
+  lb_probe_id              = "${module.lb_pool_nic.lb_probe_ids[0]}"
   nic_id                   = "${module.lb_pool_nic.nic_ids[0]}"
 }
 
@@ -57,6 +64,13 @@ module "green_vm" {
   pool_name                = "green"
   vm_instances             = "2"
   image_version            = "8"
+  admin_id                 = "${var.admin_id}"
+  public_key               = "${var.public_key}"
+  application_port         = "8080"
+  frontend_port            = "8080"
   
+  lb_id                    = "${module.lb_network.lb_id}"
+  lb_backend_address_pool_id = "${module.lb_pool_nic.lb_backend_address_pool_ids[1]}"
+  lb_probe_id              = "${module.lb_pool_nic.lb_probe_ids[1]}"
   nic_id                   = "${module.lb_pool_nic.nic_ids[1]}"
 }
