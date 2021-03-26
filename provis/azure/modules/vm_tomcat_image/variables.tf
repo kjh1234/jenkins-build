@@ -29,10 +29,6 @@ variable "lb_probe_id" {
   default     = ""
 }
 
-variable "nic_id" {
-  default     = ""
-}
-
 variable "prefix" {
   default     = "default"
 }
