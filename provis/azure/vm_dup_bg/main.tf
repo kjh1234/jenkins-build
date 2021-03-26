@@ -83,14 +83,14 @@ module "lb_rule_prod" {
   lb_probe_id              = "${module.lb_pool_nic.lb_probe_ids[0]}"
 }
 
-module "lb_rule_stage {
+module "lb_rule_stage" {
   source = "../modules/lb_rule"
   
   app_resource_group_name  = "${azurerm_resource_group.main.name}"
 
   system_type              = "stage
   application_port         = "8080"
-  frontend_port            = "8080
+  frontend_port            = "8080"
   
   lb_id                    = "${module.lb_network.lb_id}"
   lb_backend_address_pool_id = "${module.lb_pool_nic.lb_backend_address_pool_ids[1]}"
