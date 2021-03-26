@@ -41,7 +41,7 @@ module "blue_vm" {
   
   prefix                   = "vm"
   pool_name                = "blue"
-  vm_instances             = 2
+  vm_instances             = "2"
   
   nic_id                   = "${module.lb_pool_nic.nic_ids[0]}"
 }
@@ -54,7 +54,7 @@ module "green_vm" {
   
   prefix                   = "vm"
   pool_name                = "green"
-  vm_instances             = 2
+  vm_instances             = "2"
   
   nic_id                   = "${module.lb_pool_nic.nic_ids[1]}"
 }
