@@ -28,3 +28,7 @@ variable "prefix" {
 variable "pool_name" {
   default     = "default"
 }
+
+variable "application_port" {
+  default     = "8080"
+}
