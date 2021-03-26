@@ -29,18 +29,6 @@ resource "azurerm_public_ip" "main" {
   sku                          = "standard"
 }
 
-resource "azurerm_lb" "main" {
-  name                = "vm-lb"
-  location            = "${var.location}"
-  resource_group_name = "${azurerm_resource_group.main.name}"
-  sku                 = "standard"
-
-  frontend_ip_configuration {
-    name                 = "PublicIPAddress"
-    public_ip_address_id = "${azurerm_public_ip.main.id}"
-  }
-}
-
 # Create Network Security Group and rule
 resource "azurerm_network_security_group" "main" {
   name                = "vm-nsg"
@@ -58,4 +46,23 @@ resource "azurerm_network_security_group" "main" {
     source_address_prefix      = "*"
     destination_address_prefix = "*"
   }
+}
+
+resource "azurerm_lb" "main" {
+  name                = "vm-lb"
+  location            = "${var.location}"
+  resource_group_name = "${azurerm_resource_group.main.name}"
+  sku                 = "standard"
+
+  frontend_ip_configuration {
+    name                 = "PublicIPAddress"
+    public_ip_address_id = "${azurerm_public_ip.main.id}"
+  }
+}
+
+resource "azurerm_lb_probe" "main" {
+  resource_group_name = "${azurerm_resource_group.main.name}"
+  loadbalancer_id     = "${azurerm_lb.main.id}"
+  name                = "tomcat"
+  port                = "${var.application_port}"
 }
