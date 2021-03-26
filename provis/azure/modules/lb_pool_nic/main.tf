@@ -7,11 +7,11 @@ resource "azurerm_lb_backend_address_pool" "main" {
 }
 
 resource "azurerm_lb_probe" "main" {
-  count = length(var.pool_names)
+  count = length(var.system_types)
   
   resource_group_name = "${var.app_resource_group_name}"
   loadbalancer_id     = "${var.lb_id}"
-  name                = "${element(var.pool_names, count.index)}-tomcat"
+  name                = "${element(var.system_types, count.index)}-tomcat"
   port                = "${var.application_port}"
 }
 
