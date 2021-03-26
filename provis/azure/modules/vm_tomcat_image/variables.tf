@@ -22,8 +22,7 @@ variable "pool_name" {
 }
 
 variable "vm_instances" {
-  type        = "number"
-  default     = 2
+  default     = "2"
 }
 
 variable "admin_id" {
