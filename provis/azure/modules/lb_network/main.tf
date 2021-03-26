@@ -1,12 +1,12 @@
 resource "azurerm_virtual_network" "main" {
-  name                = "${prefix}-vnet"
+  name                = "${var.prefix}-vnet"
   resource_group_name = "${var.app_resource_group_name}"
   location            = "${var.location}"
   address_space       = ["10.0.0.0/16"]
 }
 
 resource "azurerm_subnet" "main" {
-  name                 = "${prefix}-subnet"
+  name                 = "${var.prefix}-subnet"
   virtual_network_name = "${azurerm_virtual_network.main.name}"
   resource_group_name  = "${var.app_resource_group_name}"
   address_prefixes     = ["10.0.1.0/24"]
@@ -14,7 +14,7 @@ resource "azurerm_subnet" "main" {
 
 # Create public IPs
 resource "azurerm_public_ip" "main" {
-  name                 = "${prefix}-pip"
+  name                 = "${var.prefix}-pip"
   location             = "${var.location}"
   resource_group_name  = "${var.app_resource_group_name}"
   allocation_method            = "Static"
@@ -23,7 +23,7 @@ resource "azurerm_public_ip" "main" {
 
 # Create Network Security Group and rule
 resource "azurerm_network_security_group" "main" {
-  name                = "${prefix}-nsg"
+  name                = "${var.prefix}-nsg"
   location            = "${var.location}"
   resource_group_name = "${var.app_resource_group_name}"
 
@@ -41,7 +41,7 @@ resource "azurerm_network_security_group" "main" {
 }
 
 resource "azurerm_lb" "main" {
-  name                = "${prefix}-lb"
+  name                = "${var.prefix}-lb"
   location            = "${var.location}"
   resource_group_name = "${var.app_resource_group_name}"
   sku                 = "standard"
