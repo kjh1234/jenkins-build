@@ -13,6 +13,8 @@ resource "azurerm_resource_group" "main" {
 
 module "network" {
   source = "../modules/lb_network"
+  
+  prefix = "vm"
 }
 
 output "public_ip_address" {
