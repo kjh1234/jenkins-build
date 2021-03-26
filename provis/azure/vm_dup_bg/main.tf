@@ -26,4 +26,5 @@ module "lb_pool_nic" {
   location                 = "${azurerm_resource_group.main.location}"
   prefix                   = "vm"
   pool_name                = "blue"
+  nsg_id                   = "${lb_network.nsg_id}"
 }
