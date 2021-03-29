@@ -129,11 +129,16 @@ pipeline {
         input("Switch Prod Proceed or Abort?")
 	 script {
 		currentBackend = "blue"
+		oldVMs = sh(returnStdout: true, script: "az disk list -g $RESOURCE_GROUP --query \"[?contains(name, '$currentBackend')].id\" -o tsv").trim()
+		oldDisks = sh(returnStdout: true, script: "az disk list -g $RESOURCE_GROUP --query \"[?contains(name, '$currentBackend')].id\" -o tsv").trim()
+		oldNICs = sh(returnStdout: true, script: "az network nic list -g $RESOURCE_GROUP  --query \"[?contains(name, '$currentBackend')].id\" -o tsv").trim()
 		sh """
-
-		    az vm delete --ids \$(az vm list -g $RESOURCE_GROUP --query "[?contains(name, $currentBackend)].id" -o tsv)
-		    az disk delete --ids \$(az disk list -g $RESOURCE_GROUP --query "[?contains(name, $currentBackend)].id" -o tsv)
-		    az network nic delete --ids \$(az network nic list -g $RESOURCE_GROUP  --query "[?contains(name, $currentBackend)].id" -o tsv)
+		  az vm delete --ids ${oldVMs}
+		  az disk delete --ids ${oldDisks}
+		  az network nic delete --ids ${oldNICs}
+		    # az vm delete --ids \$(az vm list -g $RESOURCE_GROUP --query "[?contains(name, $currentBackend)].id" -o tsv)
+		    # az disk delete --ids \$(az disk list -g $RESOURCE_GROUP --query "[?contains(name, $currentBackend)].id" -o tsv)
+		    # az network nic delete --ids \$(az network nic list -g $RESOURCE_GROUP  --query "[?contains(name, $currentBackend)].id" -o tsv)
 		"""
 	 }
       }
