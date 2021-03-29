@@ -29,7 +29,6 @@ data "azurerm_lb_backend_address_pool" "main" {
 }
 
 resource "azurerm_lb_probe" "main" {
-  resource_group_name = "${var.app_resource_group_name}"
   loadbalancer_id     = "${data.azurerm_lb.main.id}"
   name                = "${var.pool_name}-tomcat"
 }
