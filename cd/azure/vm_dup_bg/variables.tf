@@ -34,6 +34,10 @@ variable "pool_name" {
   default     = "green"
 }
 
+variable "lb_probe_id" {
+  default     = ""
+}
+
 variable "image_version" {
   default     = "8"
 }
