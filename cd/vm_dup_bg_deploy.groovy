@@ -105,11 +105,11 @@ pipeline {
 
         sh """
 	    az network lb rule delete --resource-group $RESOURCE_GROUP --lb-name $LB_NAME --name $TEST_VMSS_NAME
-            az network lb rule update --resource-group $RESOURCE_GROUP --lb-name $LB_NAME --name $PROD_VMSS_NAME --backend-pool-name $newBackend()-bepool
+            az network lb rule update --resource-group $RESOURCE_GROUP --lb-name $LB_NAME --name $PROD_VMSS_NAME --backend-pool-name ${newBackend()}-bepool
 	    
-	    az vm delete --ids $(az vm list -g $RESOURCE_GROUP --query "[?contains(name, ${currentBackend})].id" -o tsv)
-	    az disk delete --ids $(az disk list -g $RESOURCE_GROUP --query "[?contains(name, ${currentBackend})].id" -o tsv)
-	    az network nic delete --ids $(az network nic list -g $RESOURCE_GROUP  --query "[?contains(name, ${currentBackend})].id" -o tsv)'
+	    az vm delete --ids \$(az vm list -g $RESOURCE_GROUP --query "[?contains(name, ${currentBackend})].id" -o tsv)
+	    az disk delete --ids \$(az disk list -g $RESOURCE_GROUP --query "[?contains(name, ${currentBackend})].id" -o tsv)
+	    az network nic delete --ids \$(az network nic list -g $RESOURCE_GROUP  --query "[?contains(name, ${currentBackend})].id" -o tsv)'
         """
       }
     }
