@@ -129,7 +129,7 @@ pipeline {
         input("Switch Prod Proceed or Abort?")
 	 script {
 		currentBackend = "blue"
-		oldVMs = sh(returnStdout: true, script: "az disk list -g $RESOURCE_GROUP --query \"[?contains(name, '$currentBackend')].id\" -o tsv").trim()
+		oldVMs = sh(returnStdout: true, script: "az vm list -g $RESOURCE_GROUP --query \"[?contains(name, '$currentBackend')].id\" -o tsv").trim()
 		oldDisks = sh(returnStdout: true, script: "az disk list -g $RESOURCE_GROUP --query \"[?contains(name, '$currentBackend')].id\" -o tsv").trim()
 		oldNICs = sh(returnStdout: true, script: "az network nic list -g $RESOURCE_GROUP  --query \"[?contains(name, '$currentBackend')].id\" -o tsv").trim()
 		sh """
