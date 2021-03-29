@@ -27,11 +27,6 @@ data "azurerm_lb_backend_address_pool" "main" {
   name                = "${var.pool_name}-bepool"
 }
 
-data "azurerm_lb_probe" "main" {
-  loadbalancer_id     = "${data.azurerm_lb.main.id}"
-  name                = "${var.pool_name}-tomcat"
-}
-
 module "vm_stage" {
   source = "../../../provis/azure/modules/vm_tomcat_image"
 
@@ -61,5 +56,5 @@ module "lb_rule_stage" {
 
   lb_id                    = "${data.azurerm_lb.main.id}"
   lb_backend_address_pool_id = "${data.azurerm_lb_backend_address_pool.main.id}"
-  lb_probe_id              = "${data.azurerm_lb_probe.main.id}"
+  lb_probe_id              = "${var.azurerm_lb_probe}"
 }
