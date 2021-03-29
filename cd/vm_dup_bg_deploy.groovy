@@ -26,10 +26,11 @@ pipeline {
 		      script: "az network lb rule show -g ${env.RESOURCE_GROUP} --lb-name ${env.LB_NAME} -n ${env.PROD_VMSS_NAME} --query 'backendAddressPool.id'",
             returnStdout: true
           ).trim()
-          currentBackend = sh(returnStdout: true, script: "expr ${currentBackend} : '.*/backendAddressPools/\\(.*\\)-'").trim()
+         	  currentBackend = sh(returnStdout: true, script: "expr ${currentBackend} : '.*/backendAddressPools/\\(.*\\)-'").trim()
 		  sh "echo 'Current VM: ${currentBackend}'"
 		  sh "echo 'New VM: ${newBackend()}'"
 		  publicKey = sh(returnStdout: true, script: "readlink -f $PUBLIC_KEY").trim()
+	  	  lbProbeId = sh(returnStdout: true, script: "az network lb probe show -g${env.RESOURCE_GROUP} --lb-name ${env.LB_NAME} -n ${newBackend()}-tomcat --query id").trim()
 	    }
 
 
@@ -65,6 +66,7 @@ pipeline {
               -var 'pool_name=${newBackend()}' \
               -var 'image_version=${TAG_VERSION}' \
               -var "public_key=\$(cat ${PUBLIC_KEY})" \
+	      -var "lb_probe_id=${lbProbeId}"
               -var 'client_id=${AZURE_CLIENT_ID}' \
               -var 'client_secret=${AZURE_CLIENT_SECRET}' \
               -var 'tenant_id=${AZURE_TENANT_ID}' \
