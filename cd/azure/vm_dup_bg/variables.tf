@@ -30,6 +30,14 @@ variable "prefix" {
   default     = "vm"
 }
 
+variable "pool_name" {
+  default     = "green"
+}
+
+variable "image_version" {
+  default     = "8"
+}
+
 variable "admin_id" {
     description = "Default password for azureuser"
     default = "azureuser"
