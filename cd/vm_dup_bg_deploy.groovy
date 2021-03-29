@@ -90,7 +90,7 @@ pipeline {
       }
     }
 
-    stage('Test VMSS') {
+    stage('Test VM') {
       steps {
 	    script {
 	      ip = sh(returnStdout: true, script: "az network public-ip show --resource-group $RESOURCE_GROUP --name $IP_NAME --query ipAddress --output tsv").trim()
@@ -105,7 +105,11 @@ pipeline {
 
         sh """
 	    az network lb rule delete --resource-group $RESOURCE_GROUP --lb-name $LB_NAME --name $TEST_VMSS_NAME
-        az network lb rule update --resource-group $RESOURCE_GROUP --lb-name $LB_NAME --name $PROD_VMSS_NAME --backend-pool-name ${newBackend()}-bepool
+            az network lb rule update --resource-group $RESOURCE_GROUP --lb-name $LB_NAME --name $PROD_VMSS_NAME --backend-pool-name ${newBackend()}-bepool
+	    
+	    az vm delete --ids $(az vm list -g $RESOURCE_GROUP --query "[?contains(name, ${currentBackend})].id" -o tsv)
+	    az disk delete --ids $(az disk list -g $RESOURCE_GROUP --query "[?contains(name, ${currentBackend})].id" -o tsv)
+	    az network nic delete --ids $(az network nic list -g $RESOURCE_GROUP  --query "[?contains(name, ${currentBackend})].id" -o tsv)'
         """
       }
     }
@@ -125,10 +129,12 @@ pipeline {
     AZURE_SUBSCRIPTION_ID = credentials('AZURE_SUBSCRIPTION_ID')
     RESOURCE_GROUP="vm-dup-bg-tf-jenkins-1"
     LB_NAME="vm-lb"
+    IP_NAME="vm-pip"
     PUBLIC_KEY="~/.ssh/inno_id_rsa2.pub"
     TERRAFORM_PATH="cd/azure/vm_dup_bg"
     PROD_VMSS_NAME="prod-rule"
     TEST_VMSS_NAME="stage-rule"
+    TEST_PORT="8080"
   }
   parameters {
     string(name: 'TAG_VERSION', defaultValue: '', description: '')
