@@ -23,7 +23,6 @@ data "azurerm_lb" "main" {
 }
 
 data "azurerm_lb_backend_address_pool" "main" {
-  resource_group_name = "${var.app_resource_group_name}"
   loadbalancer_id     = "${data.azurerm_lb.main.id}"
   name                = "${var.pool_name}-bepool"
 }
