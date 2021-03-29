@@ -29,7 +29,7 @@ pipeline {
           currentBackend = sh(returnStdout: true, script: "expr ${currentBackend} : '.*/backendAddressPools/\\(.*\\)-'").trim()
 		  sh "echo 'Current VM: ${currentBackend}'"
 		  sh "echo 'New VM: ${newBackend()}'"
-		  publicKey = sh(returnStdout: true, script: 'readlink -f $PUBLIC_KEY_PATH').trim()
+		  publicKey = sh(returnStdout: true, script: 'readlink -f $PUBLIC_KEY').trim()
 	    }
 
 
