@@ -56,5 +56,5 @@ module "lb_rule_stage" {
 
   lb_id                    = "${data.azurerm_lb.main.id}"
   lb_backend_address_pool_id = "${data.azurerm_lb_backend_address_pool.main.id}"
-  lb_probe_id              = "${var.azurerm_lb_probe}"
+  lb_probe_id              = "${var.lb_probe_id}"
 }
