@@ -127,7 +127,7 @@ pipeline {
   environment {
     INNO_AZURE_CREDENTIALS = 'INNO_AZURE_CREDENTIALS'
     AZURE_SUBSCRIPTION_ID = credentials('AZURE_SUBSCRIPTION_ID')
-    RESOURCE_GROUP="vm-dup-bg-tf-jenkins-1"
+    RESOURCE_GROUP="vm-dup-bg-tf-jenkins"
     LB_NAME="vm-lb"
     IP_NAME="vm-pip"
     PUBLIC_KEY="~/.ssh/inno_id_rsa2.pub"
