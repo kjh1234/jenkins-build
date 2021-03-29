@@ -122,6 +122,7 @@ pipeline {
     INNO_AZURE_CREDENTIALS = 'INNO_AZURE_CREDENTIALS'
     AZURE_SUBSCRIPTION_ID = credentials('AZURE_SUBSCRIPTION_ID')
     RESOURCE_GROUP="vm-dup-bg-tf-jenkins-1"
+    LB_NAME="vm-lb"
     PUBLIC_KEY="~/.ssh/inno_id_rsa2.pub"
     TERRAFORM_PATH="cd/azure/vm_dup_bg"
     PROD_VMSS_NAME="prod-rule"
