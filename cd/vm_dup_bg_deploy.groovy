@@ -66,7 +66,7 @@ pipeline {
               -var 'pool_name=${newBackend()}' \
               -var 'image_version=${TAG_VERSION}' \
               -var "public_key=\$(cat ${PUBLIC_KEY})" \
-	      -var "lb_probe_id=${lbProbeId}"
+	      -var "lb_probe_id=${lbProbeId}" \
               -var 'client_id=${AZURE_CLIENT_ID}' \
               -var 'client_secret=${AZURE_CLIENT_SECRET}' \
               -var 'tenant_id=${AZURE_TENANT_ID}' \
