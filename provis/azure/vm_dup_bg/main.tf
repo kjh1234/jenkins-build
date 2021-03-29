@@ -49,24 +49,6 @@ module "blue_vm" {
   lb_backend_address_pool_id = "${module.lb_pool.lb_backend_address_pool_ids[0]}"
 }
 
-module "green_vm" {
-  source = "../modules/vm_tomcat_image"
-  
-  app_resource_group_name  = "${azurerm_resource_group.main.name}"
-  location                 = "${azurerm_resource_group.main.location}"
-  
-  prefix                   = "vm"
-  pool_name                = "green"
-  vm_instances             = "2"
-  image_version            = "8"
-  admin_id                 = "${var.admin_id}"
-  public_key               = "${var.public_key}"
-  
-  nsg_id                   = "${module.lb_network.nsg_id}"
-  subnet_id                = "${module.lb_network.subnet_id}"
-  lb_backend_address_pool_id = "${module.lb_pool.lb_backend_address_pool_ids[1]}"
-}
-
 module "lb_rule_prod" {
   source = "../modules/lb_rule"
   
@@ -79,18 +61,4 @@ module "lb_rule_prod" {
   lb_id                    = "${module.lb_network.lb_id}"
   lb_backend_address_pool_id = "${module.lb_pool.lb_backend_address_pool_ids[0]}"
   lb_probe_id              = "${module.lb_pool.lb_probe_ids[0]}"
-}
-
-module "lb_rule_stage" {
-  source = "../modules/lb_rule"
-  
-  app_resource_group_name  = "${azurerm_resource_group.main.name}"
-
-  system_type              = "stage"
-  application_port         = "8080"
-  frontend_port            = "8080"
-  
-  lb_id                    = "${module.lb_network.lb_id}"
-  lb_backend_address_pool_id = "${module.lb_pool.lb_backend_address_pool_ids[1]}"
-  lb_probe_id              = "${module.lb_pool.lb_probe_ids[1]}"
 }
