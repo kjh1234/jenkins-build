@@ -27,7 +27,7 @@ data "azurerm_lb_backend_address_pool" "main" {
   name                = "${var.pool_name}-bepool"
 }
 
-resource "azurerm_lb_probe" "main" {
+data "azurerm_lb_probe" "main" {
   loadbalancer_id     = "${data.azurerm_lb.main.id}"
   name                = "${var.pool_name}-tomcat"
 }
