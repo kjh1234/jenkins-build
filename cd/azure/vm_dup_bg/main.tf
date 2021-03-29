@@ -28,6 +28,7 @@ data "azurerm_lb_backend_address_pool" "main" {
 }
 
 data "azurerm_lb_probe" "main" {
+  resource_group_name = "${var.app_resource_group_name}"
   loadbalancer_id     = "${data.azurerm_lb.main.id}"
   name                = "${var.pool_name}-tomcat"
 }
@@ -53,7 +54,7 @@ module "vm_stage" {
 module "lb_rule_stage" {
   source = "../../../provis/azure/modules/lb_rule"
 
-  app_resource_group_name  = "${azurerm_resource_group.main.name}"
+  app_resource_group_name  = "${var.app_resource_group_name}"
 
   system_type              = "stage"
   application_port         = "8080"
