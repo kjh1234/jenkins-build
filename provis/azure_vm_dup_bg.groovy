@@ -31,19 +31,9 @@ pipeline {
             export ARM_TENANT_ID="${AZURE_TENANT_ID}"
             
             cd ${workspace}/${TERRAFORM_PATH}
-            # terraform plan -out=tfplan -input=false \
-            #   -var 'app_resource_group_name=${RESOURCE_GROUP}' \
-            #   -var "public_key=\$(cat ${PUBLIC_KEY})" \
-            #   -var 'client_id=${AZURE_CLIENT_ID}' \
-            #   -var 'client_secret=${AZURE_CLIENT_SECRET}' \
-            #   -var 'tenant_id=${AZURE_TENANT_ID}' \
-            #   -var 'subscription_id=${AZURE_SUBSCRIPTION_ID}'
             terraform plan -out=tfplan -input=false \
               -var 'app_resource_group_name=${RESOURCE_GROUP}' \
               -var "public_key=\$(cat ${PUBLIC_KEY})" \
-              -var 'prefix=vm' \
-              -var 'pool_name=dev' \
-              -var 'admin_id=azureuser' \
               -var 'client_id=${AZURE_CLIENT_ID}' \
               -var 'client_secret=${AZURE_CLIENT_SECRET}' \
               -var 'tenant_id=${AZURE_TENANT_ID}' \
@@ -72,7 +62,6 @@ pipeline {
     AZURE_SUBSCRIPTION_ID = credentials('AZURE_SUBSCRIPTION_ID')
     PUBLIC_KEY="~/.ssh/inno_id_rsa.pub"
     RESOURCE_GROUP="vm-dup-bg-tf-jenkins"
-    // TERRAFORM_PATH="provis/azure/vm_dup_bg"
-    TERRAFORM_PATH="provis/azure/modules/public-vm"
+    TERRAFORM_PATH="provis/azure/vm_dup_bg"
   }
 }
