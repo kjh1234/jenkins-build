@@ -22,7 +22,7 @@ resource "azurerm_network_interface" "main" {
   resource_group_name = "${var.app_resource_group_name}"
 
   ip_configuration {
-    name                          = "${var.pool_name}-configuration-${count.index}"
+    name                          = "${var.pool_name}-configuration"
     subnet_id                     = "${var.subnet_id}"
     private_ip_address_allocation = "Dynamic"
   }
