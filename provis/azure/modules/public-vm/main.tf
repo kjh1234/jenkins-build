@@ -29,7 +29,7 @@ resource "azurerm_network_interface" "main" {
 }
 
 resource "azurerm_network_interface_security_group_association" "main" {
-  network_interface_id          = "${azurerm_network_interface.main[count.index].id}"
+  network_interface_id          = "${azurerm_network_interface.main.id}"
   network_security_group_id     = "${var.nsg_id}"
 }
 
@@ -41,8 +41,7 @@ resource "azurerm_virtual_machine" "main" {
   location              = "${var.location}"
   resource_group_name   = "${var.app_resource_group_name}"
   vm_size               = "Standard_DS1_v2"
-  network_interface_ids = ["${azurerm_network_interface.main[count.index].id}"]
-#   network_interface_ids = [azurerm_network_interface.main.id]
+  network_interface_ids = ["${azurerm_network_interface.main.id}"]
 
   storage_image_reference {
     id = "${data.azurerm_image.main.id}"
