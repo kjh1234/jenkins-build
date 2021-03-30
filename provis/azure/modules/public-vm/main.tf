@@ -2,7 +2,7 @@
 
 # Create public IPs
 resource "azurerm_public_ip" "main" {
-  name                 = "${var.prefix}-pip"
+  name                 = "${var.prefix}-${var.pool_name}-pip"
   location             = "${var.location}"
   resource_group_name  = "${var.app_resource_group_name}"
   allocation_method            = "Static"
