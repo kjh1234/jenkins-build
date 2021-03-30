@@ -11,9 +11,7 @@ pipeline {
       steps {
         // Initialize the plan
         sh  """
-         # cd ${workspace}/provis/azure/vm_image_bg
-         # terraform init -input=false
-         cd ${workspace}/provis/azure/modules/public-vm
+         cd ${workspace}/provis/azure/vm_image_bg
          terraform init -input=false
         """
       }
@@ -32,21 +30,10 @@ pipeline {
             export ARM_SUBSCRIPTION_ID="${AZURE_SUBSCRIPTION_ID}"
             export ARM_TENANT_ID="${AZURE_TENANT_ID}"
             
-            # cd ${workspace}/provis/azure/vm_image_bg
-            # terraform plan -out=tfplan -input=false \
-            #   -var 'app_resource_group_name=${RESOURCE_GROUP}' \
-            #   -var "public_key=\$(cat ${PUBLIC_KEY})" \
-            #   -var 'client_id=${AZURE_CLIENT_ID}' \
-            #   -var 'client_secret=${AZURE_CLIENT_SECRET}' \
-            #   -var 'tenant_id=${AZURE_TENANT_ID}' \
-            #   -var 'subscription_id=${AZURE_SUBSCRIPTION_ID}'
-            cd ${workspace}/provis/azure/modules/public-vm
+            cd ${workspace}/provis/azure/vm_image_bg
             terraform plan -out=tfplan -input=false \
               -var 'app_resource_group_name=${RESOURCE_GROUP}' \
               -var "public_key=\$(cat ${PUBLIC_KEY})" \
-              -var 'prefix=vm' \
-              -var 'pool_name=dev' \
-              -var 'admin_id=azureuser' \
               -var 'client_id=${AZURE_CLIENT_ID}' \
               -var 'client_secret=${AZURE_CLIENT_SECRET}' \
               -var 'tenant_id=${AZURE_TENANT_ID}' \
@@ -64,9 +51,7 @@ pipeline {
         // Apply the plan
         withCredentials([azureServicePrincipal(INNO_AZURE_CREDENTIALS)]) {
           sh  """
-           # cd ${workspace}/provis/azure/vm_image_bg
-           # terraform apply -input=false -auto-approve "tfplan"
-           cd ${workspace}/provis/azure/modules/public-vm
+           cd ${workspace}/provis/azure/vm_image_bg
            terraform apply -input=false -auto-approve "tfplan"
           """
         }
