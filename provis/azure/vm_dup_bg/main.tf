@@ -63,6 +63,20 @@ provider "azurerm" {
 #   lb_probe_id              = "${module.lb_pool.lb_probe_ids[0]}"
 # }
 
+
+data "azurerm_subnet" "main" {
+  name                 = "vm-subnet"
+  virtual_network_name = "vm-vnet"
+  resource_group_name  = "${var.app_resource_group_name}"
+}
+
+# Create Network Security Group and rule
+data "azurerm_network_security_group" "main" {
+  name                = "vm-nsg"
+  location            = "${var.location}"
+  resource_group_name = "${var.app_resource_group_name}"
+}
+
 module "dev_vm" {
   source = "../modules/public-vm"
   
@@ -75,6 +89,8 @@ module "dev_vm" {
   admin_id                 = "${var.admin_id}"
   public_key               = "${var.public_key}"
   
-  nsg_id                   = "${module.lb_network.nsg_id}"
-  subnet_id                = "${module.lb_network.subnet_id}"
+  # nsg_id                   = "${module.lb_network.nsg_id}"
+  # subnet_id                = "${module.lb_network.subnet_id}"
+  nsg_id                   = "${data.azurerm_network_security_group.main.id}"
+  subnet_id                = "${data.azurerm_subnet.main.id}"
 }
