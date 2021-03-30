@@ -46,14 +46,14 @@ resource "azurerm_virtual_machine" "main" {
   }
 
   storage_os_disk {
-    name              = "osdisk-${var.pool_name}-${count.index}"
+    name              = "osdisk-${var.pool_name}"
     caching       = "ReadWrite"
     managed_disk_type = "Standard_LRS"
     create_option = "FromImage"
   }
 
   os_profile {
-    computer_name  = "tomcat-${var.prefix}-${var.pool_name}-${count.index}"
+    computer_name  = "tomcat-${var.prefix}-${var.pool_name}"
     admin_username = "${var.admin_id}"
   }
 
