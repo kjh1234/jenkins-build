@@ -73,7 +73,6 @@ data "azurerm_subnet" "main" {
 # Create Network Security Group and rule
 data "azurerm_network_security_group" "main" {
   name                = "vm-nsg"
-  location            = "${var.location}"
   resource_group_name = "${var.app_resource_group_name}"
 }
 
