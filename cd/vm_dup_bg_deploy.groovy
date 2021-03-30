@@ -30,7 +30,7 @@ pipeline {
 		  sh "echo 'Current VM: ${currentBackend}'"
 		  sh "echo 'New VM: ${newBackend()}'"
 		  publicKey = sh(returnStdout: true, script: "readlink -f $PUBLIC_KEY").trim()
-	  	  lbProbeId = sh(returnStdout: true, script: "az network lb probe show -g${env.RESOURCE_GROUP} --lb-name ${env.LB_NAME} -n ${newBackend()}-tomcat --query id").trim()
+	  	  lbProbeId = sh(returnStdout: true, script: "az network lb probe show -g ${env.RESOURCE_GROUP} --lb-name ${env.LB_NAME} -n ${newBackend()}-tomcat --query id").trim()
 	    }
 
 
