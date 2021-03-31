@@ -58,7 +58,7 @@ pipeline {
               -F maven2.groupId=com.functions \
               -F maven2.artifactId=azure-functions-samples \
               -F maven2.version=${params.TAG_VERSION} \
-              -F maven2.asset1=${workspace}/target/azure-functions/inno-func-app/azure-functions-samples-${params.TAG_VERSION}.zip \
+              -F maven2.asset1=${workspace}/azure-functions-samples-${params.TAG_VERSION}.zip \
               -F maven2.asset1.extension=zip \
               -F maven2.generate-pom=true
           """
