@@ -54,12 +54,12 @@ pipeline {
       steps {
         withCredentials(usernamePassword(credentialsId: NEXUS_CREDENTIALS_ID, usernameVariable: 'USERNAME', passwordVariable: 'PASSWORD')) {
           sh """
-            curl -v -u '${USERNAME}:${PASSWORD}' POST 'https://doss.sktelecom.com/nexus/service/rest/v1/components?repository=sk-maven-hosted'
-              -F maven2.groupId=com.functions
-              -F maven2.artifactId=azure-functions-samples
-              -F maven2.version=${params.TAG_VERSION}
-              -F maven2.asset1=${workspace}/target/azure-functions/inno-func-app/azure-functions-samples-${params.TAG_VERSION}.zip
-              -F maven2.asset1.extension=zip
+            curl -v -u '${USERNAME}:${PASSWORD}' POST 'https://doss.sktelecom.com/nexus/service/rest/v1/components?repository=sk-maven-hosted' \
+              -F maven2.groupId=com.functions \
+              -F maven2.artifactId=azure-functions-samples \
+              -F maven2.version=${params.TAG_VERSION} \
+              -F maven2.asset1=${workspace}/target/azure-functions/inno-func-app/azure-functions-samples-${params.TAG_VERSION}.zip \
+              -F maven2.asset1.extension=zip \
               -F maven2.generate-pom=true
           """
         }
