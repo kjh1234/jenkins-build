@@ -52,7 +52,7 @@ pipeline {
 
     stage('Image Push') {
       steps {
-        withCredentials(usernamePassword(credentialsId: NEXUS_CREDENTIALS_ID, usernameVariable: 'USERNAME', passwordVariable: 'PASSWORD')) {
+        withCredentials([usernamePassword(credentialsId: NEXUS_CREDENTIALS_ID, usernameVariable: 'USERNAME', passwordVariable: 'PASSWORD')]) {
           sh """
             curl -v -u '${USERNAME}:${PASSWORD}' POST 'https://doss.sktelecom.com/nexus/service/rest/v1/components?repository=sk-maven-hosted' \
               -F maven2.groupId=com.functions \
