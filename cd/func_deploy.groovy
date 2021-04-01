@@ -60,6 +60,8 @@ pipeline {
         withCredentials([usernamePassword(credentialsId: NEXUS_CREDENTIALS_ID, usernameVariable: 'USERNAME', passwordVariable: 'PASSWORD')]) {
           sh """
 	    curl -L -u '${USERNAME}:${PASSWORD}' -X GET '${REPOSITORY_API}/search/assets/download?repository=${IMAGE_REPOSITORY}&group=${IMAGE_GROUP}&name=${IMAGE_NAME}&version=${params.TAG_VERSION}&maven.extension=zip'
+	    
+	    ls -al
 	  """
         }
       }
