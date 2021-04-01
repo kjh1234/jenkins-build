@@ -65,15 +65,15 @@ pipeline {
       }
     }
 	  
-    stage('Destroy') {
-      steps {
-	    script {
-          sh """
-          az logout
-          """
-	    }
-      }
-    }
+//     stage('Destroy') {
+//       steps {
+// 	    script {
+//           sh """
+//           az logout
+//           """
+// 	    }
+//       }
+//     }
   }
   
   environment {
