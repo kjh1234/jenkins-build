@@ -71,6 +71,9 @@ pipeline {
     INNO_AZURE_CREDENTIALS = "INNO_AZURE_CREDENTIALS"
     GIT_CREDENTIALS_ID = credentials('GIT_CREDENTIALS_ID')
     NEXUS_CREDENTIALS_ID = 'NEXUS_CREDENTIALS_ID'
+    RESOURCE_GROUP = 'func-tf-jenkins'
+    FUNC_NAME = 'inno-tf-func-app'
+	  
     REPOSITORY_API = "https://doss.sktelecom.com/nexus/service/rest/v1"
     IMAGE_REPOSITORY = "sk-maven-hosted"
     IMAGE_GROUP = "com.functions"
