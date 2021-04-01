@@ -66,34 +66,6 @@ pipeline {
       }
     }
 
-//    stage('function stage Deploy') {
-//      steps {
-//        sh """
-//          az functionapp deployment slot create -g ${RESOURCE_GROUP} -n ${FUNC_NAME} --slot stage
-//          az functionapp deployment source config-zip -g ${RESOURCE_GROUP} -n ${FUNC_NAME} --slot stage --src ./archive.zip
-//        """
-//      }
-//    }
-//
-//    stage('Switch') {
-//      steps {
-//        input("Switch Prod Proceed or Abort?")
-//
-//        sh "az functionapp deployment slot swap -g func-tf-jenkins -n inno-tf-func-app --slot stage --target-slot production"
-//      }
-//    }
-//
-//    stage('Delete Stage') {
-//      steps {
-//        script {
-//          result = input(message: 'Delete Stage-Slot?', ok: 'Proceed', parameters: [booleanParam(defaultValue: true, name: 'Yes?')])
-//          if (result == true) {
-//            sh "az functionapp deployment slot delete -g ${RESOURCE_GROUP} -n ${FUNC_NAME} --slot stage"
-//          }
-//        }
-//      }
-//    }
-
     stage('Destroy') {
       steps {
         script {
