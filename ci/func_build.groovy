@@ -54,9 +54,9 @@ pipeline {
       steps {
         withCredentials([usernamePassword(credentialsId: NEXUS_CREDENTIALS_ID, usernameVariable: 'USERNAME', passwordVariable: 'PASSWORD')]) {
           sh """
-            curl -v -u '${USERNAME}:${PASSWORD}' POST 'https://doss.sktelecom.com/nexus/service/rest/v1/components?repository=sk-maven-hosted' \
-              -F maven2.groupId=com.functions \
-              -F maven2.artifactId=azure-functions-samples \
+            curl -v -u '${USERNAME}:${PASSWORD}' POST '${REPOSITORY_API}/components?repository=${IMAGE_REPOSITORY}' \
+              -F maven2.groupId=${IMAGE_GROUP} \
+              -F maven2.artifactId=azure-${IMAGE_NAME} \
               -F maven2.version=${params.TAG_VERSION} \
               -F maven2.asset1=${workspace}/azure-functions-samples-${params.TAG_VERSION}.zip \
               -F maven2.asset1.extension=zip \
@@ -83,6 +83,10 @@ pipeline {
     NEXUS_CREDENTIALS_ID = 'NEXUS_CREDENTIALS_ID'
     RESOURCE_GROUP = 'func-tf-jenkins'
     FUNC_NAME = 'inno-tf-func-app'
+    REPOSITORY_API = "https://doss.sktelecom.com/nexus/service/rest/v1"
+    IMAGE_REPOSITORY = "sk-maven-hosted"
+    IMAGE_GROUP = "com.functions"
+    IMAGE_NAME = "azure-functions-samples"
   }
   parameters {
     string(name: 'TAG_VERSION', defaultValue: '', description: '')
