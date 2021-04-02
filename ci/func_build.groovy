@@ -58,7 +58,7 @@ pipeline {
               -F maven2.groupId=${IMAGE_GROUP} \
               -F maven2.artifactId=azure-${IMAGE_NAME} \
               -F maven2.version=${params.TAG_VERSION} \
-              -F maven2.asset1=${workspace}/azure-functions-samples-${params.TAG_VERSION}.zip \
+              -F maven2.asset1=@${workspace}/azure-functions-samples-${params.TAG_VERSION}.zip \
               -F maven2.asset1.extension=zip \
               -F maven2.generate-pom=true
           """
