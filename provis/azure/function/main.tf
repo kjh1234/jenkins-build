@@ -40,7 +40,8 @@ resource "azurerm_function_app" "main" {
   app_service_plan_id        = "${azurerm_app_service_plan.main.id}"
   storage_account_name       = "${azurerm_storage_account.main.name}"
   storage_account_access_key = "${azurerm_storage_account.main.primary_access_key}"
-  app_settings = {
-    FUNCTIONS_EXTENSION_VERSION                 = "~3"  # 어플리케이션 버전과 
-  }
+  version                    = "~2"
+#   app_settings = {
+#     FUNCTIONS_EXTENSION_VERSION                 = "~3"  # 어플리케이션 버전과 
+#   }
 }
