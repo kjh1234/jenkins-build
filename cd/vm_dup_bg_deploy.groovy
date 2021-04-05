@@ -31,7 +31,7 @@ pipeline {
 	      sh "echo 'New VM: ${newBackend()}'"
 	      publicKey = sh(returnStdout: true, script: "readlink -f $PUBLIC_KEY").trim()
 	      lbProbeId = sh(returnStdout: true, script: "az network lb probe show -g ${env.RESOURCE_GROUP} --lb-name ${env.LB_NAME} -n ${newBackend()}-tomcat --query id").trim()
-	      privateIps = sh(returnStdout: true, script: "az network nic list -g vm-dup-bg-tf-jenkins  --query \"[?contains(name, '${currentBackend}')].ipConfigurations[].privateIpAddress\"")
+	      privateIps = sh(returnStdout: true, script: "az network nic list -g vm-dup-bg-tf-jenkins  --query \"[?contains(name, '${currentBackend}')].ipConfigurations[].privateIpAddress\" -o tsv").split("\n")
 
 	      print privateIps
 	      // privateIps.each {
