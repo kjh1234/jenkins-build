@@ -45,8 +45,14 @@ resource "azurerm_virtual_machine" "main" {
   network_interface_ids = ["${azurerm_network_interface.main[count.index].id}"]
 #   network_interface_ids = [azurerm_network_interface.main.id]
 
-  storage_image_reference {
-    id = "${data.azurerm_image.main.id}"
+#  storage_image_reference {
+#    id = "${data.azurerm_image.main.id}"
+#  }
+  source_image_reference {
+      publisher = "Canonical"
+      offer     = "UbuntuServer"
+      sku       = "18.04-LTS"
+      version   = "latest"
   }
 
   storage_os_disk {
