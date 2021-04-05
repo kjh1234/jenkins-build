@@ -23,19 +23,20 @@ pipeline {
 	    }
 	    script {
 	      currentBackend = sh (
-		      script: "az network lb rule show -g ${env.RESOURCE_GROUP} --lb-name ${env.LB_NAME} -n ${env.PROD_VMSS_NAME} --query 'backendAddressPool.id'",
-            returnStdout: true
-          ).trim()
-         	  currentBackend = sh(returnStdout: true, script: "expr ${currentBackend} : '.*/backendAddressPools/\\(.*\\)-'").trim()
-		  sh "echo 'Current VM: ${currentBackend}'"
-		  sh "echo 'New VM: ${newBackend()}'"
-		  publicKey = sh(returnStdout: true, script: "readlink -f $PUBLIC_KEY").trim()
-	  	  lbProbeId = sh(returnStdout: true, script: "az network lb probe show -g ${env.RESOURCE_GROUP} --lb-name ${env.LB_NAME} -n ${newBackend()}-tomcat --query id").trim()
-          privateIps = sh(returnStdout: true, script: "az network nic list -g vm-dup-bg-tf-jenkins  --query \"[?contains(name, '${currentBackend}')].ipConfigurations[].privateIpAddress\"").split("\n")
+	            script: "az network lb rule show -g ${env.RESOURCE_GROUP} --lb-name ${env.LB_NAME} -n ${env.PROD_VMSS_NAME} --query 'backendAddressPool.id'",
+                returnStdout: true
+              ).trim()
+	      currentBackend = sh(returnStdout: true, script: "expr ${currentBackend} : '.*/backendAddressPools/\\(.*\\)-'").trim()
+	      sh "echo 'Current VM: ${currentBackend}'"
+	      sh "echo 'New VM: ${newBackend()}'"
+	      publicKey = sh(returnStdout: true, script: "readlink -f $PUBLIC_KEY").trim()
+	      lbProbeId = sh(returnStdout: true, script: "az network lb probe show -g ${env.RESOURCE_GROUP} --lb-name ${env.LB_NAME} -n ${newBackend()}-tomcat --query id").trim()
+	      privateIps = sh(returnStdout: true, script: "az network nic list -g vm-dup-bg-tf-jenkins  --query \"[?contains(name, '${currentBackend}')].ipConfigurations[].privateIpAddress\"")
 
-          privateIps.each {
-              println "Computer private IP ${ip}"
-          }
+	      print privateIps
+	      // privateIps.each {
+	      //     println "Computer private IP ${ip}"
+	      // }
 	    }
 
       }
