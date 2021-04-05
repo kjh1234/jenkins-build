@@ -37,6 +37,9 @@ pipeline {
 	      // privateIps.each {
 	      //     println "Computer private IP ${ip}"
 	      // }
+	      for (ip in privateIps) {
+                sh "echo ${ip}"
+              }
 	    }
 
       }
