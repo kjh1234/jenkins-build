@@ -45,7 +45,7 @@ resource "azurerm_virtual_machine" "main" {
 #  storage_image_reference {
 #    id = "${data.azurerm_image.main.id}"
 #  }
-  source_image_reference {
+  storage_image_reference {
       publisher = "Canonical"
       offer     = "UbuntuServer"
       sku       = "18.04-LTS"
