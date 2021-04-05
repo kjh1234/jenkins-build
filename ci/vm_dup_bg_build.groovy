@@ -77,6 +77,7 @@ pipeline {
     AZURE_SUBSCRIPTION_ID = credentials('AZURE_SUBSCRIPTION_ID')
     INNO_AZURE_CREDENTIALS = 'INNO_AZURE_CREDENTIALS'
     GIT_CREDENTIALS_ID = credentials('GIT_CREDENTIALS_ID')
+    NEXUS_CREDENTIALS_ID = 'NEXUS_CREDENTIALS_ID'
 
     REPOSITORY_API = "https://doss.sktelecom.com/nexus/service/rest/v1"
     IMAGE_REPOSITORY = "sk-maven-hosted"
