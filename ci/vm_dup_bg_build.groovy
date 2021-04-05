@@ -13,7 +13,7 @@ pipeline {
 
           checkout([
               $class: 'GitSCM',
-              branches: [[name: "refs/tags/${tagVersion}"]],
+              branches: [[name: "refs/tags/${params.TAG_VERSION}"]],
               doGenerateSubmoduleConfigurations: false,
               extensions: [[
                   $class: 'SubmoduleOption',
