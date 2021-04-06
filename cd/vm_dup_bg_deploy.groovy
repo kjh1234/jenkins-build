@@ -52,17 +52,18 @@ pipeline {
               }
 	      
 	      withCredentials([sshUserPrivateKey(credentialsId: VM_PRIBATE_KEY, keyFileVariable: 'identity', usernameVariable: 'userName')]) {
-	        def remote = [:] 
-		remote.name = "tomcat-vm-dev" 
-		remote.host = "${deployIp}" 
-		remote.allowAnyHosts = true 
-		remote.user = userName 
-		remote.identityFile = identity
-		sshPut remote: remote, from: "${IMAGE_NAME}-${params.TAG_VERSION}.zip", into: "~/"
+	        // def remote = [:] 
+		// remote.name = "tomcat-vm-dev" 
+		// remote.host = "${deployIp}" 
+		// remote.allowAnyHosts = true 
+		// remote.user = userName 
+		// remote.identityFile = identity
+		// sshPut remote: remote, from: "${IMAGE_NAME}-${params.TAG_VERSION}.zip", into: "~/"
 
-	        // sh """
-	        //   scp -i ${VM_PRIBATE_KEY} ${IMAGE_NAME}-${params.TAG_VERSION}.zip azureuser@${deployIp}:~/
-	        // """
+	        sh """
+		  { tf=$(mktemp); cat >"$tf"; echo "$tf"; }
+	          scp -i $tf ${IMAGE_NAME}-${params.TAG_VERSION}.zip azureuser@${deployIp}:~/
+	        """
 	      }
 	    }
 
