@@ -32,9 +32,11 @@ pipeline {
 	      publicKey = sh(returnStdout: true, script: "readlink -f $PUBLIC_KEY").trim()
 	      lbProbeId = sh(returnStdout: true, script: "az network lb probe show -g ${env.RESOURCE_GROUP} --lb-name ${env.LB_NAME} -n ${newBackend()}-tomcat --query id").trim()
 		    
-              privateIps = sh(returnStdout: true, script: "az network public-ip show -g ${RESOURCE_GROUP} --name vm-dev-pip --query ipAddress --output tsv")
+              deployIp = sh(returnStdout: true, script: "az network public-ip show -g ${RESOURCE_GROUP} --name vm-dev-pip --query ipAddress --output tsv")
 	      privateIps = sh(returnStdout: true, script: "az network nic list -g ${RESOURCE_GROUP}  --query \"[?contains(name, '${currentBackend}')].ipConfigurations[].privateIpAddress\" -o tsv").split("\n")
 
+	      print "deployIp : ${deployIp}"
+	      print "privateIps : ${privateIps}"
 	      // for (ip in privateIps) {
               //   sh "echo ${ip}"
               // }
