@@ -59,7 +59,7 @@ pipeline {
 		// remote.user = userName 
 		// remote.identityFile = identity
 		// sshPut remote: remote, from: "${IMAGE_NAME}-${params.TAG_VERSION}.zip", into: "~/"
-		temp_key = sh(returnStdout: true, script: "mktemp")
+		temp_key = sh(returnStdout: true, script: "mktemp").trim()
 		print "temp_key ${temp_key}"
 		      
 	        sh """
