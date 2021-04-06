@@ -52,25 +52,21 @@ pipeline {
               }
 	      
 	      withCredentials([sshUserPrivateKey(credentialsId: VM_PRIBATE_KEY, keyFileVariable: 'identity', usernameVariable: 'userName')]) {
-	        // def remote = [:] 
-		// remote.name = "tomcat-vm-dev" 
-		// remote.host = "${deployIp}" 
-		// remote.allowAnyHosts = true 
-		// remote.user = userName 
-		// remote.identityFile = identity
-		// sshPut remote: remote, from: "${IMAGE_NAME}-${params.TAG_VERSION}.zip", into: "~/"
-		temp_key = sh(returnStdout: true, script: "mktemp").trim()
-		print "temp_key ${temp_key}"
-		print "identity ${identity}"
-		
-		      
-		input("Switch Prod Proceed or Abort?")
 	        sh """
-		  # chmod 700 ${temp_key}
-		  echo "${identity}" > ${temp_key}
-		  cat "${identity}"
 	          scp -i '${identity}' ${IMAGE_NAME}-${params.TAG_VERSION}.zip azureuser@${deployIp}:~/
+		  scp -o ProxyCommand="ssh $jump_host nc $host 22" $local_path $host:$destination_path
+		  scp -i '${identity}' -r -o ProxyCommand="ssh -i '${identity}' -W %h:%p azureuser@${deployIp}" ${IMAGE_NAME}-${params.TAG_VERSION}.zip azureuser@10.0.1.6:~/
 	        """
+		
+	        for (privateIp in privateIps) {
+                  sh """
+		    # app push
+		    scp -i '${identity}' -r -o ProxyCommand="ssh -i '${identity}' -W %h:%p azureuser@${deployIp}" ${IMAGE_NAME}-${params.TAG_VERSION}.zip azureuser@privateIp:~/
+		    # app run
+		    ssh -i '${identity}' -t -o ProxyCommand="ssh -i '${identity}' azureuser@${deployIp} nc ${privateIp} 22" azureuser@${privateIp} "java -jar ${IMAGE_NAME}-${params.TAG_VERSION}.zip"
+		  """
+		  // echo ${ip}"
+                }
 	      }
 	    }
 
