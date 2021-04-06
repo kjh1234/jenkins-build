@@ -40,6 +40,20 @@ pipeline {
 	      // for (ip in privateIps) {
               //   sh "echo ${ip}"
               // }
+		    
+              
+              withCredentials([usernamePassword(credentialsId: NEXUS_CREDENTIALS_ID, usernameVariable: 'USERNAME', passwordVariable: 'PASSWORD')]) {
+                sh """
+	          curl -o ${IMAGE_NAME}-${params.TAG_VERSION}.zip -L -u '${USERNAME}:${PASSWORD}' \\
+	            -X GET '${REPOSITORY_API}/search/assets/download?repository=${IMAGE_REPOSITORY}&group=${IMAGE_GROUP}&name=${IMAGE_NAME}&version=${params.TAG_VERSION}&maven.extension=zip'
+	          
+	          ls -al
+	        """
+              }
+	      
+	      sh """
+	        scp -i VM_PRIBATE_KEY ${IMAGE_NAME}-${params.TAG_VERSION}.zip azureuser@${deployIp}:~/
+	      """
 	    }
 
       }
@@ -59,6 +73,9 @@ pipeline {
   environment {
     INNO_AZURE_CREDENTIALS = 'INNO_AZURE_CREDENTIALS'
     AZURE_SUBSCRIPTION_ID = credentials('AZURE_SUBSCRIPTION_ID')
+    NEXUS_CREDENTIALS_ID = 'NEXUS_CREDENTIALS_ID'
+    VM_PRIBATE_KEY = credentials('VM_PRIBATE_KEY')
+	  
     RESOURCE_GROUP="vm-dup-bg-tf-jenkins"
     LB_NAME="vm-lb"
     IP_NAME="vm-pip"
@@ -67,6 +84,11 @@ pipeline {
     PROD_VMSS_NAME="prod-rule"
     TEST_VMSS_NAME="stage-rule"
     TEST_PORT="8080"
+    
+    REPOSITORY_API = "https://doss.sktelecom.com/nexus/service/rest/v1"
+    IMAGE_REPOSITORY = "sk-maven-hosted"
+    IMAGE_GROUP = "com.functions"
+    IMAGE_NAME = "azure-functions-samples"
   }
   parameters {
     string(name: 'TAG_VERSION', defaultValue: '', description: '')
