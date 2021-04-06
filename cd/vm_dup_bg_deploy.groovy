@@ -51,9 +51,18 @@ pipeline {
 	        """
               }
 	      
-	      sh """
-	        scp -i ${VM_PRIBATE_KEY} ${IMAGE_NAME}-${params.TAG_VERSION}.zip azureuser@${deployIp}:~/
-	      """
+	      withCredentials([sshUserPrivateKey(credentialsId: VM_PRIBATE_KEY, keyFileVariable: 'identity', usernameVariable: 'userName')]) {
+	        def remote = [:] 
+		remote.name = "tomcat-vm-dev" 
+		remote.host = "${deployIp}" 
+		remote.allowAnyHosts = true 
+		remote.user = userName 
+		remote.identityFile = identity
+		sshPut remote: remote, from: "${IMAGE_NAME}-${params.TAG_VERSION}.zip", into: "~/"
+
+	        // sh """
+	        //   scp -i ${VM_PRIBATE_KEY} ${IMAGE_NAME}-${params.TAG_VERSION}.zip azureuser@${deployIp}:~/
+	        // """
 	    }
 
       }
@@ -74,7 +83,7 @@ pipeline {
     INNO_AZURE_CREDENTIALS = 'INNO_AZURE_CREDENTIALS'
     AZURE_SUBSCRIPTION_ID = credentials('AZURE_SUBSCRIPTION_ID')
     NEXUS_CREDENTIALS_ID = 'NEXUS_CREDENTIALS_ID'
-    VM_PRIBATE_KEY = credentials('VM_PRIBATE_KEY')
+    VM_PRIBATE_KEY = 'VM_PRIBATE_KEY'
 	  
     RESOURCE_GROUP="vm-dup-bg-tf-jenkins"
     LB_NAME="vm-lb"
