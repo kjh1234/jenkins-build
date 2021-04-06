@@ -62,7 +62,7 @@ pipeline {
                 
 		temp_key = sh(returnStdout: true, script: "echo '${identity}' | { tf=\$(mktemp); cat >'\$tf'; }")
 	        sh """
-		  
+		  echo "${temp_key}"
 	          scp -i ${temp_key} ${IMAGE_NAME}-${params.TAG_VERSION}.zip azureuser@${deployIp}:~/
 	        """
 	      }
