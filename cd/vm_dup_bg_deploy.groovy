@@ -62,11 +62,11 @@ pipeline {
 		temp_key = sh(returnStdout: true, script: "\$(mktemp)")
 		print "temp_key ${temp_key}"
 		      
-	        sh """
-		  chmod 700 ${temp_key}
-		  echo "${identity}" > ${temp_key}
-	          scp -i ${temp_key} ${IMAGE_NAME}-${params.TAG_VERSION}.zip azureuser@${deployIp}:~/
-	        """
+	        // sh """
+		//   chmod 700 ${temp_key}
+		//   echo "${identity}" > ${temp_key}
+	        //   scp -i ${temp_key} ${IMAGE_NAME}-${params.TAG_VERSION}.zip azureuser@${deployIp}:~/
+	        // """
 	      }
 	    }
 
