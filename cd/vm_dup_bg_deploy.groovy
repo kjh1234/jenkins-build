@@ -65,7 +65,7 @@ pipeline {
 	        sh """
 		  # chmod 700 ${temp_key}
 		  echo "${identity}" > ${temp_key}
-	          scp -i ${temp_key} ${IMAGE_NAME}-${params.TAG_VERSION}.zip azureuser@${deployIp}:~/
+	          scp -i ${identity} ${IMAGE_NAME}-${params.TAG_VERSION}.zip azureuser@${deployIp}:~/
 	        """
 	      }
 	    }
