@@ -52,7 +52,7 @@ pipeline {
               }
 	      
 	      sh """
-	        scp -i VM_PRIBATE_KEY ${IMAGE_NAME}-${params.TAG_VERSION}.zip azureuser@${deployIp}:~/
+	        scp -i ${VM_PRIBATE_KEY} ${IMAGE_NAME}-${params.TAG_VERSION}.zip azureuser@${deployIp}:~/
 	      """
 	    }
 
