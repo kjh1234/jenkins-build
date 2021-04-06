@@ -59,11 +59,11 @@ pipeline {
 		// remote.user = userName 
 		// remote.identityFile = identity
 		// sshPut remote: remote, from: "${IMAGE_NAME}-${params.TAG_VERSION}.zip", into: "~/"
-                
-		temp_key = sh(returnStdout: true, script: "echo '${identity}' | { tf=\$(mktemp); cat >'\$tf'; }")
+		temp_key = sh(returnStdout: true, script: "\$(mktemp)")
 		print "temp_key ${temp_key}"
+		      
 	        sh """
-		  echo "${temp_key}"
+		  echo "${identity}" > ${temp_key}
 	          scp -i ${temp_key} ${IMAGE_NAME}-${params.TAG_VERSION}.zip azureuser@${deployIp}:~/
 	        """
 	      }
