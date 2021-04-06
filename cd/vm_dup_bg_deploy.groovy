@@ -61,7 +61,10 @@ pipeline {
 		// sshPut remote: remote, from: "${IMAGE_NAME}-${params.TAG_VERSION}.zip", into: "~/"
 		temp_key = sh(returnStdout: true, script: "mktemp").trim()
 		print "temp_key ${temp_key}"
+		print "identity ${identity}"
+		
 		      
+		input("Switch Prod Proceed or Abort?")
 	        sh """
 		  # chmod 700 ${temp_key}
 		  echo "${identity}" > ${temp_key}
