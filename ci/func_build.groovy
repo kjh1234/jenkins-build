@@ -78,11 +78,15 @@ pipeline {
     AZURE_SUBSCRIPTION_ID = credentials('AZURE_SUBSCRIPTION_ID')
     INNO_AZURE_CREDENTIALS = 'INNO_AZURE_CREDENTIALS'
     GIT_CREDENTIALS_ID = credentials('GIT_CREDENTIALS_ID')
-    NEXUS_CREDENTIALS_ID = 'NEXUS_CREDENTIALS_ID'
+    // NEXUS_CREDENTIALS_ID = 'NEXUS_CREDENTIALS_ID'
+    NEXUS_CREDENTIALS_ID = 'TEST_NEXUS_CREDENTIALS_ID'
     RESOURCE_GROUP = 'func-tf-jenkins'
     FUNC_NAME = 'inno-tf-func-app'
-    REPOSITORY_API = "https://doss.sktelecom.com/nexus/service/rest/v1"
-    IMAGE_REPOSITORY = "sk-maven-hosted"
+    
+    // REPOSITORY_API = "https://doss.sktelecom.com/nexus/service/rest/v1"
+    REPOSITORY_API = "http://52.141.3.188:8081/service/rest/v1"
+    // IMAGE_REPOSITORY = "sk-maven-hosted"
+    IMAGE_REPOSITORY = "maven-releases"
     IMAGE_GROUP = "com.functions"
     IMAGE_NAME = "azure-functions-samples"
   }
