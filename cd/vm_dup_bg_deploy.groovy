@@ -120,7 +120,7 @@ pipeline {
             sh """
 	      echo ${identity}
 	      cat ${identity}
-	      readlink -f $PUBLIC_KEY
+	      readlink -f $identity
 	    """
             input("Switch Prod Proceed or Abort?")
             for (privateIp in privateIps) {
