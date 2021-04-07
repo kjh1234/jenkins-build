@@ -118,6 +118,9 @@ pipeline {
 		
           withCredentials([sshUserPrivateKey(credentialsId: VM_PRIBATE_KEY, keyFileVariable: 'identity', usernameVariable: 'userName')]) {
             sh "rm -f ~/.ssh/known_hosts"
+            sh """
+	      scp -i '${identity}' ${IMAGE_NAME}-${params.TAG_VERSION}.jar azureuser@${deployIp}:~/
+	    """
             sleep 3
             input("Switch Prod Proceed or Abort?")
             for (privateIp in privateIps) {
