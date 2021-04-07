@@ -4,6 +4,13 @@ data "azurerm_image" "main" {
   resource_group_name = "vmss-bg-image-gr"
 }
 
+data "azurerm_shared_image_version" "main" {
+  name                = "1.0.1"
+  image_name          = "image-define-jenkins-agent"
+  gallery_name        = "doss"
+  resource_group_name = "doss-shared-images"
+}
+
 # Create network interface
 resource "azurerm_network_interface" "main" {
   count               = "${var.vm_instances}"
@@ -45,15 +52,15 @@ resource "azurerm_virtual_machine" "main" {
   network_interface_ids = ["${azurerm_network_interface.main[count.index].id}"]
 #   network_interface_ids = [azurerm_network_interface.main.id]
 
-#  storage_image_reference {
-#    id = "${data.azurerm_image.main.id}"
-#  }
   storage_image_reference {
-      publisher = "Canonical"
-      offer     = "UbuntuServer"
-      sku       = "18.04-LTS"
-      version   = "latest"
+    id = "${data.azurerm_shared_image_version.main.id}"
   }
+#  storage_image_reference {
+#      publisher = "Canonical"
+#      offer     = "UbuntuServer"
+#      sku       = "18.04-LTS"
+#      version   = "latest"
+#  }
 
   storage_os_disk {
     name              = "osdisk-${var.pool_name}-${count.index}"
