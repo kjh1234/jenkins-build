@@ -123,13 +123,12 @@ pipeline {
 	    """
             sleep 3
             input("Switch Prod Proceed or Abort?")
-            sh "scp -i '${identity}' -o 'StrictHostKeyChecking=no' ${IMAGE_NAME}-${params.TAG_VERSION}.jar azureuser@${deployIp}:~/"
             for (privateIp in privateIps) {
               sh """
                 # app push
-                scp -i '${identity}' -r -o ProxyCommand="ssh -i '${identity}' -W %h:%p azureuser@${deployIp}" ${IMAGE_NAME}-${params.TAG_VERSION}.jar azureuser@${privateIp}:~/
+                scp -i '${identity}' -r -o ProxyCommand="ssh -i '${identity}' -o StrictHostKeyChecking=no -W %h:%p azureuser@${deployIp}" ${IMAGE_NAME}-${params.TAG_VERSION}.jar azureuser@${privateIp}:~/
                 # app run
-                ssh -i '${identity}' -t -o ProxyCommand="ssh -i '${identity}' azureuser@${deployIp} nc ${privateIp} 22" azureuser@${privateIp} "java -jar ${IMAGE_NAME}-${params.TAG_VERSION}.jar"
+                ssh -i '${identity}' -t -o ProxyCommand="ssh -i '${identity}' -o StrictHostKeyChecking=no azureuser@${deployIp} nc ${privateIp} 22" azureuser@${privateIp} "java -jar ${IMAGE_NAME}-${params.TAG_VERSION}.jar"
               """
           // echo ${ip}"
             }
