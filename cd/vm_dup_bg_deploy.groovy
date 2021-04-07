@@ -16,60 +16,102 @@ pipeline {
 
     stage('Init') {
       steps {
-	    withCredentials([azureServicePrincipal(INNO_AZURE_CREDENTIALS)]) {
-	      sh """
-	        az login --service-principal -u $AZURE_CLIENT_ID -p $AZURE_CLIENT_SECRET -t $AZURE_TENANT_ID
-	      """
-	    }
-	    script {
-	      currentBackend = sh (
-	            script: "az network lb rule show -g ${env.RESOURCE_GROUP} --lb-name ${env.LB_NAME} -n ${env.PROD_VMSS_NAME} --query 'backendAddressPool.id'",
-                returnStdout: true
-              ).trim()
-	      currentBackend = sh(returnStdout: true, script: "expr ${currentBackend} : '.*/backendAddressPools/\\(.*\\)-'").trim()
-	      sh "echo 'Current VM: ${currentBackend}'"
-	      sh "echo 'New VM: ${newBackend()}'"
-	      publicKey = sh(returnStdout: true, script: "readlink -f $PUBLIC_KEY").trim()
-	      lbProbeId = sh(returnStdout: true, script: "az network lb probe show -g ${env.RESOURCE_GROUP} --lb-name ${env.LB_NAME} -n ${newBackend()}-tomcat --query id").trim()
-		    
-              deployIp = sh(returnStdout: true, script: "az network public-ip show -g ${RESOURCE_GROUP} --name vm-dev-pip --query ipAddress --output tsv").trim()
-	      privateIps = sh(returnStdout: true, script: "az network nic list -g ${RESOURCE_GROUP}  --query \"[?contains(name, '${currentBackend}')].ipConfigurations[].privateIpAddress\" -o tsv").split("\n")
+        withCredentials([azureServicePrincipal(INNO_AZURE_CREDENTIALS)]) {
+          sh """
+            az login --service-principal -u $AZURE_CLIENT_ID -p $AZURE_CLIENT_SECRET -t $AZURE_TENANT_ID
+          """
+        }
+        script {
+          currentBackend = sh (
+                script: "az network lb rule show -g ${env.RESOURCE_GROUP} --lb-name ${env.LB_NAME} -n ${env.PROD_VMSS_NAME} --query 'backendAddressPool.id'",
+            returnStdout: true
+          ).trim()
+          currentBackend = sh(returnStdout: true, script: "expr ${currentBackend} : '.*/backendAddressPools/\\(.*\\)-'").trim()
+          sh "echo 'Current VM: ${currentBackend}'"
+          sh "echo 'New VM: ${newBackend()}'"
+          publicKey = sh(returnStdout: true, script: "readlink -f $PUBLIC_KEY").trim()
+          lbProbeId = sh(returnStdout: true, script: "az network lb probe show -g ${env.RESOURCE_GROUP} --lb-name ${env.LB_NAME} -n ${newBackend()}-tomcat --query id").trim()
+            
+          deployIp = sh(returnStdout: true, script: "az network public-ip show -g ${RESOURCE_GROUP} --name vm-dev-pip --query ipAddress --output tsv").trim()
+          privateIps = sh(returnStdout: true, script: "az network nic list -g ${RESOURCE_GROUP}  --query \"[?contains(name, '${currentBackend}')].ipConfigurations[].privateIpAddress\" -o tsv").split("\n")
 
-	      print "deployIp : ${deployIp}"
-	      print "privateIps : ${privateIps}"
-	      // for (ip in privateIps) {
-              //   sh "echo ${ip}"
-              // }
-		    
+          print "deployIp : ${deployIp}"
+          print "privateIps : ${privateIps}"
+          // for (ip in privateIps) {
+          //   sh "echo ${ip}"
+          // }
+        }
+
+      }
+    }
+
+    stage('APP Image Pull') {
+      steps {
+        script {
+          withCredentials([usernamePassword(credentialsId: NEXUS_CREDENTIALS_ID, usernameVariable: 'USERNAME', passwordVariable: 'PASSWORD')]) {
+            sh """
+              curl -o ${IMAGE_NAME}-${params.TAG_VERSION}.jar -L -u '${USERNAME}:${PASSWORD}' \\
+                -X GET '${REPOSITORY_API}/search/assets/download?repository=${IMAGE_REPOSITORY}&group=${IMAGE_GROUP}&name=${IMAGE_NAME}&version=${params.TAG_VERSION}&maven.extension=jar'
               
-              withCredentials([usernamePassword(credentialsId: NEXUS_CREDENTIALS_ID, usernameVariable: 'USERNAME', passwordVariable: 'PASSWORD')]) {
-                sh """
-	          curl -o ${IMAGE_NAME}-${params.TAG_VERSION}.zip -L -u '${USERNAME}:${PASSWORD}' \\
-	            -X GET '${REPOSITORY_API}/search/assets/download?repository=${IMAGE_REPOSITORY}&group=${IMAGE_GROUP}&name=${IMAGE_NAME}&version=${params.TAG_VERSION}&maven.extension=zip'
-	          
-	          ls -al
-	        """
-              }
-	      
-	      withCredentials([sshUserPrivateKey(credentialsId: VM_PRIBATE_KEY, keyFileVariable: 'identity', usernameVariable: 'userName')]) {
-	        sh """
-	          scp -i '${identity}' ${IMAGE_NAME}-${params.TAG_VERSION}.zip azureuser@${deployIp}:~/
-		  scp -o ProxyCommand="ssh $jump_host nc $host 22" $local_path $host:$destination_path
-		  scp -i '${identity}' -r -o ProxyCommand="ssh -i '${identity}' -W %h:%p azureuser@${deployIp}" ${IMAGE_NAME}-${params.TAG_VERSION}.zip azureuser@10.0.1.6:~/
-	        """
-		
-	        for (privateIp in privateIps) {
-                  sh """
-		    # app push
-		    scp -i '${identity}' -r -o ProxyCommand="ssh -i '${identity}' -W %h:%p azureuser@${deployIp}" ${IMAGE_NAME}-${params.TAG_VERSION}.zip azureuser@privateIp:~/
-		    # app run
-		    ssh -i '${identity}' -t -o ProxyCommand="ssh -i '${identity}' azureuser@${deployIp} nc ${privateIp} 22" azureuser@${privateIp} "java -jar ${IMAGE_NAME}-${params.TAG_VERSION}.zip"
-		  """
-		  // echo ${ip}"
-                }
-	      }
-	    }
+              ls -al
+            """
+          }
+        }
+      }
+    }
 
+    stage('APP Deploy') {
+      steps {
+        script {
+          withCredentials([sshUserPrivateKey(credentialsId: VM_PRIBATE_KEY, keyFileVariable: 'identity', usernameVariable: 'userName')]) {
+            for (privateIp in privateIps) {
+              sh """
+                # app push
+                scp -i '${identity}' -r -o ProxyCommand="ssh -i '${identity}' -W %h:%p azureuser@${deployIp}" ${IMAGE_NAME}-${params.TAG_VERSION}.zip azureuser@privateIp:~/
+                # app run
+                ssh -i '${identity}' -t -o ProxyCommand="ssh -i '${identity}' azureuser@${deployIp} nc ${privateIp} 22" azureuser@${privateIp} "java -jar ${IMAGE_NAME}-${params.TAG_VERSION}.jar"
+              """
+          // echo ${ip}"
+            }
+          }
+	}
+      }
+    }
+
+    stage('Test VMSS') {
+      steps {
+        script {
+          ip = sh(returnStdout: true, script: "az network public-ip show --resource-group $RESOURCE_GROUP --name $IP_NAME --query ipAddress --output tsv").trim()
+          print "Visit http://$ip:$TEST_PORT"
+        }
+      }
+    }
+
+    stage('Switch') {
+      steps {
+        input("Switch Prod Proceed or Abort?")
+				  
+        sh """
+	  az network lb rule delete --resource-group $RESOURCE_GROUP --lb-name $LB_NAME --name $TEST_VMSS_NAME
+          az network lb rule update --resource-group $RESOURCE_GROUP --lb-name $LB_NAME --name $PROD_VMSS_NAME --backend-pool-name ${newBackend()}-bepool
+        """
+      }
+    }
+
+    stage('Delete Old VM') {
+      steps {
+        sh """
+	  # Old VM
+	  az vm delete --ids \$(az vm list -g $RESOURCE_GROUP --query "[?contains(name, '${currentBackend}')].id" -o tsv)
+	  az disk delete --ids \$(az disk list -g $RESOURCE_GROUP --query "[?contains(name, '${currentBackend}')].id" -o tsv)
+	  az network nic delete --ids \$(az network nic list -g $RESOURCE_GROUP  --query "[?contains(name, '${currentBackend}')].id" -o tsv)'
+	  
+	  # Jump VM
+	  az vm delete --ids \$(az vm list -g $RESOURCE_GROUP --query "[?contains(name, 'dev')].id" -o tsv)
+	  az disk delete --ids \$(az disk list -g $RESOURCE_GROUP --query "[?contains(name, 'dev')].id" -o tsv)
+	  az network nic delete --ids \$(az network nic list -g $RESOURCE_GROUP  --query "[?contains(name, 'dev')].id" -o tsv)'
+	  
+        """
       }
     }
 
@@ -104,8 +146,8 @@ pipeline {
     REPOSITORY_API = "http://52.141.3.188:8081/service/rest/v1"
     // IMAGE_REPOSITORY = "sk-maven-hosted"
     IMAGE_REPOSITORY = "maven-releases"
-    IMAGE_GROUP = "com.functions"
-    IMAGE_NAME = "azure-functions-samples"
+    IMAGE_GROUP = "com.microsoft.azure.sample"
+    IMAGE_NAME = "todo-app-java-on-azure"
   }
   parameters {
     string(name: 'TAG_VERSION', defaultValue: '', description: '')
