@@ -68,7 +68,7 @@ pipeline {
               -var 'prefix=${PREFIX}' \
               -var "pool_name=${newBackend()}" \
               -var 'vm_instances=2' \
-              -var "public_key=\$(cat ${PUBLIC_KEY})" \
+              -var "public_key=\$(cat ${publicKey})" \
               -var 'client_id=${AZURE_CLIENT_ID}' \
               -var 'client_secret=${AZURE_CLIENT_SECRET}' \
               -var 'tenant_id=${AZURE_TENANT_ID}' \
@@ -191,7 +191,7 @@ pipeline {
     RESOURCE_GROUP="vm-dup-bg-tf-jenkins"
     LOCATION="koreacentral"
     TERRAFORM_PATH="cd/azure/vm_dup_bg"
-    prefix="vm"
+    PREFIX="vm"
     PUBLIC_KEY="~/.ssh/inno_id_rsa2.pub"
     LB_NAME="vm-lb"
     IP_NAME="vm-pip"
