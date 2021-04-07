@@ -117,6 +117,7 @@ pipeline {
           print "privateIps : ${privateIps}"
 		
           withCredentials([sshUserPrivateKey(credentialsId: VM_PRIBATE_KEY, keyFileVariable: 'identity', usernameVariable: 'userName')]) {  
+            input("Switch Prod Proceed or Abort?")
             sh """
 	      echo ${identity}
 	      cat ${identity}
