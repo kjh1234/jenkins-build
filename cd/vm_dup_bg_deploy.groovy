@@ -31,17 +31,63 @@ pipeline {
           sh "echo 'New VM: ${newBackend()}'"
           publicKey = sh(returnStdout: true, script: "readlink -f $PUBLIC_KEY").trim()
           lbProbeId = sh(returnStdout: true, script: "az network lb probe show -g ${env.RESOURCE_GROUP} --lb-name ${env.LB_NAME} -n ${newBackend()}-tomcat --query id").trim()
-            
-          deployIp = sh(returnStdout: true, script: "az network public-ip show -g ${RESOURCE_GROUP} --name vm-dev-pip --query ipAddress --output tsv").trim()
-          privateIps = sh(returnStdout: true, script: "az network nic list -g ${RESOURCE_GROUP}  --query \"[?contains(name, '${currentBackend}')].ipConfigurations[].privateIpAddress\" -o tsv").split("\n")
 
-          print "deployIp : ${deployIp}"
-          print "privateIps : ${privateIps}"
-          // for (ip in privateIps) {
-          //   sh "echo ${ip}"
-          // }
         }
 
+      }
+    }
+	  
+    stage('Terraform init'){
+      steps {
+        // Initialize the plan
+        sh  """
+         cd ${workspace}/${TERRAFORM_PATH}
+         terraform init -input=false
+        """
+      }
+    }
+
+    stage('Terraform plan'){
+      steps {
+
+        // Get the VM image ID for the VMSS
+        withCredentials([azureServicePrincipal(INNO_AZURE_CREDENTIALS)]) {
+          sh """
+            az login --service-principal -u $AZURE_CLIENT_ID -p $AZURE_CLIENT_SECRET -t $AZURE_TENANT_ID
+            az account set --subscription $AZURE_SUBSCRIPTION_ID
+           
+            export ARM_CLIENT_ID="${AZURE_CLIENT_ID}"
+            export ARM_CLIENT_SECRET="${AZURE_CLIENT_SECRET}"
+            export ARM_SUBSCRIPTION_ID="${AZURE_SUBSCRIPTION_ID}"
+            export ARM_TENANT_ID="${AZURE_TENANT_ID}"
+            
+            cd ${workspace}/${TERRAFORM_PATH}
+            terraform plan -out=tfplan -input=false \
+              -var 'app_resource_group_name=${RESOURCE_GROUP}' \
+              -var "location=${LOCATION}' \
+              -var "prefix=${PREFIX}' \
+              -var "pool_name=${newBackend()}' \
+              -var "public_key=\$(cat ${PUBLIC_KEY})" \
+              -var 'client_id=${AZURE_CLIENT_ID}' \
+              -var 'client_secret=${AZURE_CLIENT_SECRET}' \
+              -var 'tenant_id=${AZURE_TENANT_ID}' \
+              -var 'subscription_id=${AZURE_SUBSCRIPTION_ID}'
+            
+          """
+        }
+        
+      }
+    }
+
+    stage('Terraform apply'){
+      steps {
+        // Apply the plan
+        withCredentials([azureServicePrincipal(INNO_AZURE_CREDENTIALS)]) {
+          sh  """
+           cd ${workspace}/${TERRAFORM_PATH}
+           terraform apply -input=false -auto-approve "tfplan"
+          """
+        }
       }
     }
 
@@ -63,7 +109,13 @@ pipeline {
     stage('APP Deploy') {
       steps {
         script {
-          withCredentials([sshUserPrivateKey(credentialsId: VM_PRIBATE_KEY, keyFileVariable: 'identity', usernameVariable: 'userName')]) {
+          deployIp = sh(returnStdout: true, script: "az network public-ip show -g ${RESOURCE_GROUP} --name vm-dev-pip --query ipAddress --output tsv").trim()
+          privateIps = sh(returnStdout: true, script: "az network nic list -g ${RESOURCE_GROUP}  --query \"[?contains(name, '${newBackend()}')].ipConfigurations[].privateIpAddress\" -o tsv").split("\n")
+
+          print "deployIp : ${deployIp}"
+          print "privateIps : ${privateIps}"
+		
+          withCredentials([sshUserPrivateKey(credentialsId: VM_PRIBATE_KEY, keyFileVariable: 'identity', usernameVariable: 'userName')]) {  
             for (privateIp in privateIps) {
               sh """
                 # app push
@@ -127,17 +179,21 @@ pipeline {
   }
 
   environment {
+    // Credentials
     INNO_AZURE_CREDENTIALS = 'INNO_AZURE_CREDENTIALS'
     AZURE_SUBSCRIPTION_ID = credentials('AZURE_SUBSCRIPTION_ID')
     // NEXUS_CREDENTIALS_ID = 'NEXUS_CREDENTIALS_ID'
     NEXUS_CREDENTIALS_ID = 'TEST_NEXUS_CREDENTIALS_ID'
     VM_PRIBATE_KEY = 'VM_PRIBATE_KEY'
-	  
+
+    // Terraform & Namespace
     RESOURCE_GROUP="vm-dup-bg-tf-jenkins"
+    LOCATION="koreacentral"
+    TERRAFORM_PATH="cd/azure/vm_dup_bg"
+    prefix="vm"
+    PUBLIC_KEY="~/.ssh/inno_id_rsa2.pub"
     LB_NAME="vm-lb"
     IP_NAME="vm-pip"
-    PUBLIC_KEY="~/.ssh/inno_id_rsa2.pub"
-    TERRAFORM_PATH="cd/azure/vm_dup_bg"
     PROD_VMSS_NAME="prod-rule"
     TEST_VMSS_NAME="stage-rule"
     TEST_PORT="8080"
