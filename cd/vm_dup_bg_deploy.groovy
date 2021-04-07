@@ -117,7 +117,7 @@ pipeline {
           print "privateIps : ${privateIps}"
 		
           withCredentials([sshUserPrivateKey(credentialsId: VM_PRIBATE_KEY, keyFileVariable: 'identity', usernameVariable: 'userName')]) {
-            sh "[ -f ~/.ssh/known_hosts ] && rm ~/.ssh/known_hosts"
+            sh "rm -f ~/.ssh/known_hosts"
             sleep 3
             for (privateIp in privateIps) {
               sh """
