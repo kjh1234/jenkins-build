@@ -35,7 +35,7 @@ module "vm_stage" {
 
   prefix                   = "vm"
   pool_name                = "${var.pool_name}"
-  vm_instances             = "2"
+  vm_instances             = "${var.vm_instances}"
   image_version            = "${var.image_version}"
   admin_id                 = "${var.admin_id}"
   public_key               = "${var.public_key}"
