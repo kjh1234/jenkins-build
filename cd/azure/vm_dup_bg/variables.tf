@@ -34,6 +34,10 @@ variable "pool_name" {
   default     = "green"
 }
 
+variable "vm_instances" {
+  default     = "2"
+}
+
 variable "lb_probe_id" {
   default     = ""
 }
