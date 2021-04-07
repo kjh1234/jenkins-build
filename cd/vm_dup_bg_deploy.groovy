@@ -64,9 +64,9 @@ pipeline {
             cd ${workspace}/${TERRAFORM_PATH}
             terraform plan -out=tfplan -input=false \
               -var 'app_resource_group_name=${RESOURCE_GROUP}' \
-              -var "location=${LOCATION}' \
-              -var "prefix=${PREFIX}' \
-              -var "pool_name=${newBackend()}' \
+              -var 'location=${LOCATION}' \
+              -var 'prefix=${PREFIX}' \
+              -var "pool_name=${newBackend()}" \
               -var "public_key=\$(cat ${PUBLIC_KEY})" \
               -var 'client_id=${AZURE_CLIENT_ID}' \
               -var 'client_secret=${AZURE_CLIENT_SECRET}' \
