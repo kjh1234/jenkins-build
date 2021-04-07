@@ -116,13 +116,7 @@ pipeline {
           print "deployIp : ${deployIp}"
           print "privateIps : ${privateIps}"
 		
-          withCredentials([sshUserPrivateKey(credentialsId: VM_PRIBATE_KEY, keyFileVariable: 'identity', usernameVariable: 'userName')]) {  
-            sh """
-	      echo ${identity}
-	      cat ${identity}
-	      readlink -f $identity
-	    """
-            input("Switch Prod Proceed or Abort?")
+          withCredentials([sshUserPrivateKey(credentialsId: VM_PRIBATE_KEY, keyFileVariable: 'identity', usernameVariable: 'userName')]) {
             for (privateIp in privateIps) {
               sh """
                 # app push
