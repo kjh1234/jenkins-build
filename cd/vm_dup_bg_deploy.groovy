@@ -67,7 +67,7 @@ pipeline {
               -var 'location=${LOCATION}' \
               -var 'prefix=${PREFIX}' \
               -var "pool_name=${newBackend()}" \
-              -var 'count=2' \
+              -var 'vm_instances=2' \
               -var "public_key=\$(cat ${PUBLIC_KEY})" \
               -var 'client_id=${AZURE_CLIENT_ID}' \
               -var 'client_secret=${AZURE_CLIENT_SECRET}' \
