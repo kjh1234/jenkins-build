@@ -117,6 +117,10 @@ pipeline {
           print "privateIps : ${privateIps}"
 		
           withCredentials([sshUserPrivateKey(credentialsId: VM_PRIBATE_KEY, keyFileVariable: 'identity', usernameVariable: 'userName')]) {  
+            sh """
+	      echo ${identity}
+	      cat ${identity}
+	    """
             for (privateIp in privateIps) {
               sh """
                 # app push
