@@ -118,6 +118,7 @@ pipeline {
 		
           withCredentials([sshUserPrivateKey(credentialsId: VM_PRIBATE_KEY, keyFileVariable: 'identity', usernameVariable: 'userName')]) {
             sh "rm ~/.ssh/known_hosts"
+            sleep 3
             for (privateIp in privateIps) {
               sh """
                 # app push
