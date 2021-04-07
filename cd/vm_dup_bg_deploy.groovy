@@ -120,9 +120,7 @@ pipeline {
             sh "rm -f ~/.ssh/known_hosts"
             sleep 3
             input("Switch Prod Proceed or Abort?")
-            sh """
-	      scp -i '${identity}' ${IMAGE_NAME}-${params.TAG_VERSION}.jar azureuser@${deployIp}:~/
-	    """
+            sh "scp -i '${identity}' ${IMAGE_NAME}-${params.TAG_VERSION}.jar azureuser@${deployIp}:~/"
             for (privateIp in privateIps) {
               sh """
                 # app push
