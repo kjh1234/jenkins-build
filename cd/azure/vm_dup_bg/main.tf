@@ -60,7 +60,7 @@ module "lb_rule_stage" {
 }
 
 module "jumpbox_vm" {
-  source = "../modules/public-vm"
+  source = "../../../provis/azure/modules/public-vm"
 
   app_resource_group_name  = "${var.app_resource_group_name}"
   location                 = "${var.location}"
