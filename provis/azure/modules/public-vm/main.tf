@@ -8,7 +8,7 @@ resource "azurerm_network_interface" "main" {
     name                          = "${var.pool_name}-configuration"
     subnet_id                     = "${var.subnet_id}"
     private_ip_address_allocation = "Dynamic"
-    public_ip_address_id          = "${var.pip.id}"
+    public_ip_address_id          = "${var.pip_id}"
   }
 }
 
