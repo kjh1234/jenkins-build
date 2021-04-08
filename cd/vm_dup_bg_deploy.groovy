@@ -129,7 +129,7 @@ pipeline {
                 # app push
                 scp -i '${identity}' -r -o StrictHostKeyChecking=no -o ProxyCommand="ssh -i '${identity}' -o StrictHostKeyChecking=no -W %h:%p azureuser@${deployIp}" ${IMAGE_NAME}-${params.TAG_VERSION}.jar azureuser@${privateIp}:~/
                 # app run
-                ssh -i '${identity}' -o StrictHostKeyChecking=no -o ProxyCommand="ssh -i '${identity}' -o StrictHostKeyChecking=no azureuser@${deployIp} nc ${privateIp} 22" azureuser@${privateIp} "java -jar ${IMAGE_NAME}-${params.TAG_VERSION}.jar"
+                ssh -i '${identity}' -o StrictHostKeyChecking=no -o ProxyCommand="ssh -i '${identity}' -o StrictHostKeyChecking=no azureuser@${deployIp} nc ${privateIp} 22" azureuser@${privateIp} "java -jar ${IMAGE_NAME}-${params.TAG_VERSION}.jar &"
               """
           // echo ${ip}"
             }
