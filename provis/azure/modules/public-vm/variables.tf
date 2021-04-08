@@ -17,6 +17,10 @@ variable "subnet_id" {
   default     = ""
 }
 
+variable "pip_id" {
+  default     = ""
+}
+
 variable "prefix" {
   default     = "default"
 }
