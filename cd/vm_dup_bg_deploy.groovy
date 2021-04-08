@@ -121,6 +121,7 @@ pipeline {
 	      rm -f ~/.ssh/known_hosts
 	      chmod 600 ${identity}
 	    """
+	    sleep 10
             // sh "scp -i '${identity}' -o 'StrictHostKeyChecking=no' ${IMAGE_NAME}-${params.TAG_VERSION}.jar azureuser@${deployIp}:~/"
             for (privateIp in privateIps) {
               sh """
