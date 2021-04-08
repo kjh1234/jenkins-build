@@ -37,60 +37,60 @@ pipeline {
       }
     }
 	  
-//    stage('Terraform init'){
-//      steps {
-//        // Initialize the plan
-//        sh  """
-//         cd ${workspace}/${TERRAFORM_PATH}
-//         terraform init -input=false
-//        """
-//      }
-//    }
-//
-//    stage('Terraform plan'){
-//      steps {
-//
-//        // Get the VM image ID for the VMSS
-//        withCredentials([azureServicePrincipal(INNO_AZURE_CREDENTIALS)]) {
-//          sh """
-//            az login --service-principal -u $AZURE_CLIENT_ID -p $AZURE_CLIENT_SECRET -t $AZURE_TENANT_ID
-//            az account set --subscription $AZURE_SUBSCRIPTION_ID
-//           
-//            export ARM_CLIENT_ID="${AZURE_CLIENT_ID}"
-//            export ARM_CLIENT_SECRET="${AZURE_CLIENT_SECRET}"
-//            export ARM_SUBSCRIPTION_ID="${AZURE_SUBSCRIPTION_ID}"
-//            export ARM_TENANT_ID="${AZURE_TENANT_ID}"
-//            
-//            cd ${workspace}/${TERRAFORM_PATH}
-//            terraform plan -out=tfplan -input=false \
-//              -var 'app_resource_group_name=${RESOURCE_GROUP}' \
-//              -var 'location=${LOCATION}' \
-//              -var 'prefix=${PREFIX}' \
-//              -var "pool_name=${newBackend()}" \
-//              -var 'vm_instances=2' \
-//              -var "public_key=\$(cat ${publicKey})" \
-//              -var 'client_id=${AZURE_CLIENT_ID}' \
-//              -var 'client_secret=${AZURE_CLIENT_SECRET}' \
-//              -var 'tenant_id=${AZURE_TENANT_ID}' \
-//              -var 'subscription_id=${AZURE_SUBSCRIPTION_ID}'
-//            
-//          """
-//        }
-//        
-//      }
-//    }
-//
-//    stage('Terraform apply'){
-//      steps {
-//        // Apply the plan
-//        withCredentials([azureServicePrincipal(INNO_AZURE_CREDENTIALS)]) {
-//          sh  """
-//           cd ${workspace}/${TERRAFORM_PATH}
-//           terraform apply -input=false -auto-approve "tfplan"
-//          """
-//        }
-//      }
-//    }
+    stage('Terraform init'){
+      steps {
+        // Initialize the plan
+        sh  """
+         cd ${workspace}/${TERRAFORM_PATH}
+         terraform init -input=false
+        """
+      }
+    }
+
+    stage('Terraform plan'){
+      steps {
+
+        // Get the VM image ID for the VMSS
+        withCredentials([azureServicePrincipal(INNO_AZURE_CREDENTIALS)]) {
+          sh """
+            az login --service-principal -u $AZURE_CLIENT_ID -p $AZURE_CLIENT_SECRET -t $AZURE_TENANT_ID
+            az account set --subscription $AZURE_SUBSCRIPTION_ID
+           
+            export ARM_CLIENT_ID="${AZURE_CLIENT_ID}"
+            export ARM_CLIENT_SECRET="${AZURE_CLIENT_SECRET}"
+            export ARM_SUBSCRIPTION_ID="${AZURE_SUBSCRIPTION_ID}"
+            export ARM_TENANT_ID="${AZURE_TENANT_ID}"
+            
+            cd ${workspace}/${TERRAFORM_PATH}
+            terraform plan -out=tfplan -input=false \
+              -var 'app_resource_group_name=${RESOURCE_GROUP}' \
+              -var 'location=${LOCATION}' \
+              -var 'prefix=${PREFIX}' \
+              -var "pool_name=${newBackend()}" \
+              -var 'vm_instances=2' \
+              -var "public_key=\$(cat ${publicKey})" \
+              -var 'client_id=${AZURE_CLIENT_ID}' \
+              -var 'client_secret=${AZURE_CLIENT_SECRET}' \
+              -var 'tenant_id=${AZURE_TENANT_ID}' \
+              -var 'subscription_id=${AZURE_SUBSCRIPTION_ID}'
+            
+          """
+        }
+        
+      }
+    }
+
+    stage('Terraform apply'){
+      steps {
+        // Apply the plan
+        withCredentials([azureServicePrincipal(INNO_AZURE_CREDENTIALS)]) {
+          sh  """
+           cd ${workspace}/${TERRAFORM_PATH}
+           terraform apply -input=false -auto-approve "tfplan"
+          """
+        }
+      }
+    }
 
     stage('APP Image Pull') {
       steps {
@@ -121,8 +121,6 @@ pipeline {
 	      rm -f ~/.ssh/known_hosts
 	      chmod 600 ${identity}
 	    """
-            sleep 3
-            input("Switch Prod Proceed or Abort?")
             // sh "scp -i '${identity}' -o 'StrictHostKeyChecking=no' ${IMAGE_NAME}-${params.TAG_VERSION}.jar azureuser@${deployIp}:~/"
             for (privateIp in privateIps) {
               sh """
@@ -166,7 +164,7 @@ pipeline {
 	  # Old VM
 	  az vm delete --yes --ids \$(az vm list -g $RESOURCE_GROUP --query "[?contains(name, '${currentBackend}')].id" -o tsv)
 	  az disk delete --yes --ids \$(az disk list -g $RESOURCE_GROUP --query "[?contains(name, '${currentBackend}')].id" -o tsv)
-	  az network nic delete --ids \$(az network nic list -g $RESOURCE_GROUP  --query "[?contains(name, '${currentBackend}')].id" -o tsv)'
+	  az network nic delete --ids \$(az network nic list -g $RESOURCE_GROUP  --query "[?contains(name, '${currentBackend}')].id" -o tsv)
 	  
 	  # Jump VM
 	  az vm delete --yes --ids \$(az vm list -g $RESOURCE_GROUP --query "[?contains(name, 'jumpbox')].id" -o tsv)
