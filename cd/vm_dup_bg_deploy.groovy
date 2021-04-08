@@ -92,86 +92,89 @@ pipeline {
 //      }
 //    }
 
-    stage('APP Image Pull') {
-      steps {
-        script {
-          withCredentials([usernamePassword(credentialsId: NEXUS_CREDENTIALS_ID, usernameVariable: 'USERNAME', passwordVariable: 'PASSWORD')]) {
-            sh """
-              curl -o ${IMAGE_NAME}-${params.TAG_VERSION}.jar -L -u '${USERNAME}:${PASSWORD}' \\
-                -X GET '${REPOSITORY_API}/search/assets/download?repository=${IMAGE_REPOSITORY}&group=${IMAGE_GROUP}&name=${IMAGE_NAME}&version=${params.TAG_VERSION}&maven.extension=jar'
-              
-              ls -al
-            """
-          }
-        }
-      }
-    }
-
-    stage('APP Deploy') {
-      steps {
-        script {
-          deployIp = sh(returnStdout: true, script: "az network public-ip show -g ${RESOURCE_GROUP} --name vm-dev-pip --query ipAddress --output tsv").trim()
-          privateIps = sh(returnStdout: true, script: "az network nic list -g ${RESOURCE_GROUP}  --query \"[?contains(name, '${newBackend()}')].ipConfigurations[].privateIpAddress\" -o tsv").split("\n")
-
-          print "deployIp : ${deployIp}"
-          print "privateIps : ${privateIps}"
-		
-          withCredentials([sshUserPrivateKey(credentialsId: VM_PRIBATE_KEY, keyFileVariable: 'identity', usernameVariable: 'userName')]) {
-            sh """
-	      rm -f ~/.ssh/known_hosts
-	      chmod 600 ${identity}
-	    """
-            sleep 3
-            input("Switch Prod Proceed or Abort?")
-            // sh "scp -i '${identity}' -o 'StrictHostKeyChecking=no' ${IMAGE_NAME}-${params.TAG_VERSION}.jar azureuser@${deployIp}:~/"
-            for (privateIp in privateIps) {
-              sh """
-                # app push
-                scp -i '${identity}' -r -o StrictHostKeyChecking=no -o ProxyCommand="ssh -i '${identity}' -o StrictHostKeyChecking=no -W %h:%p azureuser@${deployIp}" \\
-		  ${IMAGE_NAME}-${params.TAG_VERSION}.jar azureuser@${privateIp}:~/
-                # app run
-                ssh -i '${identity}' -o StrictHostKeyChecking=no -o ProxyCommand="ssh -i '${identity}' -o StrictHostKeyChecking=no azureuser@${deployIp} nc ${privateIp} 22" \\
-		  azureuser@${privateIp} "java -jar ${IMAGE_NAME}-${params.TAG_VERSION}.jar &>/dev/null &"
-              """
-          // echo ${ip}"
-            }
-          }
-	}
-      }
-    }
-
-    stage('Test VMSS') {
-      steps {
-        script {
-          ip = sh(returnStdout: true, script: "az network public-ip show --resource-group $RESOURCE_GROUP --name $IP_NAME --query ipAddress --output tsv").trim()
-          print "Visit http://$ip:$TEST_PORT"
-        }
-      }
-    }
-
-    stage('Switch') {
-      steps {
-        input("Switch Prod Proceed or Abort?")
-				  
-        sh """
-	  az network lb rule delete --resource-group $RESOURCE_GROUP --lb-name $LB_NAME --name $TEST_VMSS_NAME
-          az network lb rule update --resource-group $RESOURCE_GROUP --lb-name $LB_NAME --name $PROD_VMSS_NAME --backend-pool-name ${newBackend()}-bepool
-        """
-      }
-    }
+//    stage('APP Image Pull') {
+//      steps {
+//        script {
+//          withCredentials([usernamePassword(credentialsId: NEXUS_CREDENTIALS_ID, usernameVariable: 'USERNAME', passwordVariable: 'PASSWORD')]) {
+//            sh """
+//              curl -o ${IMAGE_NAME}-${params.TAG_VERSION}.jar -L -u '${USERNAME}:${PASSWORD}' \\
+//                -X GET '${REPOSITORY_API}/search/assets/download?repository=${IMAGE_REPOSITORY}&group=${IMAGE_GROUP}&name=${IMAGE_NAME}&version=${params.TAG_VERSION}&maven.extension=jar'
+//              
+//              ls -al
+//            """
+//          }
+//        }
+//      }
+//    }
+//
+//    stage('APP Deploy') {
+//      steps {
+//        script {
+//          deployIp = sh(returnStdout: true, script: "az network public-ip show -g ${RESOURCE_GROUP} --name vm-dev-pip --query ipAddress --output tsv").trim()
+//          privateIps = sh(returnStdout: true, script: "az network nic list -g ${RESOURCE_GROUP}  --query \"[?contains(name, '${newBackend()}')].ipConfigurations[].privateIpAddress\" -o tsv").split("\n")
+//
+//          print "deployIp : ${deployIp}"
+//          print "privateIps : ${privateIps}"
+//		
+//          withCredentials([sshUserPrivateKey(credentialsId: VM_PRIBATE_KEY, keyFileVariable: 'identity', usernameVariable: 'userName')]) {
+//            sh """
+//	      rm -f ~/.ssh/known_hosts
+//	      chmod 600 ${identity}
+//	    """
+//            sleep 3
+//            input("Switch Prod Proceed or Abort?")
+//            // sh "scp -i '${identity}' -o 'StrictHostKeyChecking=no' ${IMAGE_NAME}-${params.TAG_VERSION}.jar azureuser@${deployIp}:~/"
+//            for (privateIp in privateIps) {
+//              sh """
+//                # app push
+//                scp -i '${identity}' -r -o StrictHostKeyChecking=no -o ProxyCommand="ssh -i '${identity}' -o StrictHostKeyChecking=no -W %h:%p azureuser@${deployIp}" \\
+//		  ${IMAGE_NAME}-${params.TAG_VERSION}.jar azureuser@${privateIp}:~/
+//                # app run
+//                ssh -i '${identity}' -o StrictHostKeyChecking=no -o ProxyCommand="ssh -i '${identity}' -o StrictHostKeyChecking=no azureuser@${deployIp} nc ${privateIp} 22" \\
+//		  azureuser@${privateIp} "java -jar ${IMAGE_NAME}-${params.TAG_VERSION}.jar &>/dev/null &"
+//              """
+//          // echo ${ip}"
+//            }
+//          }
+//	}
+//      }
+//    }
+//
+//    stage('Test VMSS') {
+//      steps {
+//        script {
+//          ip = sh(returnStdout: true, script: "az network public-ip show --resource-group $RESOURCE_GROUP --name $IP_NAME --query ipAddress --output tsv").trim()
+//          print "Visit http://$ip:$TEST_PORT"
+//        }
+//      }
+//    }
+//
+//    stage('Switch') {
+//      steps {
+//        input("Switch Prod Proceed or Abort?")
+//				  
+//        sh """
+//	  az network lb rule delete --resource-group $RESOURCE_GROUP --lb-name $LB_NAME --name $TEST_VMSS_NAME
+//          az network lb rule update --resource-group $RESOURCE_GROUP --lb-name $LB_NAME --name $PROD_VMSS_NAME --backend-pool-name ${newBackend()}-bepool
+//        """
+//      }
+//    }
 
     stage('Delete Old VM') {
       steps {
         sh """
 	  # Old VM
-	  az vm delete --ids \$(az vm list -g $RESOURCE_GROUP --query "[?contains(name, '${currentBackend}')].id" -o tsv)
-	  az disk delete --ids \$(az disk list -g $RESOURCE_GROUP --query "[?contains(name, '${currentBackend}')].id" -o tsv)
-	  az network nic delete --ids \$(az network nic list -g $RESOURCE_GROUP  --query "[?contains(name, '${currentBackend}')].id" -o tsv)'
+	  # az vm delete --yes --ids \$(az vm list -g $RESOURCE_GROUP --query "[?contains(name, '${currentBackend}')].id" -o tsv)
+	  # az disk delete --yes --ids \$(az disk list -g $RESOURCE_GROUP --query "[?contains(name, '${currentBackend}')].id" -o tsv)
+	  # az network nic delete --yes --ids \$(az network nic list -g $RESOURCE_GROUP  --query "[?contains(name, '${currentBackend}')].id" -o tsv)'
+	  az vm delete --yes --ids \$(az vm list -g $RESOURCE_GROUP --query "[?contains(name, 'blue')].id" -o tsv)
+	  az disk delete --yes --ids \$(az disk list -g $RESOURCE_GROUP --query "[?contains(name, 'blue')].id" -o tsv)
+	  az network nic delete --yes --ids \$(az network nic list -g $RESOURCE_GROUP  --query "[?contains(name, 'blue')].id" -o tsv)'
 	  
 	  # Jump VM
-	  az vm delete --ids \$(az vm list -g $RESOURCE_GROUP --query "[?contains(name, 'dev')].id" -o tsv)
-	  az disk delete --ids \$(az disk list -g $RESOURCE_GROUP --query "[?contains(name, 'dev')].id" -o tsv)
-	  az network nic delete --ids \$(az network nic list -g $RESOURCE_GROUP  --query "[?contains(name, 'dev')].id" -o tsv)'
+	  az vm delete --yes --ids \$(az vm list -g $RESOURCE_GROUP --query "[?contains(name, 'dev')].id" -o tsv)
+	  az disk delete --yes --ids \$(az disk list -g $RESOURCE_GROUP --query "[?contains(name, 'dev')].id" -o tsv)
+	  az network nic delete --yes --ids \$(az network nic list -g $RESOURCE_GROUP  --query "[?contains(name, 'dev')].id" -o tsv)'
 	  
         """
       }
