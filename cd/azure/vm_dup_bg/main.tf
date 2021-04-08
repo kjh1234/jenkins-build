@@ -17,6 +17,13 @@ data "azurerm_network_security_group" "main" {
   resource_group_name = "${var.app_resource_group_name}"
 }
 
+# Create public IPs
+data "azurerm_public_ip" "jumpbox" {
+  name                 = "${var.prefix}-jumpbox-pip"
+  location             = "${var.location}"
+  resource_group_name  = "${var.app_resource_group_name}"
+}
+
 data "azurerm_lb" "main" {
   name                = "${var.prefix}-lb"
   resource_group_name = "${var.app_resource_group_name}"
@@ -72,4 +79,5 @@ module "jumpbox_vm" {
 
   nsg_id                   = "${data.azurerm_network_security_group.main.id}"
   subnet_id                = "${data.azurerm_subnet.main.id}"
+  pip_id                = "${data.azurerm_public_ip.jumpbox.id}"
 }
