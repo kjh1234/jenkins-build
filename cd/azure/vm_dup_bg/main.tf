@@ -70,6 +70,6 @@ module "jumpbox_vm" {
   admin_id                 = "${var.admin_id}"
   public_key               = "${var.public_key}"
 
-  nsg_id                   = "${data.azurerm_network_security_group.id.id}"
+  nsg_id                   = "${data.azurerm_network_security_group.main.id}"
   subnet_id                = "${data.azurerm_subnet.main.id}"
 }
