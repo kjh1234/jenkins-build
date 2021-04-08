@@ -20,7 +20,6 @@ data "azurerm_network_security_group" "main" {
 # Create public IPs
 data "azurerm_public_ip" "jumpbox" {
   name                 = "${var.prefix}-jumpbox-pip"
-  location             = "${var.location}"
   resource_group_name  = "${var.app_resource_group_name}"
 }
 
