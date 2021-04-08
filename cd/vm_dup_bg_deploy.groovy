@@ -131,7 +131,7 @@ pipeline {
 		  ${IMAGE_NAME}-${params.TAG_VERSION}.jar azureuser@${privateIp}:~/
                 # app run
                 ssh -i '${identity}' -o StrictHostKeyChecking=no -o ProxyCommand="ssh -i '${identity}' -o StrictHostKeyChecking=no azureuser@${deployIp} nc ${privateIp} 22" \\
-		  azureuser@${privateIp} "nohup java -jar ${IMAGE_NAME}-${params.TAG_VERSION}.jar &"
+		  azureuser@${privateIp} "java -jar ${IMAGE_NAME}-${params.TAG_VERSION}.jar &>/dev/null &"
               """
           // echo ${ip}"
             }
