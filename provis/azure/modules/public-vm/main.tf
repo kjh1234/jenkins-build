@@ -1,20 +1,3 @@
-
-
-# Create public IPs
-resource "azurerm_public_ip" "main" {
-  name                 = "${var.prefix}-${var.pool_name}-pip"
-  location             = "${var.location}"
-  resource_group_name  = "${var.app_resource_group_name}"
-  allocation_method            = "Static"
-  sku                          = "standard"
-}
-
-# Locate the existing custom/golden image
-data "azurerm_image" "main" {
-  name                = "tomcat-${var.image_version}"
-  resource_group_name = "vmss-bg-image-gr"
-}
-
 # Create network interface
 resource "azurerm_network_interface" "main" {
   name                = "${var.prefix}-${var.pool_name}-nic"
@@ -42,9 +25,6 @@ resource "azurerm_virtual_machine" "main" {
   vm_size               = "Standard_DS1_v2"
   network_interface_ids = ["${azurerm_network_interface.main.id}"]
 
-#  storage_image_reference {
-#    id = "${data.azurerm_image.main.id}"
-#  }
   storage_image_reference {
       publisher = "Canonical"
       offer     = "UbuntuServer"

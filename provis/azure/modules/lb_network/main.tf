@@ -21,6 +21,15 @@ resource "azurerm_public_ip" "main" {
   sku                          = "standard"
 }
 
+# Create public IPs
+resource "azurerm_public_ip" "jumpbox" {
+  name                 = "${var.prefix}-jumpbox-pip"
+  location             = "${var.location}"
+  resource_group_name  = "${var.app_resource_group_name}"
+  allocation_method            = "Static"
+  sku                          = "standard"
+}
+
 # Create Network Security Group and rule
 resource "azurerm_network_security_group" "main" {
   name                = "${var.prefix}-nsg"

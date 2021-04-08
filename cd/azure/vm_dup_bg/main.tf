@@ -58,3 +58,18 @@ module "lb_rule_stage" {
   lb_backend_address_pool_id = "${data.azurerm_lb_backend_address_pool.main.id}"
   lb_probe_id              = "${var.lb_probe_id}"
 }
+
+module "jumpbox_vm" {
+  source = "../modules/public-vm"
+
+  app_resource_group_name  = "${var.app_resource_group_name}"
+  location                 = "${var.location}"
+
+  prefix                   = "vm"
+  pool_name                = "jumpbox"
+  admin_id                 = "${var.admin_id}"
+  public_key               = "${var.public_key}"
+
+  nsg_id                   = "${data.azurerm_network_security_group.id.id}"
+  subnet_id                = "${data.azurerm_subnet.main.id}"
+}
