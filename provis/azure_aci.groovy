@@ -20,7 +20,8 @@ pipeline {
     stage('Terraform plan'){
       steps {
         // Get the VM image ID for the VMSS
-        withCredentials([azureServicePrincipal(INNO_AZURE_CREDENTIALS)]) {
+        withCredentials([azureServicePrincipal(INNO_AZURE_CREDENTIALS), 
+                         usernamePassword(credentialsId: DOCKER_CREDENTIALS_ID, usernameVariable: 'REGISTORY_USERNAME', passwordVariable: 'REGISTORY_PASSWORD')]) {
           sh """
             az login --service-principal -u $AZURE_CLIENT_ID -p $AZURE_CLIENT_SECRET -t $AZURE_TENANT_ID
             az account set --subscription $AZURE_SUBSCRIPTION_ID
@@ -35,6 +36,9 @@ pipeline {
               -var 'app_resource_group_name=${RESOURCE_GROUP}' \
               -var 'location=${LOCATIONS}' \
               -var 'prefix=${PREFIX}' \
+              -var 'registory_url=${DOCKER_URL}' \
+              -var 'registory_username=${REGISTORY_USERNAME}' \
+              -var 'registory_password=${REGISTORY_PASSWORD}' \
               -var 'client_id=${AZURE_CLIENT_ID}' \
               -var 'client_secret=${AZURE_CLIENT_SECRET}' \
               -var 'tenant_id=${AZURE_TENANT_ID}' \
@@ -69,6 +73,9 @@ pipeline {
   environment {
     INNO_AZURE_CREDENTIALS = 'INNO_AZURE_CREDENTIALS'
     AZURE_SUBSCRIPTION_ID = credentials('AZURE_SUBSCRIPTION_ID')
+    DOCKER_CREDENTIALS_ID = 'DOCKER_CREDENTIALS_ID'
+    DOCKER_URL = "innoregi.azurecr.io"
+    
     TERRAFORM_PATH="provis/azure/aci_bg"
     RESOURCE_GROUP="aci-tf-jenkins"
     LOCATIONS="koreacentral"
