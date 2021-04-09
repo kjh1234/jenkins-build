@@ -25,17 +25,16 @@ resource "azurerm_container_group" "main" {
     image  = "microsoft/aci-helloworld:latest"
     cpu    = "0.5"
     memory = "1.5"
-
     ports {
-      port     = 443
+      port     = 80
       protocol = "TCP"
     }
   }
 
-  container {
-    name   = "sidecar"
-    image  = "microsoft/aci-tutorial-sidecar"
-    cpu    = "0.5"
-    memory = "1.5"
-  }
+#   container {
+#     name   = "sidecar"
+#     image  = "microsoft/aci-tutorial-sidecar"
+#     cpu    = "0.5"
+#     memory = "1.5"
+#   }
 }
