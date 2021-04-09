@@ -30,7 +30,7 @@ variable "prefix" {
     default = "aci"
 }
 
-variable "image_registry_url" {
+variable "registry_url" {
     default = ""
 }
 
