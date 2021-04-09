@@ -31,7 +31,7 @@ pipeline {
       }
     }
 
-    stage('Function Build') {
+    stage('Maven Build') {
       steps {
         withCredentials(bindings: [azureServicePrincipal(INNO_AZURE_CREDENTIALS)]) {
           sh """
