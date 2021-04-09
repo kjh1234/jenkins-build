@@ -21,7 +21,7 @@ resource "azurerm_container_group" "main" {
   os_type             = "Linux"
 
   image_registry_credential {
-    server   = "${var.image_registry_url}"
+    server   = "${var.registory_url}"
     username = "${var.registory_username}"
     password = "${var.registory_password}"
   }
