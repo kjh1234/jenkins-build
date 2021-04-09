@@ -20,9 +20,15 @@ resource "azurerm_container_group" "main" {
   dns_name_label      = "aci-label"
   os_type             = "Linux"
 
+  image_registry_credential {
+    server   = "${var.image_registry_url}"
+    username = "${var.registory_username}"
+    password = "${var.registory_password}"
+  }
+
   container {
     name   = "hello-world"
-    image  = "microsoft/aci-helloworld:latest"
+    image  = "innoregi.azurecr.io/todo-app:1.0.1"
     cpu    = "0.5"
     memory = "1.5"
     ports {
