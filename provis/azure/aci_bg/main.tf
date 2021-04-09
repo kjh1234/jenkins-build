@@ -45,6 +45,7 @@ resource "azurerm_container_group" "main" {
   name                = "${var.prefix}-ctn-grp"
   location            = "${azurerm_resource_group.main.location}"
   resource_group_name = "${azurerm_resource_group.main.name}"
+  ip_address_type     = "Private"
   network_profile_id  = "${azurerm_network_profile.main.id}"
   os_type             = "Linux"
 
