@@ -29,3 +29,15 @@ variable "location" {
 variable "prefix" {
     default = "aci"
 }
+
+variable "image_registry_url" {
+    default = ""
+}
+
+variable "registory_username" {
+    default = ""
+}
+
+variable "registory_password" {
+    default = ""
+}
