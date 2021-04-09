@@ -28,11 +28,11 @@ resource "azurerm_container_group" "main" {
 
   container {
     name   = "hello-world"
-    image  = "innoregi.azurecr.io/todo-app:1.0.1"
+    image  = "innoregi.azurecr.io/todo-app:1.0.0"
     cpu    = "0.5"
     memory = "1.5"
     ports {
-      port     = 80
+      port     = 8080
       protocol = "TCP"
     }
   }
