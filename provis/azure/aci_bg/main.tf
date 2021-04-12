@@ -78,7 +78,7 @@ resource "azurerm_lb_rule" "main" {
   backend_port                   = "${var.application_port}"
   backend_address_pool_id        = "${azurerm_lb_backend_address_pool.main.id}"
   frontend_ip_configuration_name = "PublicIPAddress"
-  probe_id                       = "${azurerm_lb.main.id}"
+  probe_id                       = "${azurerm_lb_probe.main.id}"
 }
 
 resource "azurerm_network_profile" "main" {
