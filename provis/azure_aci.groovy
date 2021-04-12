@@ -77,7 +77,7 @@ pipeline {
     DOCKER_URL = "innoregi.azurecr.io"
     
     TERRAFORM_PATH="provis/azure/aci_bg"
-    RESOURCE_GROUP="aci-tf-jenkins"
+    RESOURCE_GROUP="aci-tf-jenkins-1"
     // LOCATIONS="koreacentral"
     LOCATIONS="eastus"
     PREFIX="aci"
