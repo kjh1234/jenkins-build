@@ -78,7 +78,8 @@ pipeline {
     
     TERRAFORM_PATH="provis/azure/aci_bg"
     RESOURCE_GROUP="aci-tf-jenkins"
-    LOCATIONS="koreacentral"
+    // LOCATIONS="koreacentral"
+    LOCATIONS="useast"
     PREFIX="aci"
 
   }
