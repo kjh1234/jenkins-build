@@ -78,7 +78,7 @@ resource "azurerm_lb_rule" "main" {
   backend_port                   = "${var.application_port}"
   backend_address_pool_id        = "${azurerm_lb_backend_address_pool.main.id}"
   frontend_ip_configuration_name = "PublicIPAddress"
-  probe_id                       = "${var.lb_probe_id}"
+  probe_id                       = "${azurerm_lb.main.id}"
 }
 
 resource "azurerm_network_profile" "main" {
@@ -94,12 +94,6 @@ resource "azurerm_network_profile" "main" {
       subnet_id = "${azurerm_subnet.main.id}"
     }
   }
-}
-
-resource "azurerm_network_interface_backend_address_pool_association" "example" {
-  network_interface_id    = "${azurerm_network_profile.main.container_network_interface.id}"
-  ip_configuration_name   = "${var.prefix}-blue-nic-config"
-  backend_address_pool_id = "${azurerm_lb_backend_address_pool.main.id}"
 }
 
 resource "azurerm_container_group" "main" {
@@ -133,4 +127,11 @@ resource "azurerm_container_group" "main" {
 #     cpu    = "0.5"
 #     memory = "1.5"
 #   }
+}
+
+resource "azurerm_lb_backend_address_pool_address" "example" {
+  name                    = "blue-bepool-addr"
+  backend_address_pool_id = "${azurerm_lb_backend_address_pool.main.id}"
+  virtual_network_id      = "${azurerm_virtual_network.example.id}"
+  ip_address              = "${azurerm_container_group.main.ip_address}"
 }
