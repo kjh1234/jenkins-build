@@ -41,3 +41,12 @@ variable "registory_username" {
 variable "registory_password" {
     default = ""
 }
+
+variable "application_port" {
+    default = "8080"
+}
+
+variable "frontend_port" {
+    default = "80"
+}
+
