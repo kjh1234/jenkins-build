@@ -132,6 +132,6 @@ resource "azurerm_container_group" "main" {
 resource "azurerm_lb_backend_address_pool_address" "example" {
   name                    = "blue-bepool-addr"
   backend_address_pool_id = "${azurerm_lb_backend_address_pool.main.id}"
-  virtual_network_id      = "${azurerm_virtual_network.example.id}"
+  virtual_network_id      = "${azurerm_virtual_network.main.id}"
   ip_address              = "${azurerm_container_group.main.ip_address}"
 }
