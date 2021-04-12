@@ -38,16 +38,16 @@ resource "azurerm_subnet" "main" {
 # Create public IPs
 resource "azurerm_public_ip" "main" {
   name                 = "${var.prefix}-pip"
-  location             = "${var.location}"
-  resource_group_name  = "${var.app_resource_group_name}"
+  resource_group_name = "${azurerm_resource_group.main.name}"
+  location            = "${azurerm_resource_group.main.location}"
   allocation_method            = "Static"
   sku                          = "standard"
 }
 
 resource "azurerm_lb" "main" {
   name                = "${var.prefix}-lb"
-  location            = "${var.location}"
-  resource_group_name = "${var.app_resource_group_name}"
+  resource_group_name = "${azurerm_resource_group.main.name}"
+  location            = "${azurerm_resource_group.main.location}"
   sku                 = "standard"
 
   frontend_ip_configuration {
@@ -57,20 +57,20 @@ resource "azurerm_lb" "main" {
 }
 
 resource "azurerm_lb_backend_address_pool" "main" {
-  resource_group_name = "${var.app_resource_group_name}"
+  resource_group_name = "${azurerm_resource_group.main.name}"
   loadbalancer_id     = "${azurerm_lb.main.id}"
   name                = "blue-bepool"
 }
 
 resource "azurerm_lb_probe" "main" {
-  resource_group_name = "${var.app_resource_group_name}"
+  resource_group_name = "${azurerm_resource_group.main.name}"
   loadbalancer_id     = "${azurerm_lb.main.id}"
   name                = "prod-probe"
   port                = "${var.application_port}"
 }
 
 resource "azurerm_lb_rule" "main" {
-  resource_group_name            = "${var.app_resource_group_name}"
+  resource_group_name            = "${azurerm_resource_group.main.name}"
   loadbalancer_id                = "${azurerm_lb.main.id}"
   name                           = "prod-rule"
   protocol                       = "Tcp"
