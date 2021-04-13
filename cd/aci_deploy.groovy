@@ -1,3 +1,7 @@
+def currentBackend
+def newBackend = { ->
+  currentBackend == 'blue' ? 'green' : 'blue'
+}
 pipeline {
   agent any
   stages {
