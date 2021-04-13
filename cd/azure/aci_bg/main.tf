@@ -37,12 +37,6 @@ resource "azurerm_public_ip" "main" {
   sku                          = "standard"
 }
 
-resource "azurerm_lb_backend_address_pool" "main" {
-  resource_group_name = "${azurerm_resource_group.main.name}"
-  loadbalancer_id     = "${azurerm_lb.main.id}"
-  name                = "blue-bepool"
-}
-
 
 resource "azurerm_lb_backend_address_pool" "main" {
   resource_group_name = "${data.azurerm_resource_group.main.name}"
