@@ -30,8 +30,8 @@ data "azurerm_lb" "main" {
 # Create public IPs
 resource "azurerm_public_ip" "main" {
   name                 = "${var.prefix}-pip"
-  resource_group_name = "${azurerm_resource_group.main.name}"
-  location            = "${azurerm_resource_group.main.location}"
+  resource_group_name = "${data.azurerm_resource_group.main.name}"
+  location            = "${data.azurerm_resource_group.main.location}"
   allocation_method            = "Static"
   sku                          = "standard"
 }
