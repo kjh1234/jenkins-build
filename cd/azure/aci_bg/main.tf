@@ -94,7 +94,7 @@ resource "azurerm_container_group" "main" {
 
 }
 
-resource "azurerm_lb_backend_address_pool_address" "green" {
+resource "azurerm_lb_backend_address_pool_address" "main" {
   name                    = "${var.pool_name}-bepool-addr"
   backend_address_pool_id = "${azurerm_lb_backend_address_pool.main.id}"
   virtual_network_id      = "${data.azurerm_virtual_network.main.id}"
