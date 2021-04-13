@@ -98,6 +98,9 @@ pipeline {
     AZURE_SUBSCRIPTION_ID = credentials('AZURE_SUBSCRIPTION_ID')
     DOCKER_CREDENTIALS_ID = 'DOCKER_CREDENTIALS_ID'
     DOCKER_URL = "innoregi.azurecr.io"
+    
+    LB_NAME="aci-lb"
+    PROD_VMSS_NAME="prod-rule"
 
     TERRAFORM_PATH="cd/azure/aci_bg"
     RESOURCE_GROUP="aci-tf-jenkins"
