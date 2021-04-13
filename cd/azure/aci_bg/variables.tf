@@ -30,6 +30,10 @@ variable "prefix" {
     default = "aci"
 }
 
+variable "pool_name" {
+    default = "green"
+}
+
 variable "registory_url" {
     default = ""
 }
