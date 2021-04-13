@@ -122,6 +122,7 @@ pipeline {
 	  az network lb probe delete -g $RESOURCE_GROUP --lb-name $LB_NAME -n stage-probe
 	  az network lb address-pool delete -g $RESOURCE_GROUP --lb-name $LB_NAME -n ${currentBackend}-bepool
 	  
+	  # 컨테이너가 완전 삭제 되지 않을시 프로필 삭제 오류 
 	  sleep 30
 	  az network profile delete --yes --ids \$(az network profile list --resource-group $RESOURCE_GROUP --query  "[?contains(name, '${currentBackend}')].id" -o tsv)
 	  
