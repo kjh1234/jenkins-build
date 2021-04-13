@@ -89,22 +89,39 @@ pipeline {
 //      }
 //    }
 
-    stage('Test ACI') {
-      steps {
-        script {
-          ip = sh(returnStdout: true, script: "az network public-ip show --resource-group $RESOURCE_GROUP --name $IP_NAME --query ipAddress --output tsv").trim()
-          print "Visit http://$ip:$TEST_PORT"
-        }
-      }
-    }
+//    stage('Test ACI') {
+//      steps {
+//        script {
+//          ip = sh(returnStdout: true, script: "az network public-ip show --resource-group $RESOURCE_GROUP --name $IP_NAME --query ipAddress --output tsv").trim()
+//          print "Visit http://$ip:$TEST_PORT"
+//        }
+//      }
+//    }
+//
+//    stage('Switch') {
+//      steps {
+//        input("Switch Prod Proceed or Abort?")
+//				  
+//        sh """
+//	        az network lb rule delete --resource-group $RESOURCE_GROUP --lb-name $LB_NAME --name $TEST_VMSS_NAME
+//          az network lb rule update --resource-group $RESOURCE_GROUP --lb-name $LB_NAME --name $PROD_VMSS_NAME --backend-pool-name ${newBackend()}-bepool
+//        """
+//      }
+//    }
 
-    stage('Switch') {
+    stage('Delete Old VM') {
       steps {
-        input("Switch Prod Proceed or Abort?")
-				  
         sh """
-	        az network lb rule delete --resource-group $RESOURCE_GROUP --lb-name $LB_NAME --name $TEST_VMSS_NAME
-          az network lb rule update --resource-group $RESOURCE_GROUP --lb-name $LB_NAME --name $PROD_VMSS_NAME --backend-pool-name ${newBackend()}-bepool
+	  # Old VM
+	  # az vm delete --yes --ids \$(az vm list -g $RESOURCE_GROUP --query "[?contains(name, '${currentBackend}')].id" -o tsv)
+	  # az disk delete --yes --ids \$(az disk list -g $RESOURCE_GROUP --query "[?contains(name, '${currentBackend}')].id" -o tsv)
+	  # az network nic delete --ids \$(az network nic list -g $RESOURCE_GROUP  --query "[?contains(name, '${currentBackend}')].id" -o tsv)
+	  
+	  az container delete --ids $(az container list -g aci-tf-jenkins --query "[?contains(name, 'blue')].id" -o tsv)
+	  az network profile delete -ids $(az network profile list --resource-group aci-tf-jenkins --query  "[?contains(name, 'blue')].id" -o tsv)
+	  az network lb probe delete -g aci-tf-jenkins --lb-name aci-lb -n stage-probe
+	  az network lb address-pool delete -g aci-tf-jenkins --lb-name aci-lb -n blue-bepool
+	  
         """
       }
     }
