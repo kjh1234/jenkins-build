@@ -83,7 +83,7 @@ resource "azurerm_container_group" "main" {
 
   container {
     name   = "todo-app"
-    image  = "innoregi.azurecr.io/todo-app:${tag_version}"
+    image  = "innoregi.azurecr.io/todo-app:${var.tag_version}"
     cpu    = "0.5"
     memory = "1.5"
     ports {
