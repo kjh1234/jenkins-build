@@ -117,8 +117,8 @@ pipeline {
 	  # az disk delete --yes --ids \$(az disk list -g $RESOURCE_GROUP --query "[?contains(name, '${currentBackend}')].id" -o tsv)
 	  # az network nic delete --ids \$(az network nic list -g $RESOURCE_GROUP  --query "[?contains(name, '${currentBackend}')].id" -o tsv)
 	  
-	  az container delete --ids $(az container list -g aci-tf-jenkins --query "[?contains(name, 'blue')].id" -o tsv)
-	  az network profile delete -ids $(az network profile list --resource-group aci-tf-jenkins --query  "[?contains(name, 'blue')].id" -o tsv)
+	  az container delete --ids \$(az container list -g aci-tf-jenkins --query "[?contains(name, 'blue')].id" -o tsv)
+	  az network profile delete -ids \$(az network profile list --resource-group aci-tf-jenkins --query  "[?contains(name, 'blue')].id" -o tsv)
 	  az network lb probe delete -g aci-tf-jenkins --lb-name aci-lb -n stage-probe
 	  az network lb address-pool delete -g aci-tf-jenkins --lb-name aci-lb -n blue-bepool
 	  
