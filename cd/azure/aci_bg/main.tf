@@ -30,7 +30,7 @@ data "azurerm_lb" "main" {
 resource "azurerm_lb_backend_address_pool" "main" {
   resource_group_name = "${data.azurerm_resource_group.main.name}"
   loadbalancer_id     = "${data.azurerm_lb.main.id}"
-  name                = "${pool_name}-bepool"
+  name                = "${var.pool_name}-bepool"
 }
 
 resource "azurerm_lb_probe" "main" {
@@ -53,22 +53,22 @@ resource "azurerm_lb_rule" "main" {
 }
 
 resource "azurerm_network_profile" "main" {
-  name                = "${var.prefix}-${pool_name}-net-profile"
+  name                = "${var.prefix}-${var.pool_name}-net-profile"
   resource_group_name = "${data.azurerm_resource_group.main.name}"
   location            = "${data.azurerm_resource_group.main.location}"
 
   container_network_interface {
-    name = "${var.prefix}-${pool_name}-nic"
+    name = "${var.prefix}-${var.pool_name}-nic"
 
     ip_configuration {
-      name      = "${var.prefix}-${pool_name}-nic-config"
+      name      = "${var.prefix}-${var.pool_name}-nic-config"
       subnet_id = "${data.azurerm_subnet.main.id}"
     }
   }
 }
 
 resource "azurerm_container_group" "main" {
-  name                = "${var.prefix}-${pool_name}-ci"
+  name                = "${var.prefix}-${var.pool_name}-ci"
   location            = "${data.azurerm_resource_group.main.location}"
   resource_group_name = "${data.azurerm_resource_group.main.name}"
   ip_address_type     = "Private"
@@ -95,7 +95,7 @@ resource "azurerm_container_group" "main" {
 }
 
 resource "azurerm_lb_backend_address_pool_address" "green" {
-  name                    = "${pool_name}-bepool-addr"
+  name                    = "${var.pool_name}-bepool-addr"
   backend_address_pool_id = "${azurerm_lb_backend_address_pool.main.id}"
   virtual_network_id      = "${data.azurerm_virtual_network.main.id}"
   ip_address              = "${azurerm_container_group.main.ip_address}"
