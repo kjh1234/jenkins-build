@@ -9,7 +9,6 @@
 
 data "azurerm_resource_group" "main" {
   name     = "${var.app_resource_group_name}"
-  location = "${var.location}"
 }
 
 data "azurerm_virtual_network" "main" {
