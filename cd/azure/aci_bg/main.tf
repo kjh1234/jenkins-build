@@ -27,16 +27,6 @@ data "azurerm_lb" "main" {
   resource_group_name = "${var.app_resource_group_name}"
 }
 
-# Create public IPs
-resource "azurerm_public_ip" "main" {
-  name                 = "${var.prefix}-pip"
-  resource_group_name = "${data.azurerm_resource_group.main.name}"
-  location            = "${data.azurerm_resource_group.main.location}"
-  allocation_method            = "Static"
-  sku                          = "standard"
-}
-
-
 resource "azurerm_lb_backend_address_pool" "main" {
   resource_group_name = "${data.azurerm_resource_group.main.name}"
   loadbalancer_id     = "${data.azurerm_lb.main.id}"
