@@ -14,7 +14,7 @@ pipeline {
       steps {
           sh """
             if [ ! -d "tmp_source" ];then
-              `mkdir tmp_source
+              mkdir tmp_source
             fi
           """
           checkout([
