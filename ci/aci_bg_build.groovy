@@ -1,6 +1,3 @@
-
-
-
 pipeline {
   agent any
   stages {
@@ -38,8 +35,6 @@ pipeline {
             pwd
             ls
           """
-        }
-
       }
     }
 
