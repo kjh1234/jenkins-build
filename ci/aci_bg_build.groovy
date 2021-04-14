@@ -13,7 +13,9 @@ pipeline {
     stage('SCM') {
       steps {
           sh """
-            mkdir tmp_source
+            if [ ! -d "tmp_source" ];then
+              `mkdir tmp_source
+            fi
           """
           checkout([
               $class: 'GitSCM',
