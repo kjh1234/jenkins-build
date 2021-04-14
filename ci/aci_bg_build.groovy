@@ -16,6 +16,7 @@ pipeline {
             if [ ! -d "tmp_source" ];then
               mkdir tmp_source
             fi
+            cd tmp_source
           """
           checkout([
               $class: 'GitSCM',
