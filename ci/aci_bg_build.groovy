@@ -12,12 +12,6 @@ pipeline {
 
     stage('SCM') {
       steps {
-          sh """
-            if [ ! -d "tmp_source" ];then
-              mkdir tmp_source
-            fi
-            cd tmp_source
-          """
           checkout([
               $class: 'GitSCM',
               branches: [[name: "refs/tags/${TAG_VERSION}"]],
@@ -36,15 +30,14 @@ pipeline {
               submoduleCfg: [],
               userRemoteConfigs: [[credentialsId: GIT_CREDENTIALS_ID, url: "https://github.com/kjh1234/todo-app-java-on-azure.git"]]
           ])
-          sh """
-            pwd
-            ls
-          """
       }
     }
 
     stage('BUILD') {
       steps {
+        sh """
+          cd ${workspace}/tmp_source
+        """
         sh """
           pwd
           sh ./mvnw clean package -Dmaven.test.skip=true
