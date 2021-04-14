@@ -40,32 +40,26 @@ pipeline {
       }
     }
 
-//    stage('BUILD') {
-//      steps {
-//        sh """
-//            sh ./mvnw clean package -Dmaven.test.skip=true
-//        """
-//      }
-//    }
-//
-//    stage('Create/Push Docker Image') {
-//      steps {
-//        withDockerRegistry([credentialsId: DOCKER_CREDENTIALS_ID, url: DOCKER_REGISTRY_URL]) {
-//            sh """
-//                docker build -t "${env.IMAGE_TAG}" .
-//                docker push "${env.IMAGE_TAG}"
-//            """
-//        }
-//      }
-//    }
-//
-//    stage('Post-clean') {
-//      steps {
-//        sh '''
-//          # rm -f kubeconfig
-//        '''
-//      }
-//    }
+    stage('BUILD') {
+      steps {
+        sh """
+          pwd
+          sh ./mvnw clean package -Dmaven.test.skip=true
+        """
+      }
+    }
+
+    stage('Create/Push Docker Image') {
+      steps {
+        withDockerRegistry([credentialsId: DOCKER_CREDENTIALS_ID, url: DOCKER_REGISTRY_URL]) {
+            sh """
+              pwd
+              docker build -t "${env.IMAGE_TAG}" .
+              docker push "${env.IMAGE_TAG}"
+            """
+        }
+      }
+    }
 
   }
   environment {
