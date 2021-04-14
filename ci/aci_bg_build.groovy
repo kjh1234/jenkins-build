@@ -14,7 +14,6 @@ pipeline {
       steps {
           sh """
             mkdir tmp_source
-            cd tmp_source
           """
           checkout([
               $class: 'GitSCM',
@@ -27,6 +26,9 @@ pipeline {
                   recursiveSubmodules: false,
                   reference: '',
                   trackingSubmodules: false
+                ],[
+                  $class: 'RelativeTargetDirectory',
+                relativeTargetDir: "${workspace}/tmp_source"
               ]],
               submoduleCfg: [],
               userRemoteConfigs: [[credentialsId: GIT_CREDENTIALS_ID, url: "https://github.com/kjh1234/todo-app-java-on-azure.git"]]
