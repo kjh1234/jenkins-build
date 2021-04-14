@@ -46,7 +46,7 @@ pipeline {
 
     stage('Create/Push Docker Image') {
       steps {
-        withDockerRegistry([credentialsId: DOCKER_CREDENTIALS_ID, url: DOCKER_REGISTRY_URL]) {
+        withDockerRegistry([credentialsId: DOCKER_CREDENTIALS_ID, url: DOCKER_REGISTRY]) {
           sh """
             cd ${workspace}/tmp_source
             docker build -t "${env.IMAGE_TAG}" .
