@@ -21,13 +21,13 @@ data "aws_ami" "ubuntu" {
   owners = ["099720109477"] # Canonical
 }
 
-resource "aws_key_pair" "main" {
-  key_name = "test-key1"
-  public_key = "${var.public_key}"
-  tags = {
-    group = "${var.app_resource_group_name}"
-  }
-}
+# resource "aws_key_pair" "main" {
+#   key_name = "test-key1"
+#   public_key = "${var.public_key}"
+#   tags = {
+#     group = "${var.app_resource_group_name}"
+#   }
+# }
 
 resource "aws_subnet" "main" {
   vpc_id = "${data.aws_vpc.main.id}"
