@@ -5,9 +5,7 @@ provider "aws" {
 }
 
 data "aws_vpc" "main" {
-  tags {
-    Name = "${var.vpc}"
-  }
+  cidr_block       = "172.31.0.0/16"
 }
 
 data "aws_ami" "ubuntu" {
@@ -29,7 +27,7 @@ resource "aws_key_pair" "main" {
 }
 
 resource "aws_subnet" "main" {
-  vpc_id = "${aws_vpc.main.id}"
+  vpc_id = "${data.aws_vpc.main.id}"
   cidr_block = "${var.subnet_cidr}"
   availability_zone = "${var.location}"
   tags {
@@ -41,7 +39,7 @@ resource "aws_subnet" "main" {
 resource "aws_security_group" "main" {
   name = "${var.prefix}_nsg"
   description = "Allow all inbound traffic"
-  vpc_id = "${aws_vpc.main.id}"
+  vpc_id = "${data.aws_vpc.main.id}"
 
   ingress {
     from_port = 0
