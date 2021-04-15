@@ -31,7 +31,7 @@ variable "public_key" {
 }
 
 variable "subnet_cidr" {
-    default = "10.0.3.0/24"
+    default = "172.31.64.0/20"
 }
 
 variable "frontend_port" {
