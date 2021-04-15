@@ -3,7 +3,7 @@
     "type": "azure-arm",
 
     "client_id": "{{user `AZURE_CLIENT_ID` }}",
-    "client_secret": ,"{{user `AZURE_CLIENT_SECRET` }}",
+    "client_secret": "{{user `AZURE_CLIENT_SECRET` }}",
     "tenant_id": "{{user `AZURE_TENANT_ID` }}",
     "subscription_id": "{{user `AZURE_SUBSCRIPTION_ID` }}",
 
