@@ -29,7 +29,7 @@ resource "aws_key_pair" "main" {
 resource "aws_subnet" "main" {
   vpc_id = "${data.aws_vpc.main.id}"
   cidr_block = "${var.subnet_cidr}"
-  availability_zone = "${var.location}"
+#  availability_zone = "${var.location}"
   tags = {
     Name = "${var.prefix}_subnet"
     group = "${var.app_resource_group_name}"
