@@ -24,6 +24,9 @@ data "aws_ami" "ubuntu" {
 resource "aws_key_pair" "main" {
   key_name = "test-key1"
   public_key = "${var.public_key}"
+  tags = {
+    group = "${var.app_resource_group_name}"
+  }
 }
 
 resource "aws_subnet" "main" {
