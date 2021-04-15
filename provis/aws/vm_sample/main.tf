@@ -68,6 +68,8 @@ resource "aws_instance" "main" {
   subnet_id = "${aws_subnet.main.id}"
   vpc_security_group_ids = ["${aws_security_group.main.id}"]
   key_name = "${aws_key_pair.main.key_name}"
+  availability_zone = "ap-northeast-2a"
+  
   count = 1
   tags = {
     Name = "${var.prefix}_ec2"
