@@ -1,0 +1,76 @@
+{
+  "builders": [{
+    "type": "azure-arm",
+
+    "client_id": "3faf8347-7bd2-4f3d-9099-f60445ad4b55",
+    "client_secret": "wKn41zOVi2BtTaTguo--~p4A25-Ijr.Dz_",
+    "tenant_id": "8db7ee9a-5c88-49fb-b0f6-0a74cc4739a4",
+    "subscription_id": "e9b9730c-d46a-480e-a12e-1dbb7505bb81",
+
+    "os_type": "Linux",
+    "image_publisher": "OpenLogic",
+    "image_offer": "CentOS",
+    "image_sku": "7_9",
+
+    "azure_tags": {
+        "dept": "Engineering",
+        "task": "Image deployment"
+    },
+
+    "shared_image_gallery_destination": {
+    	"subscription": "e9b9730c-d46a-480e-a12e-1dbb7505bb81",
+    	"resource_group": "doss-shared-images",
+    	"gallery_name": "doss",
+    	"image_name": "centos79-packer-terraform",
+    	"image_version": "{{user `image_version` }}", 
+	"replication_regions": ["Korea South"]
+    },
+
+    "managed_image_resource_group_name": "doss-shared-images",
+    "managed_image_name": "centos-packer-image-test",
+
+    "location": "Korea Central",
+    "vm_size": "Standard_DS2_v2"
+  }],
+  "provisioners": [{
+    "execute_command": "chmod +x {{ .Path }}; {{ .Vars }} sudo -E sh '{{ .Path }}'",
+    "inline": [
+      "sleep 30", 
+      "sudo yum update -y",
+      "sudo yum install java-1.8.0-openjdk-devel -y",
+      "HARD_LINK_JAVA=$(readlink -f /usr/bin/javac)",
+      "HARD_LINK_JAVA=${HARD_LINK_JAVA:0:${#HARD_LINK_JAVA}-10}",
+      "echo \"export JAVA_HOME=$HARD_LINK_JAVA\" | sudo tee -a /etc/profile",
+      "echo \"path=$PATH:$HARD_LINK_JAVA/bin\" | sudo tee -a /etc/profile",
+      "echo \"export PATH\" | sudo tee -a /etc/profile",
+      "source /etc/profile", 
+      "sleep 10",
+      "sudo yum install -y epel-release",
+      "sudo yum install -y ansible",
+      "sudo yum install -y git",
+      "echo $(pwd)",
+      "echo $(whoami)", 
+      "sleep 30"
+    ],
+    "inline_shebang": "/bin/sh -x",
+    "type": "shell"
+  }, 
+  {
+    "type": "ansible-local", 
+    "playbook_file": "playbook/main.yml",
+    "role_paths": [
+	    "playbook/roles/common",
+	    "playbook/roles/httpd",
+	    "playbook/roles/tomcat"
+    ]
+  }, 
+  {
+    "execute_command": "chmod +x {{ .Path }}; {{ .Vars }} sudo -E sh '{{ .Path }}'",
+    "inline": [
+      "sleep 30",
+      "/usr/sbin/waagent -force -deprovision && export HISTSIZE=0 && sync" 
+    ],
+    "inline_shebang": "/bin/sh -x",
+    "type": "shell"
+  }]
+}

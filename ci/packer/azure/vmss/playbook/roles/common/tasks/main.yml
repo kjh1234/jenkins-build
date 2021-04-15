@@ -1,0 +1,31 @@
+- name: webwas account add 
+  become: true
+  user: 
+    name: "webwas"
+
+- name: webwas account password 
+  become: true
+  user: 
+    name: "webwas"
+    password: "{{passwd | password_hash('sha512') }}"
+
+- name: sudo user add webwas
+  become: true 
+  copy:
+   content: |
+    %webwas ALL=(ALL) NOPASSWD: ALL
+   dest: "/etc/sudoers.d/webwas"
+   owner: root
+   group: root
+   mode: 0440
+   validate: "/usr/sbin/visudo -c -f '%s'"
+
+- name: update yum packages
+  become: yes
+  yum: list=updates update_cache=true
+
+- name: set Asia/Seoul Timezone
+  become: yes
+  timezone:
+    name: Asia/Seoul
+
