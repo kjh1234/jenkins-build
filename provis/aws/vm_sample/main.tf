@@ -30,7 +30,7 @@ resource "aws_subnet" "main" {
   vpc_id = "${data.aws_vpc.main.id}"
   cidr_block = "${var.subnet_cidr}"
   availability_zone = "${var.location}"
-  tags {
+  tags = {
     Name = "${var.prefix}_subnet"
     group = "${var.app_resource_group_name}"
   }
@@ -54,7 +54,7 @@ resource "aws_security_group" "main" {
     protocol = "-1"
     cidr_blocks = ["0.0.0.0/0"]
   }
-  tags {
+  tags = {
     group = "${var.app_resource_group_name}"
   }
 }
@@ -66,7 +66,7 @@ resource "aws_instance" "main" {
   vpc_security_group_ids = ["${aws_security_group.main.id}"]
   key_name = "${aws_key_pair.main.key_name}"
   count = 1
-  tags {
+  tags = {
     Name = "${var.prefix}_ec2"
     group = "${var.app_resource_group_name}"
   }
