@@ -49,7 +49,7 @@ pipeline {
   environment {
     AWS_ACCOUNT = "AWS_P120230_ACCOUNT"
     PUBLIC_KEY="~/.ssh/inno_id_rsa2.pub"
-    RESOURCE_GROUP="test-vm"
+    RESOURCE_GROUP="test_vm"
     LOCATION="ap-northeast-2"
     TERRAFORM_PATH="provis/aws/vm_sample"
   }
