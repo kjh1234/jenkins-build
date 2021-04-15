@@ -39,12 +39,10 @@ pipeline {
     stage('Terraform apply'){
       steps {
         // Apply the plan
-        withCredentials([azureServicePrincipal(INNO_AZURE_CREDENTIALS)]) {
-          sh  """
-           cd ${workspace}/${TERRAFORM_PATH}
-           terraform apply -input=false -auto-approve "tfplan"
-          """
-        }
+        sh  """
+         cd ${workspace}/${TERRAFORM_PATH}
+         terraform apply -input=false -auto-approve "tfplan"
+        """
       }
     }
   }
