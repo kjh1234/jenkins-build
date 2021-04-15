@@ -29,7 +29,7 @@ pipeline {
               -var "public_key=\$(cat ${PUBLIC_KEY})" \
               -var 'access_key=${USERNAME}' \
               -var 'secret_key=${PASSWORD}' \
-              -var 'location=${AZURE_CLIENT_SECRET}' \
+              -var 'location=${LOCATION}' \
 
           """
         }
