@@ -4,29 +4,31 @@ pipeline {
     stage('SCM') {
       steps {
         echo ' The SCM'
-        script {
-          if (params.TAG_VERSION == '') {
-            error "TAG_VERSION is required"
-          }
-
-          echo params.TAG_VERSION
-
-          checkout([
-              $class: 'GitSCM',
-              branches: [[name: "refs/tags/${params.TAG_VERSION}"]],
-              doGenerateSubmoduleConfigurations: false,
-              extensions: [[
-                  $class: 'SubmoduleOption',
-                  disableSubmodules: false,
-                  parentCredentials: false,
-                  recursiveSubmodules: false,
-                  reference: '',
-                  trackingSubmodules: false
-              ]],
-              submoduleCfg: [],
-              userRemoteConfigs: [[credentialsId: GIT_CREDENTIALS_ID, url: "https://github.com/kjh1234/todo-app-java-on-azure.git"]]
-          ])
+        if (params.TAG_VERSION == '') {
+          error "TAG_VERSION is required"
         }
+        pwd 
+        echo params.TAG_VERSION
+          
+        /* 빌드 대상 GIT을 임시 폴더에 생성함 */
+        checkout([
+            $class: 'GitSCM',
+            branches: [[name: "refs/tags/${TAG_VERSION}"]],
+            doGenerateSubmoduleConfigurations: false,
+            extensions: [[
+                $class: 'SubmoduleOption',
+                disableSubmodules: false,
+                parentCredentials: false,
+                recursiveSubmodules: false,
+                reference: '',
+                trackingSubmodules: false
+              ],[
+                $class: 'RelativeTargetDirectory',
+              relativeTargetDir: "${workspace}/tmp_source"
+            ]],
+            submoduleCfg: [],
+            userRemoteConfigs: [[credentialsId: GIT_CREDENTIALS_ID, url: "https://github.com/kjh1234/todo-app-java-on-azure.git"]]
+        ])
 
       }
     }
@@ -35,10 +37,8 @@ pipeline {
       steps {
         withCredentials(bindings: [azureServicePrincipal(INNO_AZURE_CREDENTIALS)]) {
           sh """
-            az login --service-principal -u "\$AZURE_CLIENT_ID" -p "\$AZURE_CLIENT_SECRET" -t "\$AZURE_TENANT_ID"
-            az account set --subscription "\$AZURE_SUBSCRIPTION_ID"
-            chmod 764 ./mvnw
-            ./mvnw clean package
+          cd ${workspace}/tmp_source
+          sh ./mvnw clean package -Dmaven.test.skip=true
           """
         }
 
@@ -61,11 +61,25 @@ pipeline {
       }
     }
 
+    stage('Packer Image') {
+      steps {
+        script {
+          sh """
+          packer build -force -var 'IMAGE_VERSION=${param.IMAGE_VERSION}' \
+          -var 'AZURE_CLIENT_ID=${AZURE_CLIENT_ID}' \
+          -var 'AZURE_CLIENT_SECRET=${AZURE_CLIENT_SECRET}' \
+          -var 'AZURE_TENANT_ID=${AZURE_TENANT_ID}' \
+          -var 'AZURE_SUBSCRIPTION_ID=${AZURE_SUBSCRIPTION_ID}' azcentos79sktbase.json
+          """
+        }
+      }
+    }
+
     stage('Destroy') {
       steps {
         script {
           sh """
-          az logout
+            echo 'end of ci' 
           """
         }
 
@@ -87,6 +101,7 @@ pipeline {
   }
   parameters {
     string(name: 'TAG_VERSION', defaultValue: '', description: '')
-    string(name: 'IMAGE_VERSION', defaultValue: '1.0.0', decscription: 'azure shared image version number' )
+
+    string(name: 'IMAGE_VERSION', defaultValue: '1.0.0', description: 'azure shared image version number' )
   }
 }

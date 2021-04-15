@@ -2,10 +2,10 @@
   "builders": [{
     "type": "azure-arm",
 
-    "client_id": "3faf8347-7bd2-4f3d-9099-f60445ad4b55",
-    "client_secret": "wKn41zOVi2BtTaTguo--~p4A25-Ijr.Dz_",
-    "tenant_id": "8db7ee9a-5c88-49fb-b0f6-0a74cc4739a4",
-    "subscription_id": "e9b9730c-d46a-480e-a12e-1dbb7505bb81",
+    "client_id": "{{user `AZURE_CLIENT_ID` }}",
+    "client_secret": ,"{{user `AZURE_CLIENT_SECRET` }}",
+    "tenant_id": "{{user `AZURE_TENANT_ID` }}",
+    "subscription_id": "{{user `AZURE_SUBSCRIPTION_ID` }}",
 
     "os_type": "Linux",
     "image_publisher": "OpenLogic",
@@ -22,7 +22,7 @@
     	"resource_group": "doss-shared-images",
     	"gallery_name": "doss",
     	"image_name": "centos79-packer-terraform",
-    	"image_version": "{{user `image_version` }}", 
+    	"image_version": "{{user `IMAGE_VERSION` }}", 
 	"replication_regions": ["Korea South"]
     },
 
