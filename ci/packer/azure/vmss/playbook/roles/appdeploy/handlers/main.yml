@@ -1,0 +1,5 @@
+- name: restart tomcat
+  become: true
+  service:
+    name: tomcat
+    state: restarted
