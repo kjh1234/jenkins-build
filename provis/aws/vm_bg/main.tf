@@ -133,11 +133,21 @@ resource "aws_instance" "green" {
     group = "${var.app_resource_group_name}"
   }
 }
-
-resource "aws_elb" "main" {
-  name            = "${var.prefix}-elb"
-  subnets         = ["${aws_subnet.blue.id}"]
+resource "aws_lb" "main" {
+  name               = "${var.prefix}-alb"
+  internal           = false
+  load_balancer_type = "application"
   security_groups = ["${aws_security_group.main.id}"]
+
+  subnet_mapping {
+    subnet_id     = "${aws_subnet.blue.id}"
+    allocation_id = aws_eip.example1.id
+  }
+
+  subnet_mapping {
+    subnet_id     = "${aws_subnet.green.id}"
+    allocation_id = aws_eip.example2.id
+  }
 
   listener {
     instance_port     = 8080
@@ -162,7 +172,7 @@ resource "aws_elb" "main" {
   }
 
   tags = {
-    Name = "${var.prefix}-elb"
+    Name = "${var.prefix}-alb"
     group = "${var.app_resource_group_name}"
   }
 }
