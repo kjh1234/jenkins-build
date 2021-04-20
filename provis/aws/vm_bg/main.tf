@@ -174,7 +174,6 @@ resource "aws_lb_target_group" "prod" {
   }
 
   tags = {
-    Name = "${var.prefix}_lb_prod_target"
     group = "${var.app_resource_group_name}"
   }
 }
@@ -199,7 +198,6 @@ resource "aws_lb_target_group" "stage" {
   }
 
   tags = {
-    Name = "${var.prefix}_lb_stage_target"
     group = "${var.app_resource_group_name}"
   }
 }
