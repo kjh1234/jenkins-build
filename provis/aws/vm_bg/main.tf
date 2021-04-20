@@ -138,14 +138,15 @@ resource "aws_lb" "main" {
   internal           = false
   load_balancer_type = "application"
   security_groups = ["${aws_security_group.main.id}"]
+  subnets = ["${aws_subnet.blue.id}", "${aws_subnet.green.id}"]
 
-  subnet_mapping {
-    subnet_id     = "${aws_subnet.blue.id}"
-  }
-
-  subnet_mapping {
-    subnet_id     = "${aws_subnet.green.id}"
-  }
+//  subnet_mapping {
+//    subnet_id     = "${aws_subnet.blue.id}"
+//  }
+//
+//  subnet_mapping {
+//    subnet_id     = "${aws_subnet.green.id}"
+//  }
 
   tags = {
     Name = "${var.prefix}-alb"
