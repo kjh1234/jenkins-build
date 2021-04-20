@@ -12,6 +12,7 @@ pipeline {
         // Initialize the plan
         sh  """
          cd ${workspace}/${TERRAFORM_PATH}
+         ls
          terraform init -input=false
         """
       }
