@@ -141,12 +141,10 @@ resource "aws_lb" "main" {
 
   subnet_mapping {
     subnet_id     = "${aws_subnet.blue.id}"
-    allocation_id = aws_eip.example1.id
   }
 
   subnet_mapping {
     subnet_id     = "${aws_subnet.green.id}"
-    allocation_id = aws_eip.example2.id
   }
 
   listener {
