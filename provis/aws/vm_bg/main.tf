@@ -122,7 +122,7 @@ resource "aws_instance" "green" {
 }
 
 resource "aws_elb" "main" {
-  name            = "${var.prefix}_elb"
+  name            = "${var.prefix}-elb"
   subnets         = ["${aws_subnet.blue.id}"]
   security_groups = ["${aws_security_group.main.id}"]
 
