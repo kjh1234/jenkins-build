@@ -1,71 +1,17 @@
-- name: Add EPEL repository 
+- name: remove basic webapp dir 
   become: true
-  yum:
-          name: epel-release
-          state: present
+  shell: rm -rf /usr/share/tomcat/webapps/ROOT/*  
 
-- name: download tomcat
+- name: download application artiface
   become: true
-  get_url:
-          url: "{{ tomcat_archive_url }}"
-          dest: "{{ tomcat_archive_dest }}"
+  become_user: webwas
+  get_url :
+    url: "https://doss.sktelecom.com/nexus/repository/maven-releases/net/javaguides/springmvc/springmvc5-helloworld-example/{{ app_version }}/springmvc5-helloworld-example-{{ app_version }}.war"
+    dest: "/usr/share/tomcat/webapps/ROOT/springmvc5-helloworld-example-{{ app_version }}.war"
+    username: "{{ nexus_user }}"
+    password: "{{ nexus_pass }}"
 
-- name: create a tomcat directory 
+- name: Unzip WAR file
   become: true
-  file:
-          path: /usr/share/tomcat
-          state: directory
-          owner: webwas
-          group: webwas
-  
-- name: Extract tomcat archive
-  become: true
-  unarchive:
-    src: "{{ tomcat_archive_dest }}"
-    dest: /usr/share/tomcat
-    owner: webwas
-    group: webwas
-    remote_src: yes
-    extra_opts: "--strip-components=1"
-    creates: /usr/share/tomcat/bin  
-
-    #- name: change mode tomcat directory 755 file 644 recursive 
-    #file:
-    #      path: /usr/share/tomcat
-    #      mode: u=rwX,g=rX,o=rX
-    #      recurse: yes 
-
-- name: copy tomcat service file
-  become: true
-  template:
-    src: templates/tomcat.service.j2
-    dest: /etc/systemd/system/tomcat.service
-  when: ansible_service_mgr == "systemd"  
-
-- name: start and enable tomcat
-  become: true
-  service:
-          daemon_reload: yes
-          name: tomcat
-          state: started
-          enabled: yes
-  when: ansible_service_mgr == "systemd"          
-
-- name: Set UI access credentials
-  become: true
-  template:
-    src: tomcat-users.xml.j2
-    dest: /usr/share/tomcat/conf/tomcat-users.xml
-    #notify: restart tomcat
-
-- name: Allow access to Manager and Host Manager apps from any IP
-  become: true
-  template:
-    src: context.xml.j2 
-    dest: "{{ item }}"
-  with_items:
-    - /usr/share/tomcat/webapps/host-manager/META-INF/context.xml
-    - /usr/share/tomcat/webapps/manager/META-INF/context.xml
-      #notify: restart tomcat
-
-
+  unarchive: src=/usr/share/tomcat/webapps/ROOT/springmvc5-helloworld-example-{{ app_version }}.war dest=/usr/share/tomcat/webapps/ROOT/ copy=no mode=0755 owner=webwas group=webwas
+  notify: restart tomcat 

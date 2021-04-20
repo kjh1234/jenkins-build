@@ -3,32 +3,31 @@ pipeline {
   stages {
     stage('SCM') {
       steps {
-        echo ' The SCM'
-        if (params.TAG_VERSION == '') {
-          error "TAG_VERSION is required"
-        }
-        pwd 
-        echo params.TAG_VERSION
+        script {
+          if (params.TAG_VERSION == '') {
+            error "TAG_VERSION is required"
+          }
           
-        /* 빌드 대상 GIT을 임시 폴더에 생성함 */
-        checkout([
-            $class: 'GitSCM',
-            branches: [[name: "refs/tags/${TAG_VERSION}"]],
-            doGenerateSubmoduleConfigurations: false,
-            extensions: [[
-                $class: 'SubmoduleOption',
-                disableSubmodules: false,
-                parentCredentials: false,
-                recursiveSubmodules: false,
-                reference: '',
-                trackingSubmodules: false
-              ],[
-                $class: 'RelativeTargetDirectory',
-              relativeTargetDir: "${workspace}/tmp_source"
-            ]],
-            submoduleCfg: [],
-            userRemoteConfigs: [[credentialsId: GIT_CREDENTIALS_ID, url: "https://github.com/kjh1234/todo-app-java-on-azure.git"]]
-        ])
+          pwd
+
+          echo params.TAG_VERSION
+
+          checkout([
+              $class: 'GitSCM',
+              branches: [[name: "refs/tags/${params.TAG_VERSION}"]],
+              doGenerateSubmoduleConfigurations: false,
+              extensions: [[
+                  $class: 'SubmoduleOption',
+                  disableSubmodules: false,
+                  parentCredentials: false,
+                  recursiveSubmodules: false,
+                  reference: '',
+                  trackingSubmodules: false
+              ]],
+              submoduleCfg: [],
+              userRemoteConfigs: [[credentialsId: GIT_CREDENTIALS_ID, url: "https://github.com/ejb486/spring-mvc-tutorial.git"]]
+          ])
+        }
 
       }
     }
@@ -37,8 +36,8 @@ pipeline {
       steps {
         withCredentials(bindings: [azureServicePrincipal(INNO_AZURE_CREDENTIALS)]) {
           sh """
-          cd ${workspace}/tmp_source
-          sh ./mvnw clean package -Dmaven.test.skip=true
+            cd springmvc5-helloworld-exmaple
+            mvn clean install
           """
         }
 
@@ -52,37 +51,44 @@ pipeline {
             curl -v -u '${USERNAME}:${PASSWORD}' POST '${REPOSITORY_API}/components?repository=${IMAGE_REPOSITORY}' \
               -F maven2.groupId=${IMAGE_GROUP} \
               -F maven2.artifactId=${IMAGE_NAME} \
-              -F maven2.version=${params.TAG_VERSION} \
-              -F maven2.asset1=@${workspace}/target/${IMAGE_NAME}-${params.TAG_VERSION}.jar \
-              -F maven2.asset1.extension=jar \
+              -F maven2.version=${params.APP_VERSION} \
+              -F maven2.asset1=@${workspace}/springmvc5-helloworld-exmaple/target/${IMAGE_NAME}-${params.APP_VERSION}.war \
+              -F maven2.asset1.extension=war \
               -F maven2.generate-pom=true
           """
         }
       }
     }
-
+    
     stage('Packer Image') {
       steps {
-        script {
-          sh """
-          packer build -force -var 'IMAGE_VERSION=${param.IMAGE_VERSION}' \
+        
+         sh """
+         
+          cd ${workspace}/springmvc5-helloworld-exmaple/packer/azure/vmss
+          
+          pwd 
+          
+          packer build -force -var 'IMAGE_VERSION=${params.IMAGE_VERSION}' \
           -var 'AZURE_CLIENT_ID=${AZURE_CLIENT_ID}' \
           -var 'AZURE_CLIENT_SECRET=${AZURE_CLIENT_SECRET}' \
           -var 'AZURE_TENANT_ID=${AZURE_TENANT_ID}' \
-          -var 'AZURE_SUBSCRIPTION_ID=${AZURE_SUBSCRIPTION_ID}' azcentos79sktbase.json
-          """
-        }
+          -var 'AZURE_SUBSCRIPTION_ID=${AZURE_SUBSCRIPTION_ID}' \
+          -var 'NEXUS_USER=admin' \
+          -var 'NEXUS_PASS=admin123' \
+          -var 'APP_VERSION=${params.APP_VERSION}' \
+          azcentos79sktbase.json
+           
+          """        
       }
     }
 
+
     stage('Destroy') {
       steps {
-        script {
           sh """
-            echo 'end of ci' 
+            echo 'end of ci'
           """
-        }
-
       }
     }
 
@@ -91,17 +97,21 @@ pipeline {
     AZURE_SUBSCRIPTION_ID = credentials('AZURE_SUBSCRIPTION_ID')
     INNO_AZURE_CREDENTIALS = 'INNO_AZURE_CREDENTIALS'
     GIT_CREDENTIALS_ID = credentials('GIT_CREDENTIALS_ID')
-    NEXUS_CREDENTIALS_ID = 'NEXUS_CREDENTIALS_ID'
+    NEXUS_CREDENTIALS_ID = 'TINNO_NEXUS_CREDENTIAL'
 
 
-    REPOSITORY_API = "https://doss.sktelecom.com/nexus/service/rest/v1"
-    IMAGE_REPOSITORY = "doss-sample-java-application"
-    IMAGE_GROUP = "com.microsoft.azure.sample"
-    IMAGE_NAME = "todo-app-java-on-azure"
+    REPOSITORY_API = "http://20.194.45.183/service/rest/v1"
+    IMAGE_REPOSITORY = "maven-releases"
+    IMAGE_GROUP = "net.javaguides.springmvc"
+    IMAGE_NAME = "springmvc5-helloworld-example"
+    
   }
   parameters {
     string(name: 'TAG_VERSION', defaultValue: '', description: '')
 
     string(name: 'IMAGE_VERSION', defaultValue: '1.0.0', description: 'azure shared image version number' )
+
+    string(name: 'APP_VERSION', defaultValue: '1.0.0', description: 'application version number' )
   }
 }
+

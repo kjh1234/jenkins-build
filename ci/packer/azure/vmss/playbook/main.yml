@@ -5,3 +5,4 @@
           - common
           - httpd
           - tomcat
+          - appdeploy

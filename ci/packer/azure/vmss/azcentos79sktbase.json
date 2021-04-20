@@ -18,7 +18,7 @@
     },
 
     "shared_image_gallery_destination": {
-    	"subscription": "e9b9730c-d46a-480e-a12e-1dbb7505bb81",
+    	"subscription": "{{user `AZURE_SUBSCRIPTION_ID` }}",
     	"resource_group": "doss-shared-images",
     	"gallery_name": "doss",
     	"image_name": "centos79-packer-terraform",
@@ -61,7 +61,12 @@
     "role_paths": [
 	    "playbook/roles/common",
 	    "playbook/roles/httpd",
-	    "playbook/roles/tomcat"
+	    "playbook/roles/tomcat",
+	    "playbook/roles/appdeploy"
+    ], 
+    "extra_arguments": [
+        "--extra-vars",
+        "\"nexus_user={{ user `NEXUS_USER`}} nexus_pass={{ user `NEXUS_PASS`}} app_version={{ user `APP_VERSION`}}\""
     ]
   }, 
   {
