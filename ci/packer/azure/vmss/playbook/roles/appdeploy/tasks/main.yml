@@ -6,7 +6,7 @@
   become: true
   become_user: webwas
   get_url :
-    url: "https://doss.sktelecom.com/nexus/repository/maven-releases/net/javaguides/springmvc/springmvc5-helloworld-example/{{ app_version }}/springmvc5-helloworld-example-{{ app_version }}.war"
+    url: "http://20.194.45.183/repository/maven-releases/net/javaguides/springmvc/springmvc5-helloworld-example/{{ app_version }}/springmvc5-helloworld-example-{{ app_version }}.war"
     dest: "/usr/share/tomcat/webapps/ROOT/springmvc5-helloworld-example-{{ app_version }}.war"
     username: "{{ nexus_user }}"
     password: "{{ nexus_pass }}"
