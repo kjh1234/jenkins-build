@@ -62,7 +62,7 @@ pipeline {
     
     stage('Packer Image') {
       steps {
-        
+       withCredentials(bindings: [azureServicePrincipal(INNO_AZURE_CREDENTIALS)]) { 
          sh """
          
           cd ${workspace}/springmvc5-helloworld-exmaple/packer/azure/vmss
@@ -80,6 +80,7 @@ pipeline {
           azcentos79sktbase.json
            
           """        
+        }
       }
     }
 
