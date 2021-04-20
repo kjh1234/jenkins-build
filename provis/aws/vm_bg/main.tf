@@ -4,24 +4,37 @@ provider "aws" {
   region     = "${var.location}"
 }
 
-resource "aws_resourcegroups_group" "resourcegroups_group" {
-  name = "${var.app_resource_group_name}"
-
-  resource_query {
-    query = <<-JSON
-      {
-        "ResourceTypeFilters": [
-          "AWS::AllSupported"
-        ],
-        "TagFilters": [
-          {
-            "Key": "ResourceGroup",
-            "Values": ["${var.app_resource_group_name}"]
-          }
-        ]
-      }
-    JSON
+data "aws_ami" "ubuntu" {
+  most_recent = true
+  filter {
+    name = "name"
+    values = ["ubuntu/images/hvm-ssd/ubuntu-xenial-16.04-amd64-server-*"]
   }
+  filter {
+    name = "virtualization-type"
+    values = ["hvm"]
+  }
+  owners = ["099720109477"] # Canonical
+}
+
+// resource "aws_resourcegroups_group" "resourcegroups_group" {
+//   name = "${var.app_resource_group_name}"
+// 
+//   resource_query {
+//     query = <<-JSON
+//       {
+//         "ResourceTypeFilters": [
+//           "AWS::AllSupported"
+//         ],
+//         "TagFilters": [
+//           {
+//             "Key": "ResourceGroup",
+//             "Values": ["${var.app_resource_group_name}"]
+//           }
+//         ]
+//       }
+//     JSON
+//   }
 }
 
 data "aws_vpc" "main" {
@@ -92,11 +105,11 @@ locals {
 }
 
 resource "aws_instance" "blue" {
-  ami                    = "ami-baa236c2"
   instance_type          = "t2.micro"
   subnet_id              = "${aws_subnet.blue.id}"
   vpc_security_group_ids = ["${aws_security_group.main.id}"]
   key_name               = "test-key1"
+  ami = "${data.aws_ami.ubuntu.id}"
 
   user_data = "${local.user_data0}"
 
@@ -107,11 +120,11 @@ resource "aws_instance" "blue" {
 }
 
 resource "aws_instance" "green" {
-  ami                    = "ami-baa236c2"
   instance_type          = "t2.micro"
   subnet_id              = "${aws_subnet.green.id}"
   vpc_security_group_ids = ["${aws_security_group.main.id}"]
   key_name               = "test-key1"
+  ami = "${data.aws_ami.ubuntu.id}"
 
   user_data = "${local.user_data1}"
 
