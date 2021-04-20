@@ -18,18 +18,6 @@ pipeline {
     }
     stage('Terraform plan'){
       steps {
-
-        withCredentials([usernamePassword(credentialsId: NEXUS_CREDENTIALS_ID, usernameVariable: 'USERNAME', passwordVariable: 'PASSWORD')]) {
-          sh """
-            curl -v -u '${USERNAME}:${PASSWORD}' POST '${REPOSITORY_API}/components?repository=${IMAGE_REPOSITORY}' \
-              -F maven2.groupId=${IMAGE_GROUP} \
-              -F maven2.artifactId=${IMAGE_NAME} \
-              -F maven2.version=${params.TAG_VERSION} \
-              -F maven2.asset1=@${workspace}/target/${IMAGE_NAME}-${params.TAG_VERSION}.jar \
-              -F maven2.asset1.extension=jar \
-              -F maven2.generate-pom=true
-          """
-        }
         // Get the VM image ID for the VMSS
         withCredentials([usernamePassword(credentialsId: AWS_ACCOUNT, usernameVariable: 'USERNAME', passwordVariable: 'PASSWORD'),
           usernamePassword(credentialsId: NEXUS_CREDENTIALS_ID, usernameVariable: 'NEXUS_USERNAME', passwordVariable: 'NEXUS_PASSWORD')]) {
