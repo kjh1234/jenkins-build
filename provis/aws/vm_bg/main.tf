@@ -92,7 +92,6 @@ locals {
 }
 
 resource "aws_instance" "blue" {
-  count                  = 1
   ami                    = "ami-baa236c2"
   instance_type          = "t2.micro"
   subnet_id              = "${aws_subnet.blue.id}"
@@ -108,7 +107,6 @@ resource "aws_instance" "blue" {
 }
 
 resource "aws_instance" "green" {
-  count                  = 1
   ami                    = "ami-baa236c2"
   instance_type          = "t2.micro"
   subnet_id              = "${aws_subnet.green.id}"
