@@ -33,7 +33,7 @@ resource "aws_subnet" "blue" {
   cidr_block = "172.31.96.0/20"
   availability_zone = "ap-northeast-2a"
   tags = {
-    Name = "${var.prefix}_subnet-blue"
+    Name = "${var.prefix}-subnet-blue"
     group = "${var.app_resource_group_name}"
   }
 }
@@ -49,7 +49,7 @@ resource "aws_subnet" "green" {
 }
 
 resource "aws_security_group" "main" {
-  name = "${var.prefix}_nsg"
+  name = "${var.prefix}-nsg"
   description = "Allow all inbound traffic"
   vpc_id = "${data.aws_vpc.main.id}"
 
@@ -101,7 +101,7 @@ resource "aws_instance" "blue" {
   user_data = "${local.user_data0}"
 
   tags = {
-    Name = "${var.prefix}_ec2_blue"
+    Name = "${var.prefix}-ec2-blue"
     group = "${var.app_resource_group_name}"
   }
 }
@@ -116,7 +116,7 @@ resource "aws_instance" "green" {
   user_data = "${local.user_data1}"
 
   tags = {
-    Name = "${var.prefix}_ec2_green"
+    Name = "${var.prefix}-ec2-green"
     group = "${var.app_resource_group_name}"
   }
 }
@@ -149,13 +149,13 @@ resource "aws_elb" "main" {
   }
 
   tags = {
-    Name = "${var.prefix}_elb"
+    Name = "${var.prefix}-elb"
     group = "${var.app_resource_group_name}"
   }
 }
 
 resource "aws_lb_target_group" "prod" {
-  name   = "${var.prefix}_lb_prod_target"
+  name   = "${var.prefix}-lb-prod-target"
   vpc_id = "${data.aws_vpc.main.id}"
   port = "80"
   protocol = "HTTP"
@@ -179,7 +179,7 @@ resource "aws_lb_target_group" "prod" {
 }
 
 resource "aws_lb_target_group" "stage" {
-  name   = "${var.prefix}_lb_stage_target"
+  name   = "${var.prefix}-lb-stage-target"
   vpc_id = "${data.aws_vpc.main.id}"
   port = "8080"
   protocol = "HTTP"
