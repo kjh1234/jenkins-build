@@ -35,7 +35,7 @@ data "aws_ami" "ubuntu" {
 //       }
 //     JSON
 //   }
-}
+// }
 
 data "aws_vpc" "main" {
   cidr_block       = "172.31.0.0/16"
