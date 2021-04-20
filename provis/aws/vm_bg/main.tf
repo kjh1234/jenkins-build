@@ -5,7 +5,7 @@ provider "aws" {
 }
 
 resource "aws_resourcegroups_group" "resourcegroups_group" {
-  name = "${local.namespace}-group"
+  name = "${var.app_resource_group_name}"
 
   resource_query {
     query = <<-JSON
@@ -92,7 +92,7 @@ resource "aws_instance" "blue" {
 
   user_data = "${local.user_data}"
 
-  tags {
+  tags = {
     Name = "${var.prefix}_ec2_blue"
     group = "${var.app_resource_group_name}"
   }
@@ -108,7 +108,7 @@ resource "aws_instance" "green" {
 
   user_data = "${local.user_data}"
 
-  tags {
+  tags = {
     Name = "${var.prefix}_ec2_green"
     group = "${var.app_resource_group_name}"
   }
@@ -116,10 +116,8 @@ resource "aws_instance" "green" {
 
 resource "aws_elb" "main" {
   name            = "${var.prefix}_elb"
-  subnets         = ["${aws_subnet.main.id}"]
+  subnets         = ["${aws_subnet.blue.id}"]
   security_groups = ["${aws_security_group.main.id}"]
-
-  instances = ["${aws_instance.main.id}"]
 
   listener {
     instance_port     = 8080
@@ -143,7 +141,7 @@ resource "aws_elb" "main" {
     interval            = 30
   }
 
-  tags {
+  tags = {
     Name = "${var.prefix}_elb"
     group = "${var.app_resource_group_name}"
   }
@@ -168,11 +166,11 @@ resource "aws_lb_target_group" "prod" {
     protocol = "HTTP"
   }
 
-  tags {
+  tags = {
     Name = "${var.prefix}_lb_prod_target"
     group = "${var.app_resource_group_name}"
   }
-  depends_on = [aws_lb.main]
+  depends_on = [${aws_elb.main}]
 }
 
 resource "aws_lb_target_group" "stage" {
@@ -194,11 +192,11 @@ resource "aws_lb_target_group" "stage" {
     protocol = "HTTP"
   }
 
-  tags {
+  tags = {
     Name = "${var.prefix}_lb_stage_target"
     group = "${var.app_resource_group_name}"
   }
-  depends_on = [aws_lb.main]
+  depends_on = [${aws_elb.main}]
 }
 
 resource "aws_lb_target_group_attachment" "prod" {
