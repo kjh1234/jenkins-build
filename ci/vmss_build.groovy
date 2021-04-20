@@ -13,7 +13,7 @@ pipeline {
         /* 빌드 대상 GIT을 임시 폴더에 생성함 */
         checkout([
             $class: 'GitSCM',
-            branches: [[name: "refs/tags/${TAG_VERSION}"]],
+            branches: [[name: "refs/tags/${param.TAG_VERSION}"]],
             doGenerateSubmoduleConfigurations: false,
             extensions: [[
                 $class: 'SubmoduleOption',
@@ -22,13 +22,11 @@ pipeline {
                 recursiveSubmodules: false,
                 reference: '',
                 trackingSubmodules: false
-              ],[
-                $class: 'RelativeTargetDirectory',
-              relativeTargetDir: "${workspace}/tmp_source"
+             ] 
             ]],
             submoduleCfg: [],
-            userRemoteConfigs: [[credentialsId: GIT_CREDENTIALS_ID, url: "https://github.com/kjh1234/todo-app-java-on-azure.git"]]
-        ])
+            userRemoteConfigs: [[credentialsId: GIT_CREDENTIALS_ID, url: "https://github.com/ejb486/spring-mvc-tutorial.git"]]
+        )
 
       }
     }
@@ -37,8 +35,8 @@ pipeline {
       steps {
         withCredentials(bindings: [azureServicePrincipal(INNO_AZURE_CREDENTIALS)]) {
           sh """
-          cd ${workspace}/tmp_source
-          sh ./mvnw clean package -Dmaven.test.skip=true
+            cd springmvc5-helloworld-exmaple
+            mvn clean install
           """
         }
 
@@ -69,7 +67,11 @@ pipeline {
           -var 'AZURE_CLIENT_ID=${AZURE_CLIENT_ID}' \
           -var 'AZURE_CLIENT_SECRET=${AZURE_CLIENT_SECRET}' \
           -var 'AZURE_TENANT_ID=${AZURE_TENANT_ID}' \
-          -var 'AZURE_SUBSCRIPTION_ID=${AZURE_SUBSCRIPTION_ID}' azcentos79sktbase.json
+          -var 'AZURE_SUBSCRIPTION_ID=${AZURE_SUBSCRIPTION_ID}' \
+          -var 'NEXUS_USER=${USER_NAME}' \
+          -var 'NEXUS_PASS=${PASSWORD}'  \
+          -var 'APP_VERSION=${param.APP_VERSION}' \
+          azcentos79sktbase.json
           """
         }
       }
@@ -95,13 +97,15 @@ pipeline {
 
 
     REPOSITORY_API = "https://doss.sktelecom.com/nexus/service/rest/v1"
-    IMAGE_REPOSITORY = "doss-sample-java-application"
-    IMAGE_GROUP = "com.microsoft.azure.sample"
-    IMAGE_NAME = "todo-app-java-on-azure"
+    IMAGE_REPOSITORY = "maven-releases"
+    IMAGE_GROUP = "net.javaguides.springmvc"
+    IMAGE_NAME = "springmvc5-helloworld-example"
   }
   parameters {
     string(name: 'TAG_VERSION', defaultValue: '', description: '')
 
     string(name: 'IMAGE_VERSION', defaultValue: '1.0.0', description: 'azure shared image version number' )
+
+    string(name: 'APP_VERSION', defaultValue: '1.0.0', description: 'application version number' )
   }
 }
