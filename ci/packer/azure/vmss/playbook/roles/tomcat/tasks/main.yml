@@ -1,0 +1,71 @@
+- name: Add EPEL repository 
+  become: true
+  yum:
+          name: epel-release
+          state: present
+
+- name: download tomcat
+  become: true
+  get_url:
+          url: "{{ tomcat_archive_url }}"
+          dest: "{{ tomcat_archive_dest }}"
+
+- name: create a tomcat directory 
+  become: true
+  file:
+          path: /usr/share/tomcat
+          state: directory
+          owner: webwas
+          group: webwas
+  
+- name: Extract tomcat archive
+  become: true
+  unarchive:
+    src: "{{ tomcat_archive_dest }}"
+    dest: /usr/share/tomcat
+    owner: webwas
+    group: webwas
+    remote_src: yes
+    extra_opts: "--strip-components=1"
+    creates: /usr/share/tomcat/bin  
+
+    #- name: change mode tomcat directory 755 file 644 recursive 
+    #file:
+    #      path: /usr/share/tomcat
+    #      mode: u=rwX,g=rX,o=rX
+    #      recurse: yes 
+
+- name: copy tomcat service file
+  become: true
+  template:
+    src: templates/tomcat.service.j2
+    dest: /etc/systemd/system/tomcat.service
+  when: ansible_service_mgr == "systemd"  
+
+- name: start and enable tomcat
+  become: true
+  service:
+          daemon_reload: yes
+          name: tomcat
+          state: started
+          enabled: yes
+  when: ansible_service_mgr == "systemd"          
+
+- name: Set UI access credentials
+  become: true
+  template:
+    src: tomcat-users.xml.j2
+    dest: /usr/share/tomcat/conf/tomcat-users.xml
+    #notify: restart tomcat
+
+- name: Allow access to Manager and Host Manager apps from any IP
+  become: true
+  template:
+    src: context.xml.j2 
+    dest: "{{ item }}"
+  with_items:
+    - /usr/share/tomcat/webapps/host-manager/META-INF/context.xml
+    - /usr/share/tomcat/webapps/manager/META-INF/context.xml
+      #notify: restart tomcat
+
+

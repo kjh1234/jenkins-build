@@ -1,0 +1,8 @@
+---
+webDocRoot: "/var/www/html"
+webDocRootBefore: "/var/www"
+httpPort: "80"
+apacheuser: "webwas"
+apachegroup: "webwas"
+serverAdmEmail: "adminsk@skmail.com"
+mainMessage: "hello this is index.html file maid by ansible template file"
