@@ -170,7 +170,7 @@ resource "aws_lb_target_group" "prod" {
     Name = "${var.prefix}_lb_prod_target"
     group = "${var.app_resource_group_name}"
   }
-  depends_on = [${aws_elb.main}]
+  depends_on = ["${aws_elb.main}"]
 }
 
 resource "aws_lb_target_group" "stage" {
@@ -196,7 +196,7 @@ resource "aws_lb_target_group" "stage" {
     Name = "${var.prefix}_lb_stage_target"
     group = "${var.app_resource_group_name}"
   }
-  depends_on = [${aws_elb.main}]
+  depends_on = ["${aws_elb.main}"]
 }
 
 resource "aws_lb_target_group_attachment" "prod" {
