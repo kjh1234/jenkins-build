@@ -28,7 +28,7 @@ data "aws_ami" "ubuntu" {
 //         ],
 //         "TagFilters": [
 //           {
-//             "Key": "ResourceGroup",
+//             "Key": "group",
 //             "Values": ["${var.app_resource_group_name}"]
 //           }
 //         ]
