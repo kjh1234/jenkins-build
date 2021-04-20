@@ -43,3 +43,15 @@ variable "application_port" {
     description = "The backend port where the application can be accessed"
     default     = 8080
 }
+
+variable "nexus_id" {
+    default = ""
+}
+
+variable "nexus_pw" {
+    default = ""
+}
+
+variable "nexus_api" {
+    default = ""
+}

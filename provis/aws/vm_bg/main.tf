@@ -74,11 +74,20 @@ resource "aws_security_group" "main" {
 
 
 locals {
-
-  user_data = <<EOF
+  user_data0 = <<EOF
     #cloud-config
     runcmd:
-    - docker run -d -p 8080:80 nginx:latest
+    - sudo apt install openjdk-11-jre-headless
+    - curl -o todo-app-java-on-azure-1.0.0.jar -L -u '${var.nexus_id}:${var.nexus_pw}' -X GET '${nexus_api}/search/assets/download?repository=maven-releases&group=com.microsoft.azure.sample&name=todo-app-java-on-azure&version=1.0.0&maven.extension=jar'
+    - java -jar todo-app-java-on-azure-1.0.0.jar &>/dev/null &
+  EOF
+
+  user_data1 = <<EOF
+    #cloud-config
+    runcmd:
+    - sudo apt install openjdk-11-jre-headless
+    - curl -o todo-app-java-on-azure-1.0.1.jar -L -u '${var.nexus_id}:${var.nexus_pw}' -X GET '${nexus_api}/search/assets/download?repository=maven-releases&group=com.microsoft.azure.sample&name=todo-app-java-on-azure&version=1.0.1&maven.extension=jar'
+    - java -jar todo-app-java-on-azure-1.0.1.jar &>/dev/null &
   EOF
 }
 
@@ -90,7 +99,7 @@ resource "aws_instance" "blue" {
   vpc_security_group_ids = ["${aws_security_group.main.id}"]
   key_name               = "test-key1"
 
-  user_data = "${local.user_data}"
+  user_data = "${local.user_data0}"
 
   tags = {
     Name = "${var.prefix}_ec2_blue"
@@ -106,7 +115,7 @@ resource "aws_instance" "green" {
   vpc_security_group_ids = ["${aws_security_group.main.id}"]
   key_name               = "test-key1"
 
-  user_data = "${local.user_data}"
+  user_data = "${local.user_data1}"
 
   tags = {
     Name = "${var.prefix}_ec2_green"
