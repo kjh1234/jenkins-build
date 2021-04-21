@@ -133,12 +133,25 @@ data "aws_vpc" "main" {
 //     group = "${var.app_resource_group_name}"
 //   }
 // }
+
+data "aws_subnet" "blue" {
+  cidr_block = "172.31.96.0/20"
+}
+
+data "aws_subnet" "green" {
+  cidr_block = "172.31.112.0/20"
+}
+
+data "aws_security_group" "main" {
+  name = "${var.prefix}-nsg"
+}
+
 resource "aws_lb" "main" {
   name               = "${var.prefix}-alb"
   internal           = false
   load_balancer_type = "application"
-  security_groups = ["${aws_security_group.main.id}"]
-  subnets = ["${aws_subnet.blue.id}", "${aws_subnet.green.id}"]
+  security_groups = ["${data.aws_security_group.main.id}"]
+  subnets = ["${data.aws_subnet.blue.id}", "${data.aws_subnet.green.id}"]
   enable_deletion_protection = true
 
   tags = {
