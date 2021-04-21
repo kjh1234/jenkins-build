@@ -23,6 +23,9 @@ pipeline {
                   recursiveSubmodules: false,
                   reference: '',
                   trackingSubmodules: false
+              ],[
+                $class: 'RelativeTargetDirectory',
+              relativeTargetDir: "${workspace}/tmp_source"
               ]],
               submoduleCfg: [],
               userRemoteConfigs: [[credentialsId: GIT_CREDENTIALS_ID, url: "https://github.com/ejb486/spring-mvc-tutorial.git"]]
@@ -36,7 +39,7 @@ pipeline {
       steps {
         withCredentials(bindings: [azureServicePrincipal(INNO_AZURE_CREDENTIALS)]) {
           sh """
-            cd springmvc5-helloworld-exmaple
+            cd ${workspace}/tmp_source/springmvc5-helloworld-exmaple
             mvn clean install
           """
         }
@@ -52,7 +55,7 @@ pipeline {
               -F maven2.groupId=${IMAGE_GROUP} \
               -F maven2.artifactId=${IMAGE_NAME} \
               -F maven2.version=${params.APP_VERSION} \
-              -F maven2.asset1=@${workspace}/springmvc5-helloworld-exmaple/target/${IMAGE_NAME}-${params.APP_VERSION}.war \
+              -F maven2.asset1=@${workspace}/tmp_source/springmvc5-helloworld-exmaple/target/${IMAGE_NAME}-${params.APP_VERSION}.war \
               -F maven2.asset1.extension=war \
               -F maven2.generate-pom=true
           """
@@ -62,20 +65,20 @@ pipeline {
     
     stage('Packer Image') {
       steps {
-       withCredentials(bindings: [azureServicePrincipal(INNO_AZURE_CREDENTIALS)]) { 
+       withCredentials(bindings: [azureServicePrincipal(INNO_AZURE_CREDENTIALS), usernamePassword(credentialsId: NEXUS_CREDENTIALS_ID, usernameVariable: 'USERNAME', passwordVariable: 'PASSWORD')]) { 
          sh """
          
-          cd ${workspace}/springmvc5-helloworld-exmaple/packer/azure/vmss
+          cd ${workspace}/ci/packer/azure/vmss
           
           pwd 
-          
+           
           packer build -force -var 'IMAGE_VERSION=${params.IMAGE_VERSION}' \
           -var 'AZURE_CLIENT_ID=${AZURE_CLIENT_ID}' \
           -var 'AZURE_CLIENT_SECRET=${AZURE_CLIENT_SECRET}' \
           -var 'AZURE_TENANT_ID=${AZURE_TENANT_ID}' \
           -var 'AZURE_SUBSCRIPTION_ID=${AZURE_SUBSCRIPTION_ID}' \
-          -var 'NEXUS_USER=admin' \
-          -var 'NEXUS_PASS=admin123' \
+          -var 'NEXUS_USER=${USERNAME}' \
+          -var 'NEXUS_PASS=${PASSWORD}' \
           -var 'APP_VERSION=${params.APP_VERSION}' \
           azcentos79sktbase.json
            
