@@ -207,6 +207,13 @@ resource "aws_lb" "main" {
 //   port             = 8080
 // }
 
+data "aws_lb_target_group" "prod" {
+  name   = "${var.prefix}-lb-prod-target"
+}
+data "aws_lb_target_group" "stage" {
+  name   = "${var.prefix}-lb-stage-target"
+}
+
 resource "aws_lb_listener" "prod" {
   load_balancer_arn = "${aws_lb.main.arn}"
   port              = "80"
@@ -214,7 +221,7 @@ resource "aws_lb_listener" "prod" {
 
   default_action {
     type             = "forward"
-    target_group_arn = "${aws_lb_target_group.prod.arn}"
+    target_group_arn = "${data.aws_lb_target_group.prod.arn}"
   }
 }
 
@@ -225,6 +232,6 @@ resource "aws_lb_listener" "stage" {
 
   default_action {
     type             = "forward"
-    target_group_arn = "${aws_lb_target_group.stage.arn}"
+    target_group_arn = "${data.aws_lb_target_group.stage.arn}"
   }
 }
