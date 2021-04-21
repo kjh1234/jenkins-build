@@ -140,7 +140,7 @@ resource "aws_lb" "main" {
   load_balancer_type = "application"
   security_groups = ["${aws_security_group.main.id}"]
   subnets = ["${aws_subnet.blue.id}", "${aws_subnet.green.id}"]
-  enable_deletion_protection = true
+//  enable_deletion_protection = true
 
   tags = {
     Name = "${var.prefix}-alb"
