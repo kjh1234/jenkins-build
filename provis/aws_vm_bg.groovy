@@ -51,8 +51,10 @@ pipeline {
     }
   }
   environment {
-    NEXUS_CREDENTIALS_ID = 'NEXUS_CREDENTIALS_ID'
-    REPOSITORY_API = "https://doss.sktelecom.com/nexus/service/rest/v1"
+    // NEXUS_CREDENTIALS_ID = 'NEXUS_CREDENTIALS_ID'
+    NEXUS_CREDENTIALS_ID = 'TINNO_NEXUS_CREDENTIAL'
+    // REPOSITORY_API = "https://doss.sktelecom.com/nexus/service/rest/v1"
+    REPOSITORY_API = "http://52.141.3.188:8081/service/rest/v1"
     AWS_ACCOUNT = "AWS_P120230_ACCOUNT"
     PUBLIC_KEY="~/.ssh/inno_id_rsa2.pub"
     RESOURCE_GROUP="vm-bg-gr"
