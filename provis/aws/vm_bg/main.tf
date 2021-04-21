@@ -111,8 +111,8 @@ resource "aws_instance" "blue" {
   key_name               = "test-key1"
   ami = "${data.aws_ami.ubuntu.id}"
 
-  // user_data = "${local.user_data0}"
-  user_data_base64 = base64encode(local.user_data0)
+  user_data = "${local.user_data0}"
+  // user_data_base64 = base64encode(local.user_data0)
 
   tags = {
     Name = "${var.prefix}-ec2-blue"
@@ -127,8 +127,8 @@ resource "aws_instance" "green" {
   key_name               = "test-key1"
   ami = "${data.aws_ami.ubuntu.id}"
 
-  // user_data = "${local.user_data1}"
-  user_data_base64 = base64encode(local.user_data1)
+  user_data = "${local.user_data1}"
+  // user_data_base64 = base64encode(local.user_data1)
 
   tags = {
     Name = "${var.prefix}-ec2-green"
