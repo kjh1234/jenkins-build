@@ -109,17 +109,11 @@ resource "aws_instance" "blue" {
   subnet_id              = "${aws_subnet.blue.id}"
   vpc_security_group_ids = ["${aws_security_group.main.id}"]
   key_name               = "test-key1"
-  ami = "${data.aws_ami.ubuntu.id}"
+  // ami = "${data.aws_ami.ubuntu.id}"
+  ami = "ami-0ad206874e2824fce"
 
   // user_data = "${local.user_data0}"
   // user_data_base64 = base64encode(local.user_data0)
-  user_data = <<EOF
-#!/bin/bash
-sudo apt-get update -y
-sudo apt install openjdk-11-jre-headless -y
-curl -o todo-app-java-on-azure-1.0.0.jar -L -u '${var.nexus_id}:${var.nexus_pw}'      -X GET '${var.nexus_api}/search/assets/download?repository=maven-releases&group=com.microsoft.azure.sample&name=todo-app-java-on-azure&version=1.0.0&maven.extension=jar'
-java -jar todo-app-java-on-azure-1.0.0.jar &>/dev/null &
-EOF
 
   tags = {
     Name = "${var.prefix}-ec2-blue"
@@ -132,17 +126,11 @@ resource "aws_instance" "green" {
   subnet_id              = "${aws_subnet.green.id}"
   vpc_security_group_ids = ["${aws_security_group.main.id}"]
   key_name               = "test-key1"
-  ami = "${data.aws_ami.ubuntu.id}"
+  // ami = "${data.aws_ami.ubuntu.id}"
+  ami = "ami-00293a4b4544ef9bc"
 
   // user_data = "${local.user_data1}"
   // user_data_base64 = base64encode(local.user_data1)
-  user_data = <<EOF
-#!/bin/bash
-sudo apt-get update -y
-sudo apt install openjdk-11-jre-headless -y
-curl -o todo-app-java-on-azure-1.0.1.jar -L -u '${var.nexus_id}:${var.nexus_pw}'      -X GET '${var.nexus_api}/search/assets/download?repository=maven-releases&group=com.microsoft.azure.sample&name=todo-app-java-on-azure&version=1.0.1&maven.extension=jar'
-java -jar todo-app-java-on-azure-1.0.1.jar &>/dev/null &
-EOF
 
   tags = {
     Name = "${var.prefix}-ec2-green"
