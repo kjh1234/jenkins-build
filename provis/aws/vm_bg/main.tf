@@ -89,15 +89,17 @@ resource "aws_security_group" "main" {
 locals {
   user_data0 = <<EOF
     #!/bin/bash
+    sudo apt-get update -y
     sudo apt install openjdk-11-jre-headless -y
-    curl -o todo-app-java-on-azure-1.0.0.jar -L -u '${var.nexus_id}:${var.nexus_pw}' -X GET '${var.nexus_api}/search/assets/download?repository=maven-releases&group=com.microsoft.azure.sample&name=todo-app-java-on-azure&version=1.0.0&maven.extension=jar'
+    curl -o todo-app-java-on-azure-1.0.0.jar -L -u '${var.nexus_id}:${var.nexus_pw}'      -X GET '${var.nexus_api}/search/assets/download?repository=maven-releases&group=com.microsoft.azure.sample&name=todo-app-java-on-azure&version=1.0.0&maven.extension=jar'
     java -jar todo-app-java-on-azure-1.0.0.jar &>/dev/null &
   EOF
 
   user_data1 = <<EOF
     #!/bin/bash
+    sudo apt-get update -y
     sudo apt install openjdk-11-jre-headless -y
-    curl -o todo-app-java-on-azure-1.0.1.jar -L -u '${var.nexus_id}:${var.nexus_pw}' -X GET '${var.nexus_api}/search/assets/download?repository=maven-releases&group=com.microsoft.azure.sample&name=todo-app-java-on-azure&version=1.0.1&maven.extension=jar'
+    curl -o todo-app-java-on-azure-1.0.1.jar -L -u '${var.nexus_id}:${var.nexus_pw}'      -X GET '${var.nexus_api}/search/assets/download?repository=maven-releases&group=com.microsoft.azure.sample&name=todo-app-java-on-azure&version=1.0.0&maven.extension=jar'
     java -jar todo-app-java-on-azure-1.0.1.jar &>/dev/null &
   EOF
 }
