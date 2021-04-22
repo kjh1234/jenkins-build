@@ -82,8 +82,8 @@ pipeline {
 
     REPOSITORY_API = "https://doss.sktelecom.com/nexus/service/rest/v1"
     // REPOSITORY_API = "http://52.141.3.188:8081/service/rest/v1"
-    IMAGE_REPOSITORY = "sk-maven-hosted"
-    // IMAGE_REPOSITORY = "maven-releases"
+    // IMAGE_REPOSITORY = "sk-maven-hosted"
+    IMAGE_REPOSITORY = "maven-releases"
     IMAGE_GROUP = "com.microsoft.azure.sample"
     IMAGE_NAME = "todo-app-java-on-azure"
   }
