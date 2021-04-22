@@ -1,0 +1,83 @@
+{
+  "variables": {
+    "vpc": "vpc-0503bfd7f80b12d60",
+    "subnet": "subnet-0fe902a2f868d381c",
+    "aws_region": "ap-northeast-2",
+    "ami_name": "SK-CENTOS7-AWS-SAMPLE-{{timestamp}}",
+    "aws_access_key": "",
+    "aws_secret_key": ""
+  },
+  "builders": [{
+    "name": "AWS AMI Builder - CIS",
+    "type": "amazon-ebs",
+    "access_key": "{{user `aws_access_key`}}",
+    "secret_key": "{{user `aws_secret_key`}}",
+    "region": "{{user `aws_region`}}",
+    "source_ami": "ami-06e83aceba2cb0907",
+    "instance_type": "t2.micro",
+    "ssh_username": "centos",
+    "ami_name": "{{user `ami_name` | clean_resource_name}}",
+    "tags": {
+      "Name": "{{user `ami_name`}}"
+    },
+    "run_tags": {
+      "Name": "{{user `ami_name`}}"
+    },
+    "run_volume_tags": {
+      "Name": "{{user `ami_name`}}"
+    },
+    "snapshot_tags": {
+      "Name": "{{user `ami_name`}}"
+    },
+    "ami_description": "CentOS AMI For SKTelecom Sample",
+    "associate_public_ip_address": "true",
+    "vpc_id": "{{user `vpc`}}",
+    "subnet_id": "{{user `subnet`}}"
+  }],
+  "provisioners": [{
+    "execute_command": "chmod +x {{ .Path }}; {{ .Vars }} sudo -E sh '{{ .Path }}'",
+    "inline": [
+        "sleep 30", 
+        "sudo yum update -y",
+        "sudo yum install java-1.8.0-openjdk-devel -y",
+        "HARD_LINK_JAVA=$(readlink -f /usr/bin/javac)",
+        "HARD_LINK_JAVA=${HARD_LINK_JAVA:0:${#HARD_LINK_JAVA}-10}",
+        "echo \"export JAVA_HOME=$HARD_LINK_JAVA\" | sudo tee -a /etc/profile",
+        "echo \"path=$PATH:$HARD_LINK_JAVA/bin\" | sudo tee -a /etc/profile",
+        "echo \"export PATH\" | sudo tee -a /etc/profile",
+        "source /etc/profile", 
+        "sleep 10",
+        "sudo yum install -y epel-release",
+        "sudo yum install -y ansible",
+        "sudo yum install -y git",
+	"sudo yum install -y gzip",
+        "sleep 30"
+      ],
+      "inline_shebang": "/bin/sh -x",
+      "type": "shell"
+    },
+    {
+      "type": "ansible-local",
+      "playbook_file": "playbook/main.yml",
+      "role_paths": [
+	    "playbook/roles/common",
+            "playbook/roles/httpd",
+            "playbook/roles/tomcat",
+            "playbook/roles/appdeploy"
+      ],
+      "extra_arguments": [
+        "--extra-vars",
+        "\"nexus_user={{ user `NEXUS_USER`}} nexus_pass={{ user `NEXUS_PASS`}} app_version={{ user `APP_VERSION`}}\""
+      ]
+    },
+    {
+      "execute_command": "chmod +x {{ .Path }}; {{ .Vars }} sudo -E sh '{{ .Path }}'",
+      "inline": [
+	"sleep 30",
+        "rm .ssh/authorized_keys ; sudo rm /root/.ssh/authorized_keys"
+      ],
+      "inline_shebang": "/bin/sh -x",  
+      "type": "shell"
+    }
+  ]
+}

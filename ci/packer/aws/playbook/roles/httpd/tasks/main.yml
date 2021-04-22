@@ -1,0 +1,40 @@
+- name: install apache webserver in redhat family
+  become: true
+  yum:
+          name: httpd
+          state: latest 
+          update_cache: true
+  when: ansible_os_family == 'RedHat'
+
+  #- name: install apache server in Debian or ubuntu family
+  #become: true
+  #apt:
+  #        name: apache2
+  #        state: lastest
+  #        update_cache: true
+  #when: ansible_os_family == 'Debian' or ansible_os_family == 'Ubuntu'
+
+- name: copy httpd.conf to apache conf 
+  become: true
+  template:
+        dest: /etc/httpd/conf/httpd.conf
+        src: httpd.conf.j2
+        owner: root
+        group: root
+
+- name: copy html index file to apache doc root
+  become: true
+  template:
+        dest: "{{ webDocRoot }}/index.html"
+        src: index.html.j2
+        owner: root
+        group: root
+
+- name: enable httpd
+  become: true
+  service:
+          name: httpd
+          enabled: yes 
+  notify: restart apache2
+# 이곳에아파치 설정 파일을 복사하는 ansible code 를 작성한다. 
+# templet 을 이용하거나copy 를 이용한다. 
