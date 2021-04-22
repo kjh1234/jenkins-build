@@ -1,0 +1,8 @@
+- name: AWS CentOS Base Apache Tomcat application server common setting
+  hosts: all
+  become_user: root
+  roles:
+          - common
+          - httpd
+          - tomcat
+          - appdeploy

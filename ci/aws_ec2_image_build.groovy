@@ -1,5 +1,5 @@
 pipeline {
-  agent { label 'master' } 
+  agent { label 'master' }
   stages {
     stage('SCM') {
       steps {
@@ -65,22 +65,20 @@ pipeline {
     
     stage('Packer Image') {
       steps {
-       withCredentials(bindings: [azureServicePrincipal(INNO_AZURE_CREDENTIALS), usernamePassword(credentialsId: NEXUS_CREDENTIALS_ID, usernameVariable: 'USERNAME', passwordVariable: 'PASSWORD')]) { 
+       withCredentials(bindings: [usernamePassword(credentialsId: AWS_CREDENTIALS, usernameVariable: 'AWS_USERNAME', passwordVariable: 'AWS_PASSWORD'), usernamePassword(credentialsId: NEXUS_CREDENTIALS_ID, usernameVariable: 'USERNAME', passwordVariable: 'PASSWORD')]) { 
          sh """
          
-          cd ${workspace}/ci/packer/azure/vmss
+          cd ${workspace}/ci/packer/aws
           
           pwd 
            
-          packer build -force -var 'IMAGE_VERSION=${params.IMAGE_VERSION}' \
-          -var 'AZURE_CLIENT_ID=${AZURE_CLIENT_ID}' \
-          -var 'AZURE_CLIENT_SECRET=${AZURE_CLIENT_SECRET}' \
-          -var 'AZURE_TENANT_ID=${AZURE_TENANT_ID}' \
-          -var 'AZURE_SUBSCRIPTION_ID=${AZURE_SUBSCRIPTION_ID}' \
+          packer build -var 'IMAGE_VERSION=${params.IMAGE_VERSION}' \
           -var 'NEXUS_USER=${USERNAME}' \
           -var 'NEXUS_PASS=${PASSWORD}' \
           -var 'APP_VERSION=${params.APP_VERSION}' \
-          azcentos79sktbase.json
+          -var 'aws_access_key=${AWS_USERNAME}' \
+          -var 'aws_secret_key=${AWS_PASSWORD}' \
+          awscentos7sktbase.json 
            
           """        
         }
@@ -98,8 +96,7 @@ pipeline {
 
   }
   environment {
-    AZURE_SUBSCRIPTION_ID = credentials('AZURE_SUBSCRIPTION_ID')
-    INNO_AZURE_CREDENTIALS = 'INNO_AZURE_CREDENTIALS'
+    AWS_CREDENTIALS = 'AWS_TERRAFORM_ACCESS_KEY'
     GIT_CREDENTIALS_ID = credentials('GIT_CREDENTIALS_ID')
     NEXUS_CREDENTIALS_ID = 'TINNO_NEXUS_CREDENTIAL'
 
