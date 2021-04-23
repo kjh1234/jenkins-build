@@ -37,13 +37,10 @@ pipeline {
 
     stage('Maven Build') {
       steps {
-        withCredentials(bindings: [azureServicePrincipal(INNO_AZURE_CREDENTIALS)]) {
           sh """
             cd ${workspace}/tmp_source/springmvc5-helloworld-exmaple
             mvn clean install
           """
-        }
-
       }
     }
 
