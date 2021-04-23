@@ -12,7 +12,7 @@ data "aws_subnet" "blue" {
 //  cidr_block       = "172.31.128.0/20"
   filter {
     name = "tag:Name"
-    values = ["vmss-bg-subnet-green"]
+    values = ["vmss-bg-subnet-blue"]
   }
 }
 
