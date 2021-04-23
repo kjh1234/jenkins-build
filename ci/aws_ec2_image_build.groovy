@@ -72,7 +72,7 @@ pipeline {
           
           pwd 
            
-          packer build -var 'IMAGE_VERSION=${params.IMAGE_VERSION}' \
+          packer build \
           -var 'NEXUS_USER=${USERNAME}' \
           -var 'NEXUS_PASS=${PASSWORD}' \
           -var 'APP_VERSION=${params.APP_VERSION}' \
@@ -109,8 +109,6 @@ pipeline {
   }
   parameters {
     string(name: 'TAG_VERSION', defaultValue: '', description: '')
-
-    string(name: 'IMAGE_VERSION', defaultValue: '1.0.0', description: 'azure shared image version number' )
 
     string(name: 'APP_VERSION', defaultValue: '1.0.0', description: 'application version number' )
   }
