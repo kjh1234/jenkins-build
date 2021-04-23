@@ -87,7 +87,7 @@ resource "aws_instance" "blue" {
   vpc_security_group_ids = ["${data.aws_security_group.main.id}"]
   key_name               = "test-key1"
   // ami = "${data.aws_ami.ubuntu.id}"
-  ami = "ami-0ad206874e2824fce"
+  ami = "ami-04012241a2c8306de"
 
   // user_data = "${local.user_data0}"
   // user_data_base64 = base64encode(local.user_data0)
@@ -104,7 +104,7 @@ resource "aws_instance" "green" {
   vpc_security_group_ids = ["${data.aws_security_group.main.id}"]
   key_name               = "test-key1"
   // ami = "${data.aws_ami.ubuntu.id}"
-  ami = "ami-00293a4b4544ef9bc"
+  ami = "ami-003c63cc36f639181"
 
   // user_data = "${local.user_data1}"
   // user_data_base64 = base64encode(local.user_data1)
@@ -180,13 +180,13 @@ resource "aws_lb_target_group" "stage" {
 resource "aws_lb_target_group_attachment" "prod" {
   target_group_arn = "${aws_lb_target_group.prod.arn}"
   target_id        = "${aws_instance.blue.id}"
-  port             = 8080
+  port             = 80
 }
 
 resource "aws_lb_target_group_attachment" "stage" {
   target_group_arn = "${aws_lb_target_group.stage.arn}"
   target_id        = "${aws_instance.green.id}"
-  port             = 8080
+  port             = 80
 }
 
 
