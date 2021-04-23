@@ -49,10 +49,14 @@ resource "aws_launch_template" "green" {
   image_id      = "ami-00293a4b4544ef9bc"
   instance_type = "t2.micro"
   vpc_security_group_ids = ["${data.aws_security_group.main.id}"]
-
-  tags = {
-    group = "${var.app_resource_group_name}"
-  }
+  
+  tags = [
+    {
+      "key"                 = "group"
+      "value"               = "${var.app_resource_group_name}"
+      "propagate_at_launch" = true
+    }
+  ]
 }
 
 resource "aws_autoscaling_group" "blue" {
@@ -64,10 +68,14 @@ resource "aws_autoscaling_group" "blue" {
   launch_template {
     id      = aws_launch_template.blue.id
   }
-
-  tags = {
-    group = "${var.app_resource_group_name}"
-  }
+  
+  tags = [
+    {
+      "key"                 = "group"
+      "value"               = "${var.app_resource_group_name}"
+      "propagate_at_launch" = true
+    }
+  ]
 }
 
 resource "aws_autoscaling_group" "green" {
@@ -80,7 +88,7 @@ resource "aws_autoscaling_group" "green" {
     id      = aws_launch_template.green.id
   }
 
-  tags = {
+  tag = {
     group = "${var.app_resource_group_name}"
   }
 }
