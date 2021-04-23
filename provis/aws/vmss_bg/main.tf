@@ -134,7 +134,7 @@ resource "aws_lb_target_group" "prod" {
 resource "aws_lb_target_group" "stage" {
   name   = "${var.prefix}-lb-stage-target"
   vpc_id = "${data.aws_vpc.main.id}"
-  port = "8080"
+  port = "80"
   protocol = "HTTP"
   target_type = "instance"
   deregistration_delay = "300"
