@@ -8,7 +8,7 @@ provider "aws" {
 data "aws_vpc" "main" {
 //  cidr_block       = "172.31.128.0/20"
   filter {
-    name = "Name"
+    name = "name"
     values = ["vmss-bg-subnet-blue"]
   }
 }
@@ -17,7 +17,7 @@ data "aws_vpc" "main" {
 data "aws_subnet" "green" {
 //  cidr_block       = "172.31.144.0/20"
   filter {
-    name = "Name"
+    name = "name"
     values = ["vmss-bg-subnet-green"]
   }
 }
