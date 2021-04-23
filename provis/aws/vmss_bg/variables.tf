@@ -19,7 +19,7 @@ variable "location" {
 }
 
 variable "prefix" {
-  default     = "vm-bg"
+  default     = "vmss-bg"
 }
 
 variable "vpc-name" {
