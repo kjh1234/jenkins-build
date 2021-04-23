@@ -39,7 +39,7 @@ resource "aws_launch_template" "blue" {
   instance_type = "t2.micro"
   vpc_security_group_ids = ["${data.aws_security_group.main.id}"]
 
-  tags = {
+  tags {
     group = "${var.app_resource_group_name}"
   }
 }
@@ -50,7 +50,7 @@ resource "aws_launch_template" "green" {
   instance_type = "t2.micro"
   vpc_security_group_ids = ["${data.aws_security_group.main.id}"]
 
-  tags = {
+  tags {
     group = "${var.app_resource_group_name}"
   }
 }
@@ -65,7 +65,7 @@ resource "aws_autoscaling_group" "blue" {
     id      = aws_launch_template.blue.id
   }
 
-  tags = {
+  tags {
     group = "${var.app_resource_group_name}"
   }
 }
@@ -80,7 +80,7 @@ resource "aws_autoscaling_group" "green" {
     id      = aws_launch_template.green.id
   }
 
-  tags = {
+  tags {
     group = "${var.app_resource_group_name}"
   }
 }
@@ -93,7 +93,7 @@ resource "aws_lb" "main" {
   subnets = ["${data.aws_subnet.blue.id}", "${data.aws_subnet.green.id}"]
 //  enable_deletion_protection = true
 
-  tags = {
+  tags {
     Name = "${var.prefix}-alb"
     group = "${var.app_resource_group_name}"
   }
@@ -118,7 +118,7 @@ resource "aws_lb_target_group" "prod" {
     protocol = "HTTP"
   }
 
-  tags = {
+  tags {
     group = "${var.app_resource_group_name}"
   }
 }
@@ -142,7 +142,7 @@ resource "aws_lb_target_group" "stage" {
     protocol = "HTTP"
   }
 
-  tags = {
+  tags {
     group = "${var.app_resource_group_name}"
   }
 }
