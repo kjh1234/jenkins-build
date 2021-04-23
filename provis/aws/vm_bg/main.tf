@@ -41,50 +41,27 @@ data "aws_vpc" "main" {
   cidr_block       = "172.31.0.0/16"
 }
 
-resource "aws_subnet" "blue" {
-  vpc_id = "${data.aws_vpc.main.id}"
-  cidr_block = "172.31.96.0/20"
-  availability_zone = "ap-northeast-2a"
-  tags = {
-    Name = "${var.prefix}-subnet-blue"
-    group = "${var.app_resource_group_name}"
+data "aws_subnet" "blue" {
+  filter {
+    name = "tag:Name"
+    values = ["${var.prefix}-subnet-blue"]
   }
 }
 
-resource "aws_subnet" "green" {
-  vpc_id = "${data.aws_vpc.main.id}"
-  cidr_block = "172.31.112.0/20"
-  availability_zone = "ap-northeast-2c"
-  tags = {
-    Name = "${var.prefix}-subnet-green"
-    group = "${var.app_resource_group_name}"
+data "aws_subnet" "green" {
+  filter {
+    name = "tag:Name"
+    values = ["${var.prefix}-subnet-green"]
   }
 }
 
-resource "aws_security_group" "main" {
-  name = "${var.prefix}-nsg"
-  description = "Allow all inbound traffic"
-  vpc_id = "${data.aws_vpc.main.id}"
 
-  ingress {
-    from_port = 0
-    to_port = 0
-    protocol = "-1"
-    cidr_blocks = ["0.0.0.0/0"]
-  }
-
-  egress {
-    from_port = 0
-    to_port = 0
-    protocol = "-1"
-    cidr_blocks = ["0.0.0.0/0"]
-  }
-  tags = {
-    Name = "${var.prefix}_nsg"
-    group = "${var.app_resource_group_name}"
+data "aws_security_group" "main" {
+  filter {
+    name = "tag:Name"
+    values = ["${var.prefix}_nsg"]
   }
 }
-
 
 locals {
   user_data0 = <<EOF
@@ -106,8 +83,8 @@ EOF
 
 resource "aws_instance" "blue" {
   instance_type          = "t2.micro"
-  subnet_id              = "${aws_subnet.blue.id}"
-  vpc_security_group_ids = ["${aws_security_group.main.id}"]
+  subnet_id              = "${data.aws_subnet.blue.id}"
+  vpc_security_group_ids = ["${data.aws_security_group.main.id}"]
   key_name               = "test-key1"
   // ami = "${data.aws_ami.ubuntu.id}"
   ami = "ami-0ad206874e2824fce"
@@ -123,8 +100,8 @@ resource "aws_instance" "blue" {
 
 resource "aws_instance" "green" {
   instance_type          = "t2.micro"
-  subnet_id              = "${aws_subnet.green.id}"
-  vpc_security_group_ids = ["${aws_security_group.main.id}"]
+  subnet_id              = "${data.aws_subnet.green.id}"
+  vpc_security_group_ids = ["${data.aws_security_group.main.id}"]
   key_name               = "test-key1"
   // ami = "${data.aws_ami.ubuntu.id}"
   ami = "ami-00293a4b4544ef9bc"
@@ -142,8 +119,8 @@ resource "aws_lb" "main" {
   name               = "${var.prefix}-alb"
   internal           = false
   load_balancer_type = "application"
-  security_groups = ["${aws_security_group.main.id}"]
-  subnets = ["${aws_subnet.blue.id}", "${aws_subnet.green.id}"]
+  security_groups = ["${data.aws_security_group.main.id}"]
+  subnets = ["${data.aws_subnet.blue.id}", "${data.aws_subnet.green.id}"]
 //  enable_deletion_protection = true
 
   tags = {
