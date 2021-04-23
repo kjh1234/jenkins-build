@@ -34,21 +34,6 @@ data "aws_security_group" "main" {
   }
 }
 
-
-resource "aws_lb" "main" {
-  name               = "${var.prefix}-alb"
-  internal           = false
-  load_balancer_type = "application"
-  security_groups = ["${data.aws_security_group.main.id}"]
-  subnets = ["${data.aws_subnet.blue.id}", "${data.aws_subnet.green.id}"]
-//  enable_deletion_protection = true
-
-  tags = {
-    Name = "${var.prefix}-alb"
-    group = "${var.app_resource_group_name}"
-  }
-}
-
 resource "aws_launch_template" "blue" {
   name_prefix   = "todo-app-1.0.0"
   image_id      = "ami-0ad206874e2824fce"
