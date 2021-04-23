@@ -131,17 +131,27 @@ resource "aws_lb_target_group" "stage" {
   }
 }
 
-resource "aws_lb_target_group_attachment" "prod" {
-  target_group_arn = "${aws_lb_target_group.prod.arn}"
-  target_id        = "${aws_autoscaling_group.blue.id}"
-  port             = 8080
+resource "aws_autoscaling_attachment" "prod" {
+  autoscaling_group_name = "${aws_autoscaling_group.blue.id}"
+  alb_target_group_arn   = "${aws_lb_target_group.prod.arn}"
 }
 
-resource "aws_lb_target_group_attachment" "stage" {
-  target_group_arn = "${aws_lb_target_group.stage.arn}"
-  target_id        = "${aws_autoscaling_group.green.id}"
-  port             = 8080
+resource "aws_autoscaling_attachment" "stage" {
+  autoscaling_group_name = "${aws_autoscaling_group.green.id}"
+  alb_target_group_arn   = "${aws_lb_target_group.stage.arn}"
 }
+
+// resource "aws_lb_target_group_attachment" "prod" {
+//   target_group_arn = "${aws_lb_target_group.prod.arn}"
+//   target_id        = "${aws_autoscaling_group.blue.id}"
+//   port             = 8080
+// }
+// 
+// resource "aws_lb_target_group_attachment" "stage" {
+//   target_group_arn = "${aws_lb_target_group.stage.arn}"
+//   target_id        = "${aws_autoscaling_group.green.id}"
+//   port             = 8080
+// }
 
 resource "aws_lb_listener" "prod" {
   load_balancer_arn = "${aws_lb.main.arn}"
