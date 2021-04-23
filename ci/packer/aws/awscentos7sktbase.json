@@ -3,9 +3,7 @@
     "vpc": "vpc-0503bfd7f80b12d60",
     "subnet": "subnet-0fe902a2f868d381c",
     "aws_region": "ap-northeast-2",
-    "ami_name": "SK-CENTOS7-AWS-SAMPLE-{{timestamp}}",
-    "aws_access_key": "",
-    "aws_secret_key": ""
+    "ami_name": "SK-CENTOS7-AWS-SAMPLE-{{timestamp}}"
   },
   "builders": [{
     "name": "AWS AMI Builder - CIS",
@@ -50,7 +48,7 @@
         "sudo yum install -y epel-release",
         "sudo yum install -y ansible",
         "sudo yum install -y git",
-	"sudo yum install -y gzip",
+	"sudo yum install -y unzip",
         "sleep 30"
       ],
       "inline_shebang": "/bin/sh -x",
