@@ -65,7 +65,7 @@ resource "aws_autoscaling_group" "blue" {
     id      = aws_launch_template.blue.id
   }
 
-  tags {
+  tags = {
     group = "${var.app_resource_group_name}"
   }
 }
@@ -80,7 +80,7 @@ resource "aws_autoscaling_group" "green" {
     id      = aws_launch_template.green.id
   }
 
-  tags {
+  tags = {
     group = "${var.app_resource_group_name}"
   }
 }
