@@ -6,29 +6,29 @@ provider "aws" {
 
 
 data "aws_vpc" "main" {
-//  cidr_block       = "172.31.128.0/20"
-  filter {
-    name = "name"
-    values = ["vmss-bg-subnet-blue"]
-  }
+  cidr_block       = "172.31.128.0/20"
+//  filter {
+//    name = "name"
+//    values = ["vmss-bg-subnet-blue"]
+//  }
 }
 
 
 data "aws_subnet" "green" {
-//  cidr_block       = "172.31.144.0/20"
-  filter {
-    name = "name"
-    values = ["vmss-bg-subnet-green"]
-  }
+  cidr_block       = "172.31.144.0/20"
+//  filter {
+//    name = "name"
+//    values = ["vmss-bg-subnet-green"]
+//  }
 }
 
 
 data "aws_security_group" "main" {
-//  cidr_block       = "172.31.144.0/20"
-  filter {
-    name = "Name"
-    values = ["vmss-bg-nsg"]
-  }
+  name       = "${var.prefix}-nsg"
+//  filter {
+//    name = "Name"
+//    values = ["vmss-bg-nsg"]
+//  }
 }
 
 resource "aws_launch_template" "blue" {
