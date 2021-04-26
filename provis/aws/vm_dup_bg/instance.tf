@@ -32,7 +32,7 @@ resource "aws_lb_target_group_attachment" "prod" {
   count = 2
 
   target_group_arn = "${aws_lb_target_group.prod.arn}"
-  target_id        = "${element(aws_instance.blue, count.index)}.id"
+  target_id        = "${element(aws_instance.blue, count.index).id}"
   port             = 8080
 }
 
@@ -40,6 +40,6 @@ resource "aws_lb_target_group_attachment" "stage" {
   count = 2
 
   target_group_arn = "${aws_lb_target_group.stage.arn}"
-  target_id        = "${element(aws_instance.green, count.index)}.id"
+  target_id        = "${element(aws_instance.green, count.index).id}"
   port             = 8080
 }
