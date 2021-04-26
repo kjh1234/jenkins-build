@@ -1,3 +1,17 @@
+resource "aws_lb" "main" {
+  name               = "${var.prefix}-alb"
+  internal           = false
+  load_balancer_type = "application"
+  security_groups = ["${data.aws_security_group.main.id}"]
+  subnets = ["${data.aws_subnet.blue.id}", "${data.aws_subnet.green.id}"]
+//  enable_deletion_protection = true
+
+  tags = {
+    Name = "${var.prefix}-alb"
+    group = "${var.app_resource_group_name}"
+  }
+}
+
 resource "aws_lb_target_group" "prod" {
   name   = "${var.prefix}-lb-prod-target"
   vpc_id = "${data.aws_vpc.main.id}"
