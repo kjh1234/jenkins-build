@@ -19,7 +19,7 @@ variable "location" {
 }
 
 variable "prefix" {
-  default     = "vm-bg"
+  default     = "vm-dup-bg"
 }
 
 variable "vpc-name" {
