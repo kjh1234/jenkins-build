@@ -20,6 +20,6 @@ data "aws_subnet" "green" {
 data "aws_security_group" "main" {
   filter {
     name = "tag:Name"
-    values = ["${var.prefix}_nsg"]
+    values = ["${var.prefix}-nsg"]
   }
 }
