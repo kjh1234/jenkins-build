@@ -35,7 +35,7 @@ data "aws_security_group" "main" {
 
 resource "aws_launch_template" "blue" {
   name_prefix   = "todo-app-1.0.0"
-  image_id      = "ami-04012241a2c8306de"
+  image_id      = "ami-03bae193f36bb386d"
   instance_type = "t2.micro"
   vpc_security_group_ids = ["${data.aws_security_group.main.id}"]
 
@@ -46,7 +46,7 @@ resource "aws_launch_template" "blue" {
 
 resource "aws_launch_template" "green" {
   name_prefix   = "todo-app-1.0.1"
-  image_id      = "ami-003c63cc36f639181"
+  image_id      = "ami-05e9bd7595a88caf3"
   instance_type = "t2.micro"
   vpc_security_group_ids = ["${data.aws_security_group.main.id}"]
 
