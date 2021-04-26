@@ -4,6 +4,39 @@ provider "aws" {
   region     = "${var.location}"
 }
 
+data "aws_ami" "ubuntu" {
+  most_recent = true
+  filter {
+    name = "name"
+    values = ["ubuntu/images/hvm-ssd/ubuntu-bionic-18.04-amd64-server-*"]
+  }
+  filter {
+    name = "virtualization-type"
+    values = ["hvm"]
+  }
+  owners = ["099720109477"] # Canonical
+}
+
+// resource "aws_resourcegroups_group" "resourcegroups_group" {
+//   name = "${var.app_resource_group_name}"
+//
+//   resource_query {
+//     query = <<-JSON
+//       {
+//         "ResourceTypeFilters": [
+//           "AWS::AllSupported"
+//         ],
+//         "TagFilters": [
+//           {
+//             "Key": "group",
+//             "Values": ["${var.app_resource_group_name}"]
+//           }
+//         ]
+//       }
+//     JSON
+//   }
+// }
+
 data "aws_vpc" "main" {
   cidr_block       = "172.31.0.0/16"
 }
@@ -63,6 +96,24 @@ resource "aws_security_group" "main" {
   }
 }
 
+locals {
+  user_data0 = <<EOF
+#!/bin/bash
+sudo apt-get update -y
+sudo apt install openjdk-11-jre-headless -y
+curl -o todo-app-java-on-azure-1.0.0.jar -L -u '${var.nexus_id}:${var.nexus_pw}'      -X GET '${var.nexus_api}/search/assets/download?repository=maven-releases&group=com.microsoft.azure.sample&name=todo-app-java-on-azure&version=1.0.0&maven.extension=jar'
+java -jar todo-app-java-on-azure-1.0.0.jar &>/dev/null &
+EOF
+
+  user_data1 = <<EOF
+#!/bin/bash
+sudo apt-get update -y
+sudo apt install openjdk-11-jre-headless -y
+curl -o todo-app-java-on-azure-1.0.1.jar -L -u '${var.nexus_id}:${var.nexus_pw}'      -X GET '${var.nexus_api}/search/assets/download?repository=maven-releases&group=com.microsoft.azure.sample&name=todo-app-java-on-azure&version=1.0.1&maven.extension=jar'
+java -jar todo-app-java-on-azure-1.0.1.jar &>/dev/null &
+EOF
+}
+
 resource "aws_instance" "main" {
   ami = "${data.aws_ami.ubuntu.id}"
   instance_type = "t2.micro"
@@ -70,7 +121,7 @@ resource "aws_instance" "main" {
   vpc_security_group_ids = ["${aws_security_group.main.id}"]
   key_name = "test-key1"
   availability_zone = "ap-northeast-2a"
-  
+
   count = 1
   tags = {
     Name = "${var.prefix}_ec2"
