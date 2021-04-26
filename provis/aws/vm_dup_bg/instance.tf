@@ -28,24 +28,14 @@ resource "aws_instance" "green" {
   }
 }
 
-resource "aws_lb_listener" "prod" {
-  load_balancer_arn = "${aws_lb.main.arn}"
-  port              = "80"
-  protocol          = "HTTP"
-
-  default_action {
-    type             = "forward"
-    target_group_arn = "${aws_lb_target_group.prod.arn}"
-  }
+resource "aws_lb_target_group_attachment" "prod" {
+  target_group_arn = "${aws_lb_target_group.prod.arn}"
+  target_id        = "${aws_instance.blue.*.id}"
+  port             = 8080
 }
 
-resource "aws_lb_listener" "stage" {
-  load_balancer_arn = "${aws_lb.main.arn}"
-  port              = "8080"
-  protocol          = "HTTP"
-
-  default_action {
-    type             = "forward"
-    target_group_arn = "${aws_lb_target_group.stage.arn}"
-  }
+resource "aws_lb_target_group_attachment" "stage" {
+  target_group_arn = "${aws_lb_target_group.stage.arn}"
+  target_id        = "${aws_instance.green.*.id}"
+  port             = 8080
 }
