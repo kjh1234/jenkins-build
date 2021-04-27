@@ -28,18 +28,18 @@ resource "aws_instance" "green" {
   }
 }
 
-resource "aws_lb_target_group_attachment" "prod" {
+resource "aws_lb_target_group_attachment" "blue" {
   count = 2
 
-  target_group_arn = "${aws_lb_target_group.prod.arn}"
+  target_group_arn = "${aws_lb_target_group.blue.arn}"
   target_id        = "${element(aws_instance.blue, count.index).id}"
   port             = 8080
 }
 
-resource "aws_lb_target_group_attachment" "stage" {
+resource "aws_lb_target_group_attachment" "green" {
   count = 2
 
-  target_group_arn = "${aws_lb_target_group.stage.arn}"
+  target_group_arn = "${aws_lb_target_group.green.arn}"
   target_id        = "${element(aws_instance.green, count.index).id}"
   port             = 8080
 }
