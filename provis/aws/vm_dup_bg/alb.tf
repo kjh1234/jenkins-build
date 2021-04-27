@@ -12,8 +12,8 @@ resource "aws_lb" "main" {
   }
 }
 
-resource "aws_lb_target_group" "prod" {
-  name   = "${var.prefix}-lb-prod-target"
+resource "aws_lb_target_group" "blue" {
+  name   = "${var.prefix}-lb-blue-target"
   vpc_id = "${data.aws_vpc.main.id}"
   port = "8080"
   protocol = "HTTP"
@@ -33,11 +33,12 @@ resource "aws_lb_target_group" "prod" {
 
   tags = {
     group = "${var.app_resource_group_name}"
+    pool_name = "blue"
   }
 }
 
-resource "aws_lb_target_group" "stage" {
-  name   = "${var.prefix}-lb-stage-target"
+resource "aws_lb_target_group" "green" {
+  name   = "${var.prefix}-lb-green-target"
   vpc_id = "${data.aws_vpc.main.id}"
   port = "8080"
   protocol = "HTTP"
@@ -57,6 +58,7 @@ resource "aws_lb_target_group" "stage" {
 
   tags = {
     group = "${var.app_resource_group_name}"
+    pool_name = "blue"
   }
 }
 
@@ -67,7 +69,7 @@ resource "aws_lb_listener" "prod" {
 
   default_action {
     type             = "forward"
-    target_group_arn = "${aws_lb_target_group.prod.arn}"
+    target_group_arn = "${aws_lb_target_group.blue.arn}"
   }
 }
 
@@ -78,6 +80,6 @@ resource "aws_lb_listener" "stage" {
 
   default_action {
     type             = "forward"
-    target_group_arn = "${aws_lb_target_group.stage.arn}"
+    target_group_arn = "${aws_lb_target_group.green.arn}"
   }
 }

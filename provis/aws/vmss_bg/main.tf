@@ -64,7 +64,7 @@ resource "aws_autoscaling_group" "blue" {
   launch_template {
     id      = aws_launch_template.blue.id
   }
-  
+
   tags = [
     {
       "key"                 = "group"
@@ -83,7 +83,7 @@ resource "aws_autoscaling_group" "green" {
   launch_template {
     id      = aws_launch_template.green.id
   }
-  
+
   tags = [
     {
       "key"                 = "group"
@@ -107,8 +107,8 @@ resource "aws_lb" "main" {
   }
 }
 
-resource "aws_lb_target_group" "prod" {
-  name   = "${var.prefix}-lb-prod-target"
+resource "aws_lb_target_group" "blue" {
+  name   = "${var.prefix}-lb-blue-target"
   vpc_id = "${data.aws_vpc.main.id}"
   port = "8080"
   protocol = "HTTP"
@@ -131,8 +131,8 @@ resource "aws_lb_target_group" "prod" {
   }
 }
 
-resource "aws_lb_target_group" "stage" {
-  name   = "${var.prefix}-lb-stage-target"
+resource "aws_lb_target_group" "green" {
+  name   = "${var.prefix}-lb-green-target"
   vpc_id = "${data.aws_vpc.main.id}"
   port = "8080"
   protocol = "HTTP"
@@ -155,14 +155,14 @@ resource "aws_lb_target_group" "stage" {
   }
 }
 
-resource "aws_autoscaling_attachment" "prod" {
+resource "aws_autoscaling_attachment" "blue" {
   autoscaling_group_name = "${aws_autoscaling_group.blue.id}"
-  alb_target_group_arn   = "${aws_lb_target_group.prod.arn}"
+  alb_target_group_arn   = "${aws_lb_target_group.blue.arn}"
 }
 
-resource "aws_autoscaling_attachment" "stage" {
+resource "aws_autoscaling_attachment" "green" {
   autoscaling_group_name = "${aws_autoscaling_group.green.id}"
-  alb_target_group_arn   = "${aws_lb_target_group.stage.arn}"
+  alb_target_group_arn   = "${aws_lb_target_group.green.arn}"
 }
 
 // resource "aws_lb_target_group_attachment" "prod" {
@@ -170,7 +170,7 @@ resource "aws_autoscaling_attachment" "stage" {
 //   target_id        = "${aws_autoscaling_group.blue.id}"
 //   port             = 8080
 // }
-// 
+//
 // resource "aws_lb_target_group_attachment" "stage" {
 //   target_group_arn = "${aws_lb_target_group.stage.arn}"
 //   target_id        = "${aws_autoscaling_group.green.id}"
@@ -184,7 +184,7 @@ resource "aws_lb_listener" "prod" {
 
   default_action {
     type             = "forward"
-    target_group_arn = "${aws_lb_target_group.prod.arn}"
+    target_group_arn = "${aws_lb_target_group.blue.arn}"
   }
 }
 
@@ -195,6 +195,6 @@ resource "aws_lb_listener" "stage" {
 
   default_action {
     type             = "forward"
-    target_group_arn = "${aws_lb_target_group.stage.arn}"
+    target_group_arn = "${aws_lb_target_group.green.arn}"
   }
 }
