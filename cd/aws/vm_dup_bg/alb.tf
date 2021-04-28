@@ -5,8 +5,8 @@ data "aws_lb" "main" {
   }
 }
 
-resource "aws_lb_target_group" "stage" {
-  name   = "${var.prefix}-lb-stage-target"
+resource "aws_lb_target_group" "main" {
+  name   = "${var.prefix}-lb-${pool_name}-target"
   vpc_id = "${data.aws_vpc.main.id}"
   port = "8080"
   protocol = "HTTP"
@@ -36,6 +36,6 @@ resource "aws_lb_listener" "stage" {
 
   default_action {
     type             = "forward"
-    target_group_arn = "${aws_lb_target_group.stage.arn}"
+    target_group_arn = "${aws_lb_target_group.main.arn}"
   }
 }
