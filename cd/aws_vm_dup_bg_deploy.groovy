@@ -60,7 +60,8 @@ pipeline {
               -var 'app_resource_group_name=${RESOURCE_GROUP}' \
               -var 'location=${LOCATION}' \
               -var 'app_version=${TAG_VERSION}' \
-              -var 'pool_name=${newBackend()}'
+              -var 'pool_name=${newBackend()}' \
+              -var 'owner_id=${AMI_ID}'
           """
         }
       }
@@ -185,6 +186,7 @@ pipeline {
   environment {
     // Credentials
     AWS_ACCOUNT = "AWS_P120230_ACCOUNT"
+    AMI_ID = credentials('AMI_ID')
     INNO_AZURE_CREDENTIALS = 'INNO_AZURE_CREDENTIALS'
 //    AZURE_SUBSCRIPTION_ID = credentials('AZURE_SUBSCRIPTION_ID')
     NEXUS_CREDENTIALS_ID = 'NEXUS_CREDENTIALS_ID'
