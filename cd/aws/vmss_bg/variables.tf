@@ -33,3 +33,7 @@ variable "public_key" {
 variable "pool_name" {
     default = ""
 }
+
+variable "app_version" {
+    default = ""
+}
