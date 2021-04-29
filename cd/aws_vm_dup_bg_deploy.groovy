@@ -69,12 +69,10 @@ pipeline {
     stage('Terraform apply'){
       steps {
         // Apply the plan
-        withCredentials([usernamePassword(credentialsId: AWS_ACCOUNT, usernameVariable: 'USERNAME', passwordVariable: 'PASSWORD')]) {
-          sh  """
-           cd ${workspace}/${TERRAFORM_PATH}
-           terraform apply -input=false -auto-approve "tfplan"
-          """
-        }
+        sh  """
+          cd ${workspace}/${TERRAFORM_PATH}
+          terraform apply -input=false -auto-approve "tfplan"
+        """
       }
     }
 
@@ -186,6 +184,7 @@ pipeline {
 
   environment {
     // Credentials
+    AWS_ACCOUNT = "AWS_P120230_ACCOUNT"
     INNO_AZURE_CREDENTIALS = 'INNO_AZURE_CREDENTIALS'
 //    AZURE_SUBSCRIPTION_ID = credentials('AZURE_SUBSCRIPTION_ID')
     NEXUS_CREDENTIALS_ID = 'NEXUS_CREDENTIALS_ID'
