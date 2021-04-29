@@ -106,7 +106,7 @@ pipeline {
     stage('Delete Old VM') {
       steps {
         script {
-	      oldTargetGroupArn = sh(script: "aws elbv2 describe-target-groups --names vm-dup-bg-lb-${currentBackend}-target --query \"TargetGroups[].TargetGroupArn\" --output text", returnStdout: true).trim()
+	      oldTargetGroupArn = sh(script: "aws elbv2 describe-target-groups --names vmss-bg-lb-${currentBackend}-target --query \"TargetGroups[].TargetGroupArn\" --output text", returnStdout: true).trim()
           oldInstanceIds = sh(script: "aws autoscaling describe-auto-scaling-groups --query \"AutoScalingGroups[].{scaleName:AutoScalingGroupName, name:Tags[?Key=='Name'].Value}[?name[0] == 'vmss-bg-${currentBackend}'].scaieName\" --output text", returnStdout: true).trim()
 	
           sh """
