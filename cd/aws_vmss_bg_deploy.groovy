@@ -151,7 +151,7 @@ pipeline {
     TERRAFORM_PATH="cd/aws/vmss_bg"
     PREFIX="vm"
     PUBLIC_KEY="~/.ssh/inno_id_rsa2.pub"
-    LB_NAME="vm-dup-bg-alb"
+    LB_NAME="vmss-bg-alb"
     IP_NAME="vm-pip"
     PROD_VMSS_NAME="prod-rule"
     TEST_VMSS_NAME="stage-rule"
