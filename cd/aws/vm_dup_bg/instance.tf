@@ -1,3 +1,10 @@
+data "aws_ami" "main" {
+  filter {
+    name = "tag:Name"
+    values = ["todo-app-${version}"]
+  }
+}
+
 resource "aws_instance" "main" {
   count = 2
 
@@ -5,7 +12,9 @@ resource "aws_instance" "main" {
   subnet_id              = "${data.aws_subnet.main.id}"
   vpc_security_group_ids = ["${data.aws_security_group.main.id}"]
   key_name               = "test-key1"
-  ami = "ami-05e9bd7595a88caf3"
+#  ami = "ami-05e9bd7595a88caf3"
+  ami = "${aws_ami.main.id}"
+
 
   tags = {
     Name = "${var.prefix}-ec2-${pool_name}-${count.index}"
