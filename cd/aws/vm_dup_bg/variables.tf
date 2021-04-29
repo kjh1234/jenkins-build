@@ -22,10 +22,6 @@ variable "prefix" {
   default     = "vm-dup-bg"
 }
 
-variable "vpc-name" {
-  default     = "doss-vpc"
-}
-
 variable "public_key" {
     default = ""
 }
@@ -34,28 +30,7 @@ variable "pool_name" {
     default = ""
 }
 
-variable "subnet_cidr" {
-    default = "10.0.3.0/24"
+variable "version" {
+    default = "1.0.0"
 }
 
-variable "frontend_port" {
-    description = "The frontend port of the external Load Balancer"
-    default     = 80
-}
-
-variable "application_port" {
-    description = "The backend port where the application can be accessed"
-    default     = 8080
-}
-
-variable "nexus_id" {
-    default = ""
-}
-
-variable "nexus_pw" {
-    default = ""
-}
-
-variable "nexus_api" {
-    default = ""
-}
