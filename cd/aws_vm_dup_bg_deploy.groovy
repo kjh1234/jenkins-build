@@ -22,8 +22,6 @@ pipeline {
 //          """
 //        }
 
-        aws elbv2 describe-listeners --load-balancer-arn $(aws elbv2 describe-load-balancers --names "vm-dup-bg-alb" --query "LoadBalancers[].LoadBalancerArn" --output text) \
-        --query "Listeners[].{port:Port, targetArn:DefaultActions[0].TargetGroupArn}[?contains(targetArn, 'blue')].port" --output text
         script {
           albArn = sh(script: "aws elbv2 describe-load-balancers --names '${LB_NAME}' --query \"LoadBalancers[].LoadBalancerArn\" --output text", returnStdout: true).trim()
           port = sh(script: "aws elbv2 describe-listeners --load-balancer-arn ${albArn} --query \"Listeners[].{port:Port, targetArn:DefaultActions[0].TargetGroupArn}[?contains(targetArn, 'blue')].port\" --output text", returnStdout: true).trim()
