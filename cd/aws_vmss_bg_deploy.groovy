@@ -60,8 +60,7 @@ pipeline {
               -var 'app_resource_group_name=${RESOURCE_GROUP}' \
               -var 'location=${LOCATION}' \
               -var 'app_version=${TAG_VERSION}' \
-              -var 'pool_name=${newBackend()}' \
-              -var 'owner_id=${AMI_ID}'
+              -var 'pool_name=${newBackend()}'
           """
         }
       }
@@ -77,53 +76,6 @@ pipeline {
       }
     }
 
-//    stage('APP Image Pull') {
-//      steps {
-//        script {
-//          withCredentials([usernamePassword(credentialsId: NEXUS_CREDENTIALS_ID, usernameVariable: 'USERNAME', passwordVariable: 'PASSWORD')]) {
-//            sh """
-//              curl -o ${IMAGE_NAME}-${params.TAG_VERSION}.jar -L -u '${USERNAME}:${PASSWORD}' \\
-//                -X GET '${REPOSITORY_API}/search/assets/download?repository=${IMAGE_REPOSITORY}&group=${IMAGE_GROUP}&name=${IMAGE_NAME}&version=${params.TAG_VERSION}&maven.extension=jar'
-//
-//              ls -al
-//            """
-//          }
-//        }
-//      }
-//    }
-//
-//    stage('APP Deploy') {
-//      steps {
-//        script {
-//          deployIp = sh(returnStdout: true, script: "az network public-ip show -g ${RESOURCE_GROUP} --name vm-jumpbox-pip --query ipAddress --output tsv").trim()
-//          privateIps = sh(returnStdout: true, script: "az network nic list -g ${RESOURCE_GROUP}  --query \"[?contains(name, '${newBackend()}')].ipConfigurations[].privateIpAddress\" -o tsv").split("\n")
-//
-//          print "deployIp : ${deployIp}"
-//          print "privateIps : ${privateIps}"
-//
-//          withCredentials([sshUserPrivateKey(credentialsId: VM_PRIBATE_KEY, keyFileVariable: 'identity', usernameVariable: 'userName')]) {
-//            sh """
-//	      rm -f ~/.ssh/known_hosts
-//	      chmod 600 ${identity}
-//	    """
-//	    sleep 10
-//            // sh "scp -i '${identity}' -o 'StrictHostKeyChecking=no' ${IMAGE_NAME}-${params.TAG_VERSION}.jar azureuser@${deployIp}:~/"
-//            for (privateIp in privateIps) {
-//              sh """
-//                # app push
-//                scp -i '${identity}' -r -o StrictHostKeyChecking=no -o ProxyCommand="ssh -i '${identity}' -o StrictHostKeyChecking=no -W %h:%p azureuser@${deployIp}" \\
-//		  ${IMAGE_NAME}-${params.TAG_VERSION}.jar azureuser@${privateIp}:~/
-//                # app run
-//                ssh -i '${identity}' -o StrictHostKeyChecking=no -o ProxyCommand="ssh -i '${identity}' -o StrictHostKeyChecking=no azureuser@${deployIp} nc ${privateIp} 22" \\
-//		  azureuser@${privateIp} "java -jar ${IMAGE_NAME}-${params.TAG_VERSION}.jar &>/dev/null &"
-//              """
-//          // echo ${ip}"
-//            }
-//          }
-//	}
-//      }
-//    }
-//
     stage('Test VMSS') {
       steps {
         script {
@@ -154,13 +106,13 @@ pipeline {
     stage('Delete Old VM') {
       steps {
         script {
-	  oldTargetGroupArn = sh(script: "aws elbv2 describe-target-groups --names vm-dup-bg-lb-${currentBackend}-target --query \"TargetGroups[].TargetGroupArn\" --output text", returnStdout: true).trim()
-          oldInstanceIds = sh(script: "aws ec2 describe-instances --query \"Reservations[].Instances[].{id:InstanceId, group:Tags[?Key=='group'][].Value, name: Tags[?Key=='Name'][].Value}[].{id:id, group:group[0], name:name[0]}[?group=='${RESOURCE_GROUP}' && contains(name, '${currentBackend}')].id\" --output text", returnStdout: true).trim()
+	      oldTargetGroupArn = sh(script: "aws elbv2 describe-target-groups --names vm-dup-bg-lb-${currentBackend}-target --query \"TargetGroups[].TargetGroupArn\" --output text", returnStdout: true).trim()
+          oldInstanceIds = sh(script: "aws autoscaling describe-auto-scaling-groups --query \"AutoScalingGroups[].{scaleName:AutoScalingGroupName, name:Tags[?Key=='Name'].Value}[?name[0] == 'vmss-bg-${currentBackend}'].scaieName\" --output text", returnStdout: true).trim()
 	
           sh """
-	    # Old VM
+	        # Old VM
             aws ec2 terminate-instances --instance-ids ${oldInstanceIds}
-	    aws elbv2 delete-target-group  --target-group-arn ${oldTargetGroupArn}
+	        aws elbv2 delete-target-group  --target-group-arn ${oldTargetGroupArn}
       
 #	        # Jump VM
 #	        az vm delete --yes --ids \$(az vm list -g $RESOURCE_GROUP --query "[?contains(name, 'jumpbox')].id" -o tsv)
@@ -194,9 +146,9 @@ pipeline {
     VM_PRIBATE_KEY = 'VM_PRIBATE_KEY'
 
     // Terraform & Namespace
-    RESOURCE_GROUP="vm-dup-bg-gr"
+    RESOURCE_GROUP="vmss-bg-gr"
     LOCATION="ap-northeast-2"
-    TERRAFORM_PATH="cd/aws/vm_dup_bg"
+    TERRAFORM_PATH="cd/aws/vmss_bg"
     PREFIX="vm"
     PUBLIC_KEY="~/.ssh/inno_id_rsa2.pub"
     LB_NAME="vm-dup-bg-alb"
