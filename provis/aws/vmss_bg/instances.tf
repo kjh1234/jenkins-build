@@ -1,6 +1,15 @@
+data "aws_ami" "main" {
+  owners           = ["self"]
+  most_recent      = true
+  filter {
+    name = "tag:Name"
+    values = ["todo-app-${var.app_version}"]
+  }
+}
+
 resource "aws_launch_template" "blue" {
-  name_prefix   = "todo-app-1.0.0"
-  image_id      = "ami-03bae193f36bb386d"
+  name_prefix   = "todo-app-${var.app_version}"
+  image_id      = "${data.aws_ami.main.id}"
   instance_type = "t2.micro"
   vpc_security_group_ids = ["${data.aws_security_group.main.id}"]
 
