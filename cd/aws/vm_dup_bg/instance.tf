@@ -1,6 +1,7 @@
 data "aws_ami" "main" {
 #  owner_id = "${var.owner_id}"
   owners           = ["self"]
+  most_recent      = true
   filter {
     name = "tag:Name"
     values = ["todo-app-${var.app_version}"]
