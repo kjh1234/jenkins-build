@@ -7,7 +7,7 @@ data "aws_lb" "main" {
 }
 
 resource "aws_lb_target_group" "main" {
-  name   = "${var.prefix}-lb-${pool_name}-target"
+  name   = "${var.prefix}-lb-${var.pool_name}-target"
   vpc_id = "${data.aws_vpc.main.id}"
   port = "8080"
   protocol = "HTTP"
