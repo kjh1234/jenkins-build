@@ -69,7 +69,7 @@ pipeline {
     stage('Terraform apply'){
       steps {
         // Apply the plan
-        withCredentials([azureServicePrincipal(INNO_AZURE_CREDENTIALS)]) {
+        withCredentials([usernamePassword(credentialsId: AWS_ACCOUNT, usernameVariable: 'USERNAME', passwordVariable: 'PASSWORD')]) {
           sh  """
            cd ${workspace}/${TERRAFORM_PATH}
            terraform apply -input=false -auto-approve "tfplan"
