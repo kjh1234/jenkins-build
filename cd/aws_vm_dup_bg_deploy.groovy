@@ -51,8 +51,7 @@ pipeline {
     stage('Terraform plan'){
       steps {
         // Get the VM image ID for the VMSS
-        withCredentials([usernamePassword(credentialsId: AWS_ACCOUNT, usernameVariable: 'USERNAME', passwordVariable: 'PASSWORD'),
-          usernamePassword(credentialsId: NEXUS_CREDENTIALS_ID, usernameVariable: 'NEXUS_USERNAME', passwordVariable: 'NEXUS_PASSWORD')]) {
+        withCredentials([usernamePassword(credentialsId: AWS_ACCOUNT, usernameVariable: 'USERNAME', passwordVariable: 'PASSWORD')]) {
           sh """
             cd ${workspace}/${TERRAFORM_PATH}
             terraform plan -out=tfplan -input=false \
