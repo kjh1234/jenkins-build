@@ -128,7 +128,7 @@ pipeline {
       steps {
         script {
           // ip = sh(returnStdout: true, script: "az network public-ip show --resource-group $RESOURCE_GROUP --name $IP_NAME --query ipAddress --output tsv").trim()
-	  ip = sh(script: "aws elbv2 describe-load-balancer  --load-balancer-arn ${albArn} --query \"LoadBalancers[].DNSName\" --output text", returnStdout: true)
+	  ip = sh(script: "aws elbv2 describe-load-balancers  --load-balancer-arn ${albArn} --query \"LoadBalancers[].DNSName\" --output text", returnStdout: true)
           print "Visit http://$ip:$TEST_PORT"
         }
       }
