@@ -29,10 +29,6 @@ pipeline {
               -var 'access_key=${USERNAME}' \
               -var 'secret_key=${PASSWORD}' \
               -var 'app_resource_group_name=${RESOURCE_GROUP}' \
-              -var "public_key=\$(cat ${PUBLIC_KEY})" \
-              -var 'nexus_id=${NEXUS_USERNAME}' \
-              -var 'nexus_pw=${NEXUS_PASSWORD}' \
-              -var 'nexus_api=${REPOSITORY_API}' \
               -var 'location=${LOCATION}'
 
           """
