@@ -1,8 +1,9 @@
 data "aws_lb" "main" {
-  filter {
-    name = "tag:Name"
-    values = ["${var.prefix}-alb"]
-  }
+  name = "${var.prefix}-alb"
+#  filter {
+#    name = "tag:Name"
+#    values = ["${var.prefix}-alb"]
+#  }
 }
 
 resource "aws_lb_target_group" "main" {
