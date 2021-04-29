@@ -1,7 +1,7 @@
 data "aws_ami" "main" {
   filter {
     name = "tag:Name"
-    values = ["todo-app-${app_version}"]
+    values = ["todo-app-${var.app_version}"]
   }
 }
 
