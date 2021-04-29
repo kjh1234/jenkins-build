@@ -27,12 +27,12 @@ resource "aws_lb_target_group" "main" {
 }
 
 resource "aws_lb_listener" "stage" {
-  load_balancer_arn = "${aws_lb.main.arn}"
+  load_balancer_arn = "${data.aws_lb.main.arn}"
   port              = "8080"
   protocol          = "HTTP"
 
   default_action {
     type             = "forward"
-    target_group_arn = "${aws_lb_target_group.blue.arn}"
+    target_group_arn = "${aws_lb_target_group.main.arn}"
   }
 }
