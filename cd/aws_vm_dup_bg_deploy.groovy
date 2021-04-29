@@ -167,7 +167,7 @@ pipeline {
 
     stage('Delete Old VM') {
       steps {
-	oldTargetGroupArn = sh(script: "aws elbv2 describe-target-groups --names vm-dup-bg-lb-${currentBackend}-target --query \"TargetGroups[].TargetGroupArn" --output text\", returnStdout: true).trim()
+	oldTargetGroupArn = sh(script: "aws elbv2 describe-target-groups --names vm-dup-bg-lb-${currentBackend}-target --query \"TargetGroups[].TargetGroupArn\" --output text", returnStdout: true).trim()
         oldInstanceIds = sh(script: "aws ec2 describe-instances --query \"Reservations[].Instances[].{id:InstanceId, group:Tags[?Key=='group'][].Value, name: Tags[?Key=='Name'][].Value}[].{id:id, group:group[0], name:name[0]}[?group=='${RESOURCE_GROUP}' && contains(name, '${currentBackend}')].id\" --output text", returnStdout: true).trim()
         sh """
 	  # Old VM
