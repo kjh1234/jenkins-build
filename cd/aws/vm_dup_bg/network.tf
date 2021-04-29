@@ -9,7 +9,6 @@ data "aws_subnet" "main" {
   }
 }
 
-
 data "aws_security_group" "main" {
   filter {
     name = "tag:Name"
