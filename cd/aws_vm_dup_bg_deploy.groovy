@@ -154,13 +154,13 @@ pipeline {
         input("Switch Prod Proceed or Abort?")
 
         stageLisner = sh(script: "aws elbv2 describe-listeners --load-balancer-arn ${albArn} --query \"Listeners[].{listenerArn:ListenerArn, targetArn:DefaultActions[0].TargetGroupArn}[?contains(targetArn, '${newBackend()}')].listenerArn\" --output text", returnStdout: true).trim()
-        newTargetGroup = sh(script: "aws elbv2 describe-listeners --load-balancer-arn  ${albArn} --query \"Listeners[].{listenerArn:ListenerArn, targetArn:DefaultActions[0].TargetGroupArn}[?contains(targetArn, '${newBackend()}')].targetArn\" --output text", returnStdout: true).trim()
-        
-        
-        sh """
-          aws elbv2 delete-listener --listener-arn ${stageLisner}
-          aws elbv2 modify-listener --listener-arn ${prodLisner} --default-actions Type=forward,TargetGroupArn=${newTargetGroup}
-        """
+//        newTargetGroup = sh(script: "aws elbv2 describe-listeners --load-balancer-arn  ${albArn} --query \"Listeners[].{listenerArn:ListenerArn, targetArn:DefaultActions[0].TargetGroupArn}[?contains(targetArn, '${newBackend()}')].targetArn\" --output text", returnStdout: true).trim()
+//        
+//        
+//        sh """
+//          aws elbv2 delete-listener --listener-arn ${stageLisner}
+//          aws elbv2 modify-listener --listener-arn ${prodLisner} --default-actions Type=forward,TargetGroupArn=${newTargetGroup}
+//        """
       }
     }
 //
