@@ -149,16 +149,20 @@ pipeline {
 //      }
 //    }
 //
-//    stage('Switch') {
-//      steps {
-//        input("Switch Prod Proceed or Abort?")
-//
-//        sh """
-//	  az network lb rule delete --resource-group $RESOURCE_GROUP --lb-name $LB_NAME --name $TEST_VMSS_NAME
-//          az network lb rule update --resource-group $RESOURCE_GROUP --lb-name $LB_NAME --name $PROD_VMSS_NAME --backend-pool-name ${newBackend()}-bepool
-//        """
-//      }
-//    }
+    stage('Switch') {
+      steps {
+        input("Switch Prod Proceed or Abort?")
+
+        stageLisner = sh(script: "aws elbv2 describe-listeners --load-balancer-arn ${albArn} --query \"Listeners[].{listenerArn:ListenerArn, targetArn:DefaultActions[0].TargetGroupArn}[?contains(targetArn, '${newBackend()}')].listenerArn\" --output text", returnStdout: true).trim()
+        newTargetGroup = sh(script: "aws elbv2 describe-listeners --load-balancer-arn  ${albArn} --query \"Listeners[].{listenerArn:ListenerArn, targetArn:DefaultActions[0].TargetGroupArn}[?contains(targetArn, '${newBackend()}')].targetArn\" --output text", returnStdout: true).trim()
+        
+        
+        sh """
+          aws elbv2 delete-listener --listener-arn ${stageLisner}
+          aws elbv2 modify-listener --listener-arn ${prodLisner} --default-actions Type=forward,TargetGroupArn=${newTargetGroup}
+        """
+      }
+    }
 //
 //    stage('Delete Old VM') {
 //      steps {
