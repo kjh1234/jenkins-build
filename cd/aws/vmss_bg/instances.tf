@@ -34,6 +34,11 @@ resource "aws_autoscaling_group" "main" {
       "key"                 = "group"
       "value"               = "${var.app_resource_group_name}"
       "propagate_at_launch" = true
+    },
+    {
+      "key"                 = "Name"
+      "value"               = "${var.prefix}-${var.pool_name}"
+      "propagate_at_launch" = true
     }
   ]
 }
