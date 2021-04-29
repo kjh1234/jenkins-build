@@ -20,7 +20,7 @@ resource "aws_launch_template" "main" {
 }
 
 resource "aws_autoscaling_group" "main" {
-  availability_zones = ["ap-northeast-2${var.pool_name == 'blue' ? 'a': 'c'}"]
+  availability_zones = ["ap-northeast-2${var.pool_name == "blue" ? "a": "c"}"]
   desired_capacity   = 2
   min_size           = 2
   max_size           = 5
