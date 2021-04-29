@@ -38,61 +38,45 @@ pipeline {
       }
     }
 
-//    stage('Terraform init'){
-//      steps {
-//        // Initialize the plan
-//        sh  """
-//         cd ${workspace}/${TERRAFORM_PATH}
-//         terraform init -input=false
-//        """
-//      }
-//    }
-//
-//    stage('Terraform plan'){
-//      steps {
-//
-//        // Get the VM image ID for the VMSS
-//        withCredentials([azureServicePrincipal(INNO_AZURE_CREDENTIALS)]) {
-//          sh """
-//            az login --service-principal -u $AZURE_CLIENT_ID -p $AZURE_CLIENT_SECRET -t $AZURE_TENANT_ID
-//            az account set --subscription $AZURE_SUBSCRIPTION_ID
-//
-//            export ARM_CLIENT_ID="${AZURE_CLIENT_ID}"
-//            export ARM_CLIENT_SECRET="${AZURE_CLIENT_SECRET}"
-//            export ARM_SUBSCRIPTION_ID="${AZURE_SUBSCRIPTION_ID}"
-//            export ARM_TENANT_ID="${AZURE_TENANT_ID}"
-//
-//            cd ${workspace}/${TERRAFORM_PATH}
-//            terraform plan -out=tfplan -input=false \
-//              -var 'app_resource_group_name=${RESOURCE_GROUP}' \
-//              -var 'location=${LOCATION}' \
-//              -var 'prefix=${PREFIX}' \
-//              -var "pool_name=${newBackend()}" \
-//              -var 'vm_instances=2' \
-//              -var "public_key=\$(cat ${publicKey})" \
-//              -var 'client_id=${AZURE_CLIENT_ID}' \
-//              -var 'client_secret=${AZURE_CLIENT_SECRET}' \
-//              -var 'tenant_id=${AZURE_TENANT_ID}' \
-//              -var 'subscription_id=${AZURE_SUBSCRIPTION_ID}'
-//
-//          """
-//        }
-//
-//      }
-//    }
-//
-//    stage('Terraform apply'){
-//      steps {
-//        // Apply the plan
-//        withCredentials([azureServicePrincipal(INNO_AZURE_CREDENTIALS)]) {
-//          sh  """
-//           cd ${workspace}/${TERRAFORM_PATH}
-//           terraform apply -input=false -auto-approve "tfplan"
-//          """
-//        }
-//      }
-//    }
-//
+    stage('Terraform init'){
+      steps {
+        // Initialize the plan
+        sh  """
+         cd ${workspace}/${TERRAFORM_PATH}
+         terraform init -input=false
+        """
+      }
+    }
+
+    stage('Terraform plan'){
+      steps {
+        // Get the VM image ID for the VMSS
+        withCredentials([usernamePassword(credentialsId: AWS_ACCOUNT, usernameVariable: 'USERNAME', passwordVariable: 'PASSWORD'),
+          usernamePassword(credentialsId: NEXUS_CREDENTIALS_ID, usernameVariable: 'NEXUS_USERNAME', passwordVariable: 'NEXUS_PASSWORD')]) {
+          sh """
+            cd ${workspace}/${TERRAFORM_PATH}
+            terraform plan -out=tfplan -input=false \
+              -var 'access_key=${USERNAME}' \
+              -var 'secret_key=${PASSWORD}' \
+              -var 'app_resource_group_name=${RESOURCE_GROUP}' \
+              -var 'location=${LOCATION}'
+          """
+        }
+      }
+    }
+
+    stage('Terraform apply'){
+      steps {
+        // Apply the plan
+        withCredentials([azureServicePrincipal(INNO_AZURE_CREDENTIALS)]) {
+          sh  """
+           cd ${workspace}/${TERRAFORM_PATH}
+           terraform apply -input=false -auto-approve "tfplan"
+          """
+        }
+      }
+    }
+
 //    stage('APP Image Pull') {
 //      steps {
 //        script {
@@ -149,22 +133,22 @@ pipeline {
 //      }
 //    }
 //
-    stage('Switch') {
-      steps {
-        input("Switch Prod Proceed or Abort?")
-
-        script {
-          stageLisner = sh(script: "aws elbv2 describe-listeners --load-balancer-arn ${albArn} --query \"Listeners[].{listenerArn:ListenerArn, targetArn:DefaultActions[0].TargetGroupArn}[?contains(targetArn, '${newBackend()}')].listenerArn\" --output text", returnStdout: true).trim()
-          newTargetGroup = sh(script: "aws elbv2 describe-listeners --load-balancer-arn  ${albArn} --query \"Listeners[].{listenerArn:ListenerArn, targetArn:DefaultActions[0].TargetGroupArn}[?contains(targetArn, '${newBackend()}')].targetArn\" --output text", returnStdout: true).trim()
-		
-          sh """
-            aws elbv2 delete-listener --listener-arn ${stageLisner}
-            aws elbv2 modify-listener --listener-arn ${prodLisner} --default-actions Type=forward,TargetGroupArn=${newTargetGroup}
-          """
-        }
-        
-      }
-    }
+//    stage('Switch') {
+//      steps {
+//        input("Switch Prod Proceed or Abort?")
+//
+//        script {
+//          stageLisner = sh(script: "aws elbv2 describe-listeners --load-balancer-arn ${albArn} --query \"Listeners[].{listenerArn:ListenerArn, targetArn:DefaultActions[0].TargetGroupArn}[?contains(targetArn, '${newBackend()}')].listenerArn\" --output text", returnStdout: true).trim()
+//          newTargetGroup = sh(script: "aws elbv2 describe-listeners --load-balancer-arn  ${albArn} --query \"Listeners[].{listenerArn:ListenerArn, targetArn:DefaultActions[0].TargetGroupArn}[?contains(targetArn, '${newBackend()}')].targetArn\" --output text", returnStdout: true).trim()
+//		
+//          sh """
+//            aws elbv2 delete-listener --listener-arn ${stageLisner}
+//            aws elbv2 modify-listener --listener-arn ${prodLisner} --default-actions Type=forward,TargetGroupArn=${newTargetGroup}
+//          """
+//        }
+//        
+//      }
+//    }
 
     stage('Delete Old VM') {
       steps {
@@ -209,7 +193,7 @@ pipeline {
     // Terraform & Namespace
     RESOURCE_GROUP="vm-dup-bg-gr"
     LOCATION="koreacentral"
-    TERRAFORM_PATH="cd/azure/vm_dup_bg"
+    TERRAFORM_PATH="cd/aws/vm_dup_bg"
     PREFIX="vm"
     PUBLIC_KEY="~/.ssh/inno_id_rsa2.pub"
     LB_NAME="vm-dup-bg-alb"
