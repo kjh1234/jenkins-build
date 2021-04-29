@@ -5,7 +5,7 @@ data "aws_vpc" "main" {
 data "aws_subnet" "main" {
   filter {
     name = "tag:Name"
-    values = ["${var.prefix}-subnet-${pool_name}"]
+    values = ["${var.prefix}-subnet-${var.pool_name}"]
   }
 }
 
