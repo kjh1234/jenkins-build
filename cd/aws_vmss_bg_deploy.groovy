@@ -110,14 +110,14 @@ pipeline {
           oldInstanceIds = sh(script: "aws autoscaling describe-auto-scaling-groups --query \"AutoScalingGroups[].{scaleName:AutoScalingGroupName, name:Tags[?Key=='Name'].Value}[?name[0] == 'vmss-bg-${currentBackend}'].scaieName\" --output text", returnStdout: true).trim()
 	
           sh """
-	        # Old VM
-            aws ec2 terminate-instances --instance-ids ${oldInstanceIds}
-	        aws elbv2 delete-target-group  --target-group-arn ${oldTargetGroupArn}
+	    # Old VM
+	    aws elbv2 delete-target-group  --target-group-arn ${oldTargetGroupArn}
+            aws autoscaling delete-auto-scaling-group --auto-scaling-group-name ${oldInstanceIds} --force-delete
       
-#	        # Jump VM
-#	        az vm delete --yes --ids \$(az vm list -g $RESOURCE_GROUP --query "[?contains(name, 'jumpbox')].id" -o tsv)
-#	        az disk delete --yes --ids \$(az disk list -g $RESOURCE_GROUP --query "[?contains(name, 'jumpbox')].id" -o tsv)
-#	        az network nic delete --ids \$(az network nic list -g $RESOURCE_GROUP  --query "[?contains(name, 'jumpbox')].id" -o tsv)
+#	    # Jump VM
+#	    az vm delete --yes --ids \$(az vm list -g $RESOURCE_GROUP --query "[?contains(name, 'jumpbox')].id" -o tsv)
+#	    az disk delete --yes --ids \$(az disk list -g $RESOURCE_GROUP --query "[?contains(name, 'jumpbox')].id" -o tsv)
+#	    az network nic delete --ids \$(az network nic list -g $RESOURCE_GROUP  --query "[?contains(name, 'jumpbox')].id" -o tsv)
   
           """
 	  }
