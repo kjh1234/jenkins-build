@@ -167,10 +167,12 @@ pipeline {
 
     stage('Delete Old VM') {
       steps {
-        oldInstanceIds = sh(script: "aws ec2 describe-instances --query \"Reservations[].Instances[].{id:InstanceId, group:Tags[?Key=='group'][].Value, name: Tags[?Key=='Name'][].Value}[].{id:id, group:group[0], name:name[0]}[?group=='vm-dup-bg-gr' && contains(name, 'blue')].id\" --output text", returnStdout: true).trim()
+	oldTargetGroupArn = sh(script: "aws elbv2 describe-target-groups --names vm-dup-bg-lb-${currentBackend}-target --query "TargetGroups[].TargetGroupArn" --output text", returnStdout: true).trim()
+        oldInstanceIds = sh(script: "aws ec2 describe-instances --query \"Reservations[].Instances[].{id:InstanceId, group:Tags[?Key=='group'][].Value, name: Tags[?Key=='Name'][].Value}[].{id:id, group:group[0], name:name[0]}[?group=='vm-dup-bg-gr' && contains(name, '${currentBackend}')].id\" --output text", returnStdout: true).trim()
         sh """
-	        # Old VM
+	  # Old VM
           aws ec2 terminate-instances --instance-ids ${oldInstanceIds}
+	  aws elbv2 delete-target-group  --target-group-arn ${oldTargetGroupArn}
 //	        az vm delete --yes --ids \$(az vm list -g $RESOURCE_GROUP --query "[?contains(name, '${currentBackend}')].id" -o tsv)
 //	        az disk delete --yes --ids \$(az disk list -g $RESOURCE_GROUP --query "[?contains(name, '${currentBackend}')].id" -o tsv)
 //	        az network nic delete --ids \$(az network nic list -g $RESOURCE_GROUP  --query "[?contains(name, '${currentBackend}')].id" -o tsv)
