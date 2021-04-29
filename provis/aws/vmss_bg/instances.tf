@@ -1,9 +1,3 @@
-provider "aws" {
-  access_key = "${var.access_key}"
-  secret_key = "${var.secret_key}"
-  region     = "${var.location}"
-}
-
 resource "aws_launch_template" "blue" {
   name_prefix   = "todo-app-1.0.0"
   image_id      = "ami-03bae193f36bb386d"
