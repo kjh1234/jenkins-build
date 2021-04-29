@@ -26,6 +26,7 @@ resource "aws_lb_target_group_attachment" "main" {
   count = 2
 
   target_group_arn = "${aws_lb_target_group.stage.arn}"
-  target_id        = "${element(aws_instance[${pool_name}], count.index).id}"
+#  target_id        = "${element(aws_instance[${pool_name}], count.index).id}"
+  target_id        = "${aws_instance.main.id}"
   port             = 8080
 }
