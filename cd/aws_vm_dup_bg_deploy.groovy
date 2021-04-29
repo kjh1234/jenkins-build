@@ -60,7 +60,8 @@ pipeline {
               -var 'secret_key=${PASSWORD}' \
               -var 'app_resource_group_name=${RESOURCE_GROUP}' \
               -var 'location=${LOCATION}' \
-              -var 'version=${TAG_VERSION}'
+              -var 'version=${TAG_VERSION}' \
+              -var 'pool_name=${newBackend()}'
           """
         }
       }
