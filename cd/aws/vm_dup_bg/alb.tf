@@ -31,7 +31,7 @@ resource "aws_lb_target_group" "main" {
 }
 
 resource "aws_lb_listener" "stage" {
-  load_balancer_arn = "${aws_lb.main.arn}"
+  load_balancer_arn = "${data.aws_lb.main.arn}"
   port              = "8080"
   protocol          = "HTTP"
 
