@@ -13,11 +13,11 @@ resource "aws_instance" "main" {
   vpc_security_group_ids = ["${data.aws_security_group.main.id}"]
   key_name               = "test-key1"
 #  ami = "ami-05e9bd7595a88caf3"
-  ami = "${aws_ami.main.id}"
+  ami = "${data.aws_ami.main.id}"
 
 
   tags = {
-    Name = "${var.prefix}-ec2-${pool_name}-${count.index}"
+    Name = "${var.prefix}-ec2-${var.pool_name}-${count.index}"
     group = "${var.app_resource_group_name}"
   }
 }
