@@ -176,14 +176,11 @@ pipeline {
 	    # Old VM
             aws ec2 terminate-instances --instance-ids ${oldInstanceIds}
 	    aws elbv2 delete-target-group  --target-group-arn ${oldTargetGroupArn}
-//	          az vm delete --yes --ids \$(az vm list -g $RESOURCE_GROUP --query "[?contains(name, '${currentBackend}')].id" -o tsv)
-//	          az disk delete --yes --ids \$(az disk list -g $RESOURCE_GROUP --query "[?contains(name, '${currentBackend}')].id" -o tsv)
-//	          az network nic delete --ids \$(az network nic list -g $RESOURCE_GROUP  --query "[?contains(name, '${currentBackend}')].id" -o tsv)
       
-//	        # Jump VM
-//	        az vm delete --yes --ids \$(az vm list -g $RESOURCE_GROUP --query "[?contains(name, 'jumpbox')].id" -o tsv)
-//	        az disk delete --yes --ids \$(az disk list -g $RESOURCE_GROUP --query "[?contains(name, 'jumpbox')].id" -o tsv)
-//	        az network nic delete --ids \$(az network nic list -g $RESOURCE_GROUP  --query "[?contains(name, 'jumpbox')].id" -o tsv)
+#	        # Jump VM
+#	        az vm delete --yes --ids \$(az vm list -g $RESOURCE_GROUP --query "[?contains(name, 'jumpbox')].id" -o tsv)
+#	        az disk delete --yes --ids \$(az disk list -g $RESOURCE_GROUP --query "[?contains(name, 'jumpbox')].id" -o tsv)
+#	        az network nic delete --ids \$(az network nic list -g $RESOURCE_GROUP  --query "[?contains(name, 'jumpbox')].id" -o tsv)
   
           """
 	  }
