@@ -35,6 +35,11 @@ resource "aws_autoscaling_group" "blue" {
       "key"                 = "group"
       "value"               = "${var.app_resource_group_name}"
       "propagate_at_launch" = true
+    },
+    {
+      "key"                 = "Name"
+      "value"               = "${var.prefix}-blue"
+      "propagate_at_launch" = true
     }
   ]
 }
@@ -53,6 +58,11 @@ resource "aws_autoscaling_group" "green" {
     {
       "key"                 = "group"
       "value"               = "${var.app_resource_group_name}"
+      "propagate_at_launch" = true
+    },
+    {
+      "key"                 = "Name"
+      "value"               = "${var.prefix}-green"
       "propagate_at_launch" = true
     }
   ]
