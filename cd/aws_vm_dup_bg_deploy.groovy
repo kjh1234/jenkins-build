@@ -195,7 +195,7 @@ pipeline {
 
     // Terraform & Namespace
     RESOURCE_GROUP="vm-dup-bg-gr"
-    LOCATION="koreacentral"
+    LOCATION="ap-northeast-2"
     TERRAFORM_PATH="cd/aws/vm_dup_bg"
     PREFIX="vm"
     PUBLIC_KEY="~/.ssh/inno_id_rsa2.pub"
