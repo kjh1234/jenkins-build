@@ -1,4 +1,5 @@
 data "aws_ami" "main" {
+  owner_id = "${var.owner_id}"
   filter {
     name = "tag:Name"
     values = ["todo-app-${var.app_version}"]
