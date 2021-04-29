@@ -10,7 +10,7 @@ variable "secret_key" {
 #     resource variables     #
 variable "app_resource_group_name" {
   description = "Resource Group name, must be lowercase alphanumeric with hyphens as its used as domain_name_label as well"
-  default     = "vmss-bg-gr"
+  default     = "test_vm"
 }
 
 variable "location" {
@@ -23,13 +23,13 @@ variable "prefix" {
 }
 
 variable "vpc-name" {
-  default     = ""
+  default     = "doss-vpc"
 }
 
 variable "public_key" {
     default = ""
 }
 
-variable "subnet_cidr" {
-    default = "10.0.3.0/24"
+variable "pool_name" {
+    default = ""
 }
