@@ -7,6 +7,18 @@ data "aws_ami" "main" {
     values = ["todo-app-${var.app_version}"]
   }
 }
+data "aws_ami" "ubuntu" {
+    most_recent = true
+    filter {
+        name   = "name"
+        values = ["ubuntu/images/hvm-ssd/ubuntu-focal-20.04-amd64-server-*"]
+    }
+    filter {
+        name = "virtualization-type"
+        values = ["hvm"]
+    }
+    owners = ["099720109477"]
+}
 
 resource "aws_instance" "main" {
   count = 2
@@ -16,7 +28,8 @@ resource "aws_instance" "main" {
   vpc_security_group_ids = ["${data.aws_security_group.main.id}"]
   key_name               = "test-key1"
 #  ami = "ami-05e9bd7595a88caf3"
-  ami = "${data.aws_ami.main.id}"
+#  ami = "${data.aws_ami.main.id}"
+  ami = "${data.aws_ami.ubuntu.id}"
 
 
   tags = {
@@ -40,7 +53,7 @@ resource "aws_instance" "jumpbox" {
   subnet_id              = "${data.aws_subnet.main.id}"
   vpc_security_group_ids = ["${data.aws_security_group.main.id}"]
   key_name               = "test-key1"
-  ami = "ami-03bae193f36bb386d"
+  ami = "${data.aws_ami.ubuntu.id}"
 
   tags = {
     Name = "${var.prefix}-ec2-jumpbox"
