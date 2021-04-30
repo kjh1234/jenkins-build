@@ -33,3 +33,22 @@ resource "aws_lb_target_group_attachment" "main" {
   target_id        = "${aws_instance.main[count.index].id}"
   port             = 8080
 }
+
+resource "aws_instance" "jumpbox" {
+
+  instance_type          = "t2.micro"
+  subnet_id              = "${data.aws_subnet.main.id}"
+  vpc_security_group_ids = ["${data.aws_security_group.main.id}"]
+  key_name               = "test-key1"
+  ami = "ami-03bae193f36bb386d"
+
+  tags = {
+    Name = "${var.prefix}-ec2-jumpbox"
+    group = "${var.app_resource_group_name}"
+  }
+}
+
+resource "aws_eip" "jumpbox" {
+  vpc = true
+  instance                  = aws_instance.jumpbox.id
+}
