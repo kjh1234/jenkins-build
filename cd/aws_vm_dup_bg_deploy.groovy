@@ -98,7 +98,7 @@ pipeline {
 		
           
           deployIp = sh(returnStdout: true, script: "aws ec2 describe-instances --query \"Reservations[].Instances[].{id:InstanceId, publicIp: PublicIpAddress, group:Tags[?Key=='group'][].Value, name: Tags[?Key=='Name'][].Value}[].{id:id, publicIp: publicIp, group:group[0], name:name[0]}[?group=='${RESOURCE_GROUP}' && contains(name, 'jumpbox')].publicIp\" --output text").trim()
-          privateIps = sh(returnStdout: true, script: "aws ec2 describe-instances --query \"Reservations[].Instances[].{id:InstanceId, privateIp: PrivateIpAddress, group:Tags[?Key=='group'][].Value, name: Tags[?Key=='Name'][].Value}[].{id:id, privateIp: privateIp, group:group[0], name:name[0]}[?group=='${RESOURCE_GROUP}' && contains(name, '${newBackend()}')].privateIp\" --output text").split("\n")
+          privateIps = sh(returnStdout: true, script: "aws ec2 describe-instances --query \"Reservations[].Instances[].{id:InstanceId, privateIp: PrivateIpAddress, group:Tags[?Key=='group'][].Value, name: Tags[?Key=='Name'][].Value}[].{id:id, privateIp: privateIp, group:group[0], name:name[0]}[?group=='${RESOURCE_GROUP}' && contains(name, '${newBackend()}')].privateIp\" --output text").split("\t")
 
           print "deployIp : ${deployIp}"
           print "privateIps : ${privateIps}"
