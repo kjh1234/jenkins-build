@@ -118,7 +118,7 @@ pipeline {
 		  ${IMAGE_NAME}-${params.TAG_VERSION}.jar ubuntu@${privateIp}:~/
                 # app run
                 ssh -i '${identity}' -o StrictHostKeyChecking=no -o ProxyCommand="ssh -i '${identity}' -o StrictHostKeyChecking=no ubuntu@${deployIp} nc ${privateIp} 22" \\
-		  ubuntu@${privateIp} "sudo apt install openjdk-11-jre-headless"
+		  ubuntu@${privateIp} "sudo apt install openjdk-11-jre-headless -y"
                 ssh -i '${identity}' -o StrictHostKeyChecking=no -o ProxyCommand="ssh -i '${identity}' -o StrictHostKeyChecking=no ubuntu@${deployIp} nc ${privateIp} 22" \\
 		  ubuntu@${privateIp} "java -jar ${IMAGE_NAME}-${params.TAG_VERSION}.jar server.port=8080 &>/dev/null &"
               """
