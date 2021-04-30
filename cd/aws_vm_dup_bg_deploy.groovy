@@ -91,16 +91,18 @@ pipeline {
         }
       }
     }
-//
-//    stage('APP Deploy') {
-//      steps {
-//        script {
-//          deployIp = sh(returnStdout: true, script: "az network public-ip show -g ${RESOURCE_GROUP} --name vm-jumpbox-pip --query ipAddress --output tsv").trim()
-//          privateIps = sh(returnStdout: true, script: "az network nic list -g ${RESOURCE_GROUP}  --query \"[?contains(name, '${newBackend()}')].ipConfigurations[].privateIpAddress\" -o tsv").split("\n")
-//
-//          print "deployIp : ${deployIp}"
-//          print "privateIps : ${privateIps}"
-//
+
+    stage('APP Deploy') {
+      steps {
+        script {
+		
+          
+          deployIp = sh(returnStdout: true, script: "aws ec2 describe-instances --query \"Reservations[].Instances[].{id:InstanceId, publicIp: PublicIpAddress, group:Tags[?Key=='group'][].Value, name: Tags[?Key=='Name'][].Value}[].{id:id, publicIp: publicIp, group:group[0], name:name[0]}[?group=='${RESOURCE_GROUP}' && contains(name, 'jumpbox')].publicIp\" --output text").trim()
+          privateIps = sh(returnStdout: true, script: "aws ec2 describe-instances --query \"Reservations[].Instances[].{id:InstanceId, privateIp: PrivateIpAddress, group:Tags[?Key=='group'][].Value, name: Tags[?Key=='Name'][].Value}[].{id:id, privateIp: privateIp, group:group[0], name:name[0]}[?group=='${RESOURCE_GROUP}' && contains(name, '${newBackend()}')].privateIp\" --output text").split("\n")
+
+          print "deployIp : ${deployIp}"
+          print "privateIps : ${privateIps}"
+
 //          withCredentials([sshUserPrivateKey(credentialsId: VM_PRIBATE_KEY, keyFileVariable: 'identity', usernameVariable: 'userName')]) {
 //            sh """
 //	      rm -f ~/.ssh/known_hosts
@@ -120,10 +122,10 @@ pipeline {
 //          // echo ${ip}"
 //            }
 //          }
-//	}
-//      }
-//    }
-//
+	}
+      }
+    }
+
     stage('Test VMSS') {
       steps {
         script {
@@ -210,7 +212,7 @@ pipeline {
     // IMAGE_REPOSITORY = "sk-maven-hosted"
     IMAGE_REPOSITORY = "maven-releases"
     IMAGE_GROUP = "com.microsoft.azure.sample"
-    IMAGE_NAME = "todo-app-java-on-azure-download"
+    IMAGE_NAME = "todo-app-java-on-azure"
   }
   parameters {
     string(name: 'TAG_VERSION', defaultValue: '', description: '')
