@@ -103,25 +103,25 @@ pipeline {
           print "deployIp : ${deployIp}"
           print "privateIps : ${privateIps}"
 
-//          withCredentials([sshUserPrivateKey(credentialsId: VM_PRIBATE_KEY, keyFileVariable: 'identity', usernameVariable: 'userName')]) {
-//            sh """
-//	      rm -f ~/.ssh/known_hosts
-//	      chmod 600 ${identity}
-//	    """
-//	    sleep 10
-//            // sh "scp -i '${identity}' -o 'StrictHostKeyChecking=no' ${IMAGE_NAME}-${params.TAG_VERSION}.jar azureuser@${deployIp}:~/"
-//            for (privateIp in privateIps) {
-//              sh """
-//                # app push
-//                scp -i '${identity}' -r -o StrictHostKeyChecking=no -o ProxyCommand="ssh -i '${identity}' -o StrictHostKeyChecking=no -W %h:%p azureuser@${deployIp}" \\
-//		  ${IMAGE_NAME}-${params.TAG_VERSION}.jar azureuser@${privateIp}:~/
-//                # app run
-//                ssh -i '${identity}' -o StrictHostKeyChecking=no -o ProxyCommand="ssh -i '${identity}' -o StrictHostKeyChecking=no azureuser@${deployIp} nc ${privateIp} 22" \\
-//		  azureuser@${privateIp} "java -jar ${IMAGE_NAME}-${params.TAG_VERSION}.jar &>/dev/null &"
-//              """
-//          // echo ${ip}"
-//            }
-//          }
+          withCredentials([sshUserPrivateKey(credentialsId: VM_PRIBATE_KEY, keyFileVariable: 'identity', usernameVariable: 'userName')]) {
+            sh """
+	      rm -f ~/.ssh/known_hosts
+	      chmod 600 ${identity}
+	    """
+	    sleep 10
+            // sh "scp -i '${identity}' -o 'StrictHostKeyChecking=no' ${IMAGE_NAME}-${params.TAG_VERSION}.jar azureuser@${deployIp}:~/"
+            for (privateIp in privateIps) {
+              sh """
+                # app push
+                scp -i '${identity}' -r -o StrictHostKeyChecking=no -o ProxyCommand="ssh -i '${identity}' -o StrictHostKeyChecking=no -W %h:%p ubuntu@${deployIp}" \\
+		  ${IMAGE_NAME}-${params.TAG_VERSION}.jar ubuntu@${privateIp}:~/
+                # app run
+                ssh -i '${identity}' -o StrictHostKeyChecking=no -o ProxyCommand="ssh -i '${identity}' -o StrictHostKeyChecking=no azureuser@${deployIp} nc ${privateIp} 22" \\
+		  ubuntu@${privateIp} "java -jar ${IMAGE_NAME}-${params.TAG_VERSION}.jar &>/dev/null &"
+              """
+          // echo ${ip}"
+            }
+          }
 	}
       }
     }
