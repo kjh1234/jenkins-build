@@ -38,44 +38,44 @@ pipeline {
       }
     }
 
-//    stage('Terraform init'){
-//      steps {
-//        // Initialize the plan
-//        sh  """
-//         cd ${workspace}/${TERRAFORM_PATH}
-//         terraform init -input=false
-//        """
-//      }
-//    }
-//
-//    stage('Terraform plan'){
-//      steps {
-//        // Get the VM image ID for the VMSS
-//        withCredentials([usernamePassword(credentialsId: AWS_ACCOUNT, usernameVariable: 'USERNAME', passwordVariable: 'PASSWORD')]) {
-//          sh """
-//            cd ${workspace}/${TERRAFORM_PATH}
-//            terraform plan -out=tfplan -input=false \
-//              -var 'access_key=${USERNAME}' \
-//              -var 'secret_key=${PASSWORD}' \
-//              -var 'app_resource_group_name=${RESOURCE_GROUP}' \
-//              -var 'location=${LOCATION}' \
-//              -var 'app_version=${TAG_VERSION}' \
-//              -var 'pool_name=${newBackend()}' \
-//              -var 'owner_id=${AMI_ID}'
-//          """
-//        }
-//      }
-//    }
-//
-//    stage('Terraform apply'){
-//      steps {
-//        // Apply the plan
-//        sh  """
-//          cd ${workspace}/${TERRAFORM_PATH}
-//          terraform apply -input=false -auto-approve "tfplan"
-//        """
-//      }
-//    }
+    stage('Terraform init'){
+      steps {
+        // Initialize the plan
+        sh  """
+         cd ${workspace}/${TERRAFORM_PATH}
+         terraform init -input=false
+        """
+      }
+    }
+
+    stage('Terraform plan'){
+      steps {
+        // Get the VM image ID for the VMSS
+        withCredentials([usernamePassword(credentialsId: AWS_ACCOUNT, usernameVariable: 'USERNAME', passwordVariable: 'PASSWORD')]) {
+          sh """
+            cd ${workspace}/${TERRAFORM_PATH}
+            terraform plan -out=tfplan -input=false \
+              -var 'access_key=${USERNAME}' \
+              -var 'secret_key=${PASSWORD}' \
+              -var 'app_resource_group_name=${RESOURCE_GROUP}' \
+              -var 'location=${LOCATION}' \
+              -var 'app_version=${TAG_VERSION}' \
+              -var 'pool_name=${newBackend()}' \
+              -var 'owner_id=${AMI_ID}'
+          """
+        }
+      }
+    }
+
+    stage('Terraform apply'){
+      steps {
+        // Apply the plan
+        sh  """
+          cd ${workspace}/${TERRAFORM_PATH}
+          terraform apply -input=false -auto-approve "tfplan"
+        """
+      }
+    }
 
     stage('APP Image Pull') {
       steps {
