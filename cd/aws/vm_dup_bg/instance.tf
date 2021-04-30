@@ -64,4 +64,9 @@ resource "aws_instance" "jumpbox" {
 resource "aws_eip" "jumpbox" {
   vpc = true
   instance                  = aws_instance.jumpbox.id
+
+  tags = {
+    Name = "${var.prefix}-eip"
+    group = "${var.app_resource_group_name}"
+  }
 }
