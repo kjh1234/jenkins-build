@@ -38,59 +38,59 @@ pipeline {
       }
     }
 
-    stage('Terraform init'){
-      steps {
-        // Initialize the plan
-        sh  """
-         cd ${workspace}/${TERRAFORM_PATH}
-         terraform init -input=false
-        """
-      }
-    }
-
-    stage('Terraform plan'){
-      steps {
-        // Get the VM image ID for the VMSS
-        withCredentials([usernamePassword(credentialsId: AWS_ACCOUNT, usernameVariable: 'USERNAME', passwordVariable: 'PASSWORD')]) {
-          sh """
-            cd ${workspace}/${TERRAFORM_PATH}
-            terraform plan -out=tfplan -input=false \
-              -var 'access_key=${USERNAME}' \
-              -var 'secret_key=${PASSWORD}' \
-              -var 'app_resource_group_name=${RESOURCE_GROUP}' \
-              -var 'location=${LOCATION}' \
-              -var 'app_version=${TAG_VERSION}' \
-              -var 'pool_name=${newBackend()}' \
-              -var 'owner_id=${AMI_ID}'
-          """
-        }
-      }
-    }
-
-    stage('Terraform apply'){
-      steps {
-        // Apply the plan
-        sh  """
-          cd ${workspace}/${TERRAFORM_PATH}
-          terraform apply -input=false -auto-approve "tfplan"
-        """
-      }
-    }
-
-    stage('APP Image Pull') {
-      steps {
-        script {
-          withCredentials([usernamePassword(credentialsId: NEXUS_CREDENTIALS_ID, usernameVariable: 'USERNAME', passwordVariable: 'PASSWORD')]) {
-            sh """
-              curl -o ${IMAGE_NAME}-${params.TAG_VERSION}.jar -L -u '${USERNAME}:${PASSWORD}' \\
-                -X GET '${REPOSITORY_API}/search/assets/download?repository=${IMAGE_REPOSITORY}&group=${IMAGE_GROUP}&name=${IMAGE_NAME}&version=${params.TAG_VERSION}&maven.extension=jar'
-
-              ls -al
-            """
-          }
-        }
-      }
-    }
+//    stage('Terraform init'){
+//      steps {
+//        // Initialize the plan
+//        sh  """
+//         cd ${workspace}/${TERRAFORM_PATH}
+//         terraform init -input=false
+//        """
+//      }
+//    }
+//
+//    stage('Terraform plan'){
+//      steps {
+//        // Get the VM image ID for the VMSS
+//        withCredentials([usernamePassword(credentialsId: AWS_ACCOUNT, usernameVariable: 'USERNAME', passwordVariable: 'PASSWORD')]) {
+//          sh """
+//            cd ${workspace}/${TERRAFORM_PATH}
+//            terraform plan -out=tfplan -input=false \
+//              -var 'access_key=${USERNAME}' \
+//              -var 'secret_key=${PASSWORD}' \
+//              -var 'app_resource_group_name=${RESOURCE_GROUP}' \
+//              -var 'location=${LOCATION}' \
+//              -var 'app_version=${TAG_VERSION}' \
+//              -var 'pool_name=${newBackend()}' \
+//              -var 'owner_id=${AMI_ID}'
+//          """
+//        }
+//      }
+//    }
+//
+//    stage('Terraform apply'){
+//      steps {
+//        // Apply the plan
+//        sh  """
+//          cd ${workspace}/${TERRAFORM_PATH}
+//          terraform apply -input=false -auto-approve "tfplan"
+//        """
+//      }
+//    }
+//
+//    stage('APP Image Pull') {
+//      steps {
+//        script {
+//          withCredentials([usernamePassword(credentialsId: NEXUS_CREDENTIALS_ID, usernameVariable: 'USERNAME', passwordVariable: 'PASSWORD')]) {
+//            sh """
+//              curl -o ${IMAGE_NAME}-${params.TAG_VERSION}.jar -L -u '${USERNAME}:${PASSWORD}' \\
+//                -X GET '${REPOSITORY_API}/search/assets/download?repository=${IMAGE_REPOSITORY}&group=${IMAGE_GROUP}&name=${IMAGE_NAME}&version=${params.TAG_VERSION}&maven.extension=jar'
+//
+//              ls -al
+//            """
+//          }
+//        }
+//      }
+//    }
 
     stage('APP Deploy') {
       steps {
