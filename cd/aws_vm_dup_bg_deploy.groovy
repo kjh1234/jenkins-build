@@ -210,7 +210,7 @@ pipeline {
     // IMAGE_REPOSITORY = "sk-maven-hosted"
     IMAGE_REPOSITORY = "maven-releases"
     IMAGE_GROUP = "com.microsoft.azure.sample"
-    IMAGE_NAME = "todo-app-java-on-azure"
+    IMAGE_NAME = "todo-app-java-on-azure-download"
   }
   parameters {
     string(name: 'TAG_VERSION', defaultValue: '', description: '')
