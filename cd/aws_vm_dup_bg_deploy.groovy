@@ -118,6 +118,8 @@ pipeline {
 		  ${IMAGE_NAME}-${params.TAG_VERSION}.jar ubuntu@${privateIp}:~/
                 # app run
                 ssh -i '${identity}' -o StrictHostKeyChecking=no -o ProxyCommand="ssh -i '${identity}' -o StrictHostKeyChecking=no ubuntu@${deployIp} nc ${privateIp} 22" \\
+		  ubuntu@${privateIp} "sudo apt install openjdk-11-jre-headless"
+                ssh -i '${identity}' -o StrictHostKeyChecking=no -o ProxyCommand="ssh -i '${identity}' -o StrictHostKeyChecking=no ubuntu@${deployIp} nc ${privateIp} 22" \\
 		  ubuntu@${privateIp} "java -jar ${IMAGE_NAME}-${params.TAG_VERSION}.jar server.port=8080 &>/dev/null &"
               """
           // echo ${ip}"
@@ -161,6 +163,7 @@ pipeline {
           oldInstanceIds = sh(script: "aws ec2 describe-instances --query \"Reservations[].Instances[].{id:InstanceId, group:Tags[?Key=='group'][].Value, name: Tags[?Key=='Name'][].Value}[].{id:id, group:group[0], name:name[0]}[?group=='${RESOURCE_GROUP}' && contains(name, '${currentBackend}')].id\" --output text", returnStdout: true).trim()
 		
           jumpbox = sh(script: "aws ec2 describe-instances --query \"Reservations[].Instances[].{id:InstanceId, group:Tags[?Key=='group'][].Value, name: Tags[?Key=='Name'][].Value}[].{id:id, group:group[0], name:name[0]}[?group=='${RESOURCE_GROUP}' && contains(name, 'jumpbox')].id\" --output text", returnStdout: true).trim()
+          jumpboxIpId = sh(script: "aws ec2 describe-addresses --query \"Addresses[].{id: AllocationId, name:Tags[?Key=='Name'].Value}[?name[0]=='${PREFIX}-eip'].id\" --output text", returnStdout: true).trim()
 	
           sh """
 	    # Old VM
@@ -169,6 +172,7 @@ pipeline {
       
 	    # Jump VM
             aws ec2 terminate-instances --instance-ids ${jumpbox}
+	    aws ec2 release-address --allocation-id ${jumpboxIpId}
           """
 	  }
       }
@@ -199,7 +203,7 @@ pipeline {
     RESOURCE_GROUP="vm-dup-bg-gr"
     LOCATION="ap-northeast-2"
     TERRAFORM_PATH="cd/aws/vm_dup_bg"
-    PREFIX="vm"
+    PREFIX="vm-dup-bg"
     PUBLIC_KEY="~/.ssh/inno_id_rsa2.pub"
     LB_NAME="vm-dup-bg-alb"
     IP_NAME="vm-pip"
