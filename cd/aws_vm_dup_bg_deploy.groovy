@@ -134,42 +134,42 @@ pipeline {
       }
     }
 
-    stage('Switch') {
-      steps {
-        input("Switch Prod Proceed or Abort?")
+//    stage('Switch') {
+//      steps {
+//        input("Switch Prod Proceed or Abort?")
+//
+//        script {
+//          stageLisner = sh(script: "aws elbv2 describe-listeners --load-balancer-arn ${albArn} --query \"Listeners[].{listenerArn:ListenerArn, targetArn:DefaultActions[0].TargetGroupArn}[?contains(targetArn, '${newBackend()}')].listenerArn\" --output text", returnStdout: true).trim()
+//          newTargetGroup = sh(script: "aws elbv2 describe-listeners --load-balancer-arn  ${albArn} --query \"Listeners[].{listenerArn:ListenerArn, targetArn:DefaultActions[0].TargetGroupArn}[?contains(targetArn, '${newBackend()}')].targetArn\" --output text", returnStdout: true).trim()
+//		
+//          sh """
+//            aws elbv2 delete-listener --listener-arn ${stageLisner}
+//            aws elbv2 modify-listener --listener-arn ${prodLisner} --default-actions Type=forward,TargetGroupArn=${newTargetGroup}
+//          """
+//        }
+//        
+//      }
+//    }
 
-        script {
-          stageLisner = sh(script: "aws elbv2 describe-listeners --load-balancer-arn ${albArn} --query \"Listeners[].{listenerArn:ListenerArn, targetArn:DefaultActions[0].TargetGroupArn}[?contains(targetArn, '${newBackend()}')].listenerArn\" --output text", returnStdout: true).trim()
-          newTargetGroup = sh(script: "aws elbv2 describe-listeners --load-balancer-arn  ${albArn} --query \"Listeners[].{listenerArn:ListenerArn, targetArn:DefaultActions[0].TargetGroupArn}[?contains(targetArn, '${newBackend()}')].targetArn\" --output text", returnStdout: true).trim()
-		
-          sh """
-            aws elbv2 delete-listener --listener-arn ${stageLisner}
-            aws elbv2 modify-listener --listener-arn ${prodLisner} --default-actions Type=forward,TargetGroupArn=${newTargetGroup}
-          """
-        }
-        
-      }
-    }
-
-    stage('Delete Old VM') {
-      steps {
-        script {
-	  oldTargetGroupArn = sh(script: "aws elbv2 describe-target-groups --names vm-dup-bg-lb-${currentBackend}-target --query \"TargetGroups[].TargetGroupArn\" --output text", returnStdout: true).trim()
-          oldInstanceIds = sh(script: "aws ec2 describe-instances --query \"Reservations[].Instances[].{id:InstanceId, group:Tags[?Key=='group'][].Value, name: Tags[?Key=='Name'][].Value}[].{id:id, group:group[0], name:name[0]}[?group=='${RESOURCE_GROUP}' && contains(name, '${currentBackend}')].id\" --output text", returnStdout: true).trim()
-	
-          sh """
-	    # Old VM
-            aws ec2 terminate-instances --instance-ids ${oldInstanceIds}
-	    aws elbv2 delete-target-group  --target-group-arn ${oldTargetGroupArn}
-      
-#	        # Jump VM
-#	        az vm delete --yes --ids \$(az vm list -g $RESOURCE_GROUP --query "[?contains(name, 'jumpbox')].id" -o tsv)
-#	        az disk delete --yes --ids \$(az disk list -g $RESOURCE_GROUP --query "[?contains(name, 'jumpbox')].id" -o tsv)
-#	        az network nic delete --ids \$(az network nic list -g $RESOURCE_GROUP  --query "[?contains(name, 'jumpbox')].id" -o tsv)
-  
-          """
-	  }
-      }
+//    stage('Delete Old VM') {
+//      steps {
+//        script {
+//	  oldTargetGroupArn = sh(script: "aws elbv2 describe-target-groups --names vm-dup-bg-lb-${currentBackend}-target --query \"TargetGroups[].TargetGroupArn\" --output text", returnStdout: true).trim()
+//          oldInstanceIds = sh(script: "aws ec2 describe-instances --query \"Reservations[].Instances[].{id:InstanceId, group:Tags[?Key=='group'][].Value, name: Tags[?Key=='Name'][].Value}[].{id:id, group:group[0], name:name[0]}[?group=='${RESOURCE_GROUP}' && contains(name, '${currentBackend}')].id\" --output text", returnStdout: true).trim()
+//	
+//          sh """
+//	    # Old VM
+//            aws ec2 terminate-instances --instance-ids ${oldInstanceIds}
+//	    aws elbv2 delete-target-group  --target-group-arn ${oldTargetGroupArn}
+//      
+//	        # Jump VM
+//	        az vm delete --yes --ids \$(az vm list -g $RESOURCE_GROUP --query "[?contains(name, 'jumpbox')].id" -o tsv)
+//	        az disk delete --yes --ids \$(az disk list -g $RESOURCE_GROUP --query "[?contains(name, 'jumpbox')].id" -o tsv)
+//	        az network nic delete --ids \$(az network nic list -g $RESOURCE_GROUP  --query "[?contains(name, 'jumpbox')].id" -o tsv)
+//  
+//          """
+//	  }
+//      }
     }
 //
 //    stage('Destroy') {
