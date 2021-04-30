@@ -170,7 +170,7 @@ pipeline {
 //          """
 //	  }
 //      }
-    }
+//    }
 //
 //    stage('Destroy') {
 //      steps {
