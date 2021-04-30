@@ -111,6 +111,7 @@ pipeline {
 	    sleep 10
             // sh "scp -i '${identity}' -o 'StrictHostKeyChecking=no' ${IMAGE_NAME}-${params.TAG_VERSION}.jar azureuser@${deployIp}:~/"
             for (privateIp in privateIps) {
+	      privateIp = privateIp.trim()
               sh """
                 # app push
                 scp -i '${identity}' -r -o StrictHostKeyChecking=no -o ProxyCommand="ssh -i '${identity}' -o StrictHostKeyChecking=no -W %h:%p ubuntu@${deployIp}" \\
